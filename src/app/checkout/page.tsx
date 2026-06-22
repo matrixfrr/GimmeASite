@@ -416,7 +416,7 @@ function CheckoutContent() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Plan</span>
-                      <span className="font-medium capitalize">{planType === "one-time" ? "Upfront" : planType === "upfront-monthly" ? "Upfront + Monthly" : "Monthly"}</span>
+                      <span className="font-medium capitalize">{planType === "monthly" ? "Monthly" : quote.notes?.includes("[monthly_cents:") ? "Upfront + Monthly" : "Upfront"}</span>
                     </div>
                     {quote.notes && quote.notes.replace(/\[monthly_cents:\d+\]\s*/g, "").trim() && (
                       <div className="pt-2">
@@ -431,25 +431,28 @@ function CheckoutContent() {
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">Total</span>
                     <div className="text-right">
-                      {planType === "upfront-monthly" ? (() => {
+                      {(() => {
                         const monthlyMatch = quote.notes?.match(/\[monthly_cents:(\d+)\]/);
                         const monthlyCents = monthlyMatch ? parseInt(monthlyMatch[1]) : 0;
+                        if (monthlyCents) {
+                          return (
+                            <div>
+                              <div className="text-sm text-muted-foreground">{formatPrice(quote.priceCents)} upfront</div>
+                              <div className="text-2xl font-bold text-primary">+ {formatPrice(monthlyCents)}<span className="text-sm text-muted-foreground">/mo</span></div>
+                            </div>
+                          );
+                        }
                         return (
-                          <div>
-                            <div className="text-sm text-muted-foreground">{formatPrice(quote.priceCents)} upfront</div>
-                            <div className="text-2xl font-bold text-primary">+ {formatPrice(monthlyCents)}<span className="text-sm text-muted-foreground">/mo</span></div>
-                          </div>
+                          <>
+                            <span className="text-2xl font-bold text-primary">
+                              {formatPrice(quote.priceCents)}
+                            </span>
+                            {planType === "monthly" && (
+                              <span className="text-sm text-muted-foreground">/month</span>
+                            )}
+                          </>
                         );
-                      })() : (
-                        <>
-                          <span className="text-2xl font-bold text-primary">
-                            {formatPrice(quote.priceCents)}
-                          </span>
-                          {planType === "monthly" && (
-                            <span className="text-sm text-muted-foreground">/month</span>
-                          )}
-                        </>
-                      )}
+                      })()}
                     </div>
                   </div>
                 </div>
