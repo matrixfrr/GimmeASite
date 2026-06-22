@@ -467,7 +467,7 @@ function AboutUsSection() {
 // Pricing Section
 function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | "monthly") => void }) {
   const [showComingSoon, setShowComingSoon] = useState(false);
-  const [showEquityCmsTooltip, setShowEquityCmsTooltip] = useState(false);
+  const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
 
   const plans = [
     {
@@ -552,34 +552,47 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-2xl font-bold">{plan.name}</h3>
                 {plan.name === "Equity / CMS" && (
-                  <div className="relative">
+                  <>
                     <button
                       type="button"
                       className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                      onClick={() => setShowEquityCmsTooltip(!showEquityCmsTooltip)}
+                      onClick={() => setShowEquityCmsPopup(true)}
                     >
                       ?
                     </button>
-                    {showEquityCmsTooltip && (
-                      <>
-                        <div className="fixed inset-0 z-40 bg-transparent" onClick={() => setShowEquityCmsTooltip(false)} />
-                        <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground shadow-xl z-50 font-normal w-[calc(100vw-2rem)] max-w-72 sm:absolute sm:left-0 sm:top-full sm:mt-2 sm:translate-x-0 sm:translate-y-0">
+                    {showEquityCmsPopup && (
+                      <div
+                        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+                        onClick={() => setShowEquityCmsPopup(false)}
+                      >
+                        <div
+                          className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <h3 className="text-lg font-bold mb-4">Why?</h3>
                           <div className="mb-3">
                             <span className="font-semibold text-primary block mb-1">Equity Plan</span>
-                            <span className="text-muted-foreground text-xs block">
+                            <span className="text-sm text-muted-foreground block">
                               Partner with us through a small equity share or revenue percentage. Perfect for startups and growing businesses looking to minimize upfront costs while investing in their online presence.
                             </span>
                           </div>
-                          <div>
+                          <div className="mb-5">
                             <span className="font-semibold text-primary block mb-1">CMS Plan</span>
-                            <span className="text-muted-foreground text-xs block">
+                            <span className="text-sm text-muted-foreground block">
                               Take control of your content with our built-in content management system. Update text, images, and more anytime — no revision requests needed.
                             </span>
                           </div>
+                          <button
+                            type="button"
+                            onClick={() => setShowEquityCmsPopup(false)}
+                            className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                          >
+                            Got it
+                          </button>
                         </div>
-                      </>
+                      </div>
                     )}
-                  </div>
+                  </>
                 )}
               </div>
               <div className="mb-4">
@@ -689,12 +702,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     linkedin: "",
     googleBusiness: "",
   });
-  const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | null>(null);
-  const [showPhoneTooltip, setShowPhoneTooltip] = useState(false);
-  const [showPlanTooltip, setShowPlanTooltip] = useState(false);
+  const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | "phone" | "plan" | "domain" | "google" | null>(null);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
-  const [showGoogleTooltip, setShowGoogleTooltip] = useState(false);
-  const [showDomainTooltip, setShowDomainTooltip] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -1140,41 +1149,14 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="relative">
-                    <label htmlFor="phone" className="block text-sm font-medium mb-2 relative">
-                      Phone Number <span className="text-red-500">*</span>
-                      <span className="relative inline-block align-middle">
-                        <button
-                          type="button"
-                          className="inline-flex items-center justify-center w-4 h-4 ml-1 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setShowPhoneTooltip(!showPhoneTooltip);
-                          }}
-                        >
-                          ?
-                        </button>
-                      </span>
-                    </label>
-                    {showPhoneTooltip && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40 bg-transparent"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setShowPhoneTooltip(false);
-                          }}
-                          onTouchEnd={(e) => {
-                            e.preventDefault();
-                            setShowPhoneTooltip(false);
-                          }}
-                        />
-                        <div className="fixed left-4 right-4 top-1/2 -translate-y-1/2 md:absolute md:left-0 md:right-auto md:top-full md:translate-y-0 md:mt-2 bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground shadow-xl z-50 font-normal max-w-sm md:w-72">
-                          Enter the mobile number you are best reached by (texts and calls).
-                        </div>
-                      </>
-                    )}
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <label htmlFor="phone" className="text-sm font-medium">Phone Number <span className="text-red-500">*</span></label>
+                      <button
+                        type="button"
+                        className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
+                        onClick={(e) => { e.preventDefault(); setShowWhyPopup("phone"); }}
+                      >?</button>
+                    </div>
                     <Input
                       id="phone"
                       type="tel"
@@ -1209,56 +1191,14 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
 
                 {/* Domain Field */}
                 <div className="relative">
-                  <label htmlFor="domain" className="block text-sm font-medium mb-2 relative">
-                    Desired Domain <span className="text-red-500">*</span>
-                    <span className="relative inline-block align-middle">
-                      <button
-                        type="button"
-                        className="inline-flex items-center justify-center w-4 h-4 ml-1 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setShowDomainTooltip(!showDomainTooltip);
-                        }}
-                      >
-                        ?
-                      </button>
-                    </span>
-                  </label>
-                  {showDomainTooltip && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-40 bg-transparent"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setShowDomainTooltip(false);
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault();
-                          setShowDomainTooltip(false);
-                        }}
-                      />
-                      <div className="fixed left-4 right-4 top-1/2 -translate-y-1/2 md:absolute md:left-0 md:right-auto md:top-full md:translate-y-0 md:mt-2 bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground shadow-xl z-50 font-normal max-w-sm md:w-80">
-                        <span className="font-semibold block mb-2">What is a domain?</span>
-                        <span className="block text-muted-foreground mb-3">
-                          A domain is your website's address on the internet (e.g., mybusiness.com). It's how customers find you online.
-                        </span>
-                        <span className="font-semibold block mb-1">Popular extensions:</span>
-                        <ul className="text-muted-foreground text-xs space-y-1">
-                          <li><span className="text-primary font-medium">.com</span> - Most popular, great for businesses</li>
-                          <li><span className="text-primary font-medium">.org</span> - Non-profits & organizations</li>
-                          <li><span className="text-primary font-medium">.net</span> - Tech & network companies</li>
-                          <li><span className="text-primary font-medium">.shop</span> - Online stores</li>
-                          <li><span className="text-primary font-medium">.io</span> - Tech startups & SaaS</li>
-                          <li><span className="text-primary font-medium">.co</span> - Modern alternative to .com</li>
-                        </ul>
-                        <span className="block text-muted-foreground text-xs mt-3 pt-2 border-t border-border/50">
-                          GimmeASite uses Instant Domain Search to check availability.
-                        </span>
-                      </div>
-                    </>
-                  )}
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <label htmlFor="domain" className="text-sm font-medium">Desired Domain <span className="text-red-500">*</span></label>
+                    <button
+                      type="button"
+                      className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
+                      onClick={(e) => { e.preventDefault(); setShowWhyPopup("domain"); }}
+                    >?</button>
+                  </div>
                   <div className="relative flex gap-2">
                     <Input
                       id="domain"
@@ -1315,52 +1255,14 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 </div>
 
                 <div className="relative">
-                  <label className="block text-sm font-medium mb-2 relative">
-                    Payment Plan <span className="text-red-500">*</span>
-                    <span className="relative inline-block align-middle">
-                      <button
-                        type="button"
-                        className="inline-flex items-center justify-center w-4 h-4 ml-1 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setShowPlanTooltip(!showPlanTooltip);
-                        }}
-                      >
-                        ?
-                      </button>
-                    </span>
-                  </label>
-                  {showPlanTooltip && (
-                    <>
-                      <div
-                        className="fixed inset-0 z-40 bg-transparent"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setShowPlanTooltip(false);
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault();
-                          setShowPlanTooltip(false);
-                        }}
-                      />
-                      <div className="fixed left-4 right-4 top-1/2 -translate-y-1/2 md:absolute md:left-0 md:right-auto md:top-full md:translate-y-0 md:mt-2 bg-card border border-border rounded-lg px-4 py-3 text-sm text-foreground shadow-xl z-50 font-normal max-w-sm md:w-56">
-                        <span className="block mb-2">Unsure about payment plans?</span>
-                        <button
-                          type="button"
-                          className="inline-flex items-center gap-1 text-primary hover:underline text-xs font-medium"
-                          onClick={() => {
-                            setShowPlanTooltip(false);
-                            scrollToSection("pricing");
-                          }}
-                        >
-                          View pricing options
-                          <ArrowRight className="w-3 h-3" />
-                        </button>
-                      </div>
-                    </>
-                  )}
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <label className="text-sm font-medium">Payment Plan <span className="text-red-500">*</span></label>
+                    <button
+                      type="button"
+                      className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
+                      onClick={(e) => { e.preventDefault(); setShowWhyPopup("plan"); }}
+                    >?</button>
+                  </div>
                   <div className="relative">
                     {showPlanDropdown && (
                       <div className="fixed inset-0 z-[5]" onClick={() => setShowPlanDropdown(false)} />
@@ -1611,21 +1513,13 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     </div>
                   </div>
                   <div className="mt-4 relative">
-                    <div className="flex items-center gap-1 mb-1 relative">
+                    <div className="flex items-center gap-1 mb-1">
                       <span className="text-xs text-muted-foreground">Google Business</span>
-                      <span className="relative inline-block">
-                        <button
-                          type="button"
-                          className="inline-flex items-center justify-center w-4 h-4 ml-1 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setShowGoogleTooltip(!showGoogleTooltip);
-                          }}
-                        >
-                          ?
-                        </button>
-                      </span>
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center w-4 h-4 ml-0.5 text-xs bg-muted rounded-full hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground"
+                        onClick={(e) => { e.preventDefault(); setShowWhyPopup("google"); }}
+                      >?</button>
                       {validatingSocial.googleBusiness && (
                         <span className="text-xs text-muted-foreground animate-pulse ml-1">Checking...</span>
                       )}
@@ -1633,31 +1527,6 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         <Check className="w-3 h-3 text-green-500" />
                       )}
                     </div>
-                    {showGoogleTooltip && (
-                      <>
-                        <div
-                          className="fixed inset-0 z-40 bg-transparent"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            setShowGoogleTooltip(false);
-                          }}
-                          onTouchEnd={(e) => {
-                            e.preventDefault();
-                            setShowGoogleTooltip(false);
-                          }}
-                        />
-                        <div className="fixed left-4 right-4 top-1/2 -translate-y-1/2 md:absolute md:left-0 md:right-auto md:top-full md:translate-y-0 md:mt-2 bg-card border border-border rounded-lg px-4 py-3 text-xs text-foreground shadow-xl z-50 font-normal max-w-sm md:w-80">
-                          <span className="font-semibold block mb-2">How to find your Google Business link:</span>
-                          <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                            <li>Search for your business name on Google</li>
-                            <li>Locate your Business Profile in the Knowledge Panel (appears on the right side on desktop, or near the top on mobile)</li>
-                            <li>Click the Share button beneath your business name</li>
-                            <li>Copy and paste the link here</li>
-                          </ol>
-                        </div>
-                      </>
-                    )}
                     <Input
                       id="googleBusiness"
                       type="text"
@@ -1697,7 +1566,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         </div>
       </div>
 
-      {/* Why? popup for Company and Social Media */}
+      {/* Unified Why? popup */}
       {showWhyPopup && (
         <div
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
@@ -1707,12 +1576,58 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
             className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold mb-3">Why?</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {showWhyPopup === "company"
-                ? "Providing your company name helps our team understand your business better and create a more tailored website design that aligns with your brand and industry."
-                : "Sharing your social media profiles gives our team extra resources about your brand, helping us design a website that stays consistent with your existing online presence."}
-            </p>
+            <h3 className="text-lg font-bold mb-3">
+              {showWhyPopup === "domain" ? "What is a domain?" : "Why?"}
+            </h3>
+            <div className="text-sm text-muted-foreground leading-relaxed">
+              {showWhyPopup === "company" && (
+                <p>Providing your company name helps our team understand your business better and create a more tailored website design that aligns with your brand and industry.</p>
+              )}
+              {showWhyPopup === "social" && (
+                <p>Sharing your social media profiles gives our team extra resources about your brand, helping us design a website that stays consistent with your existing online presence.</p>
+              )}
+              {showWhyPopup === "phone" && (
+                <p>Enter the mobile number you are best reached by — our team may reach out via texts or calls to discuss your project.</p>
+              )}
+              {showWhyPopup === "plan" && (
+                <div>
+                  <p className="mb-3">Unsure which payment plan is right for you?</p>
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 text-primary hover:underline text-sm font-medium"
+                    onClick={() => { setShowWhyPopup(null); scrollToSection("pricing"); }}
+                  >
+                    View pricing options <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+              {showWhyPopup === "domain" && (
+                <div>
+                  <p className="mb-3">A domain is your website&apos;s address on the internet (e.g., mybusiness.com). It&apos;s how customers find you online.</p>
+                  <p className="font-semibold text-foreground mb-2">Popular extensions:</p>
+                  <ul className="space-y-1 text-xs mb-3">
+                    <li><span className="text-primary font-medium">.com</span> — Most popular, great for businesses</li>
+                    <li><span className="text-primary font-medium">.org</span> — Non-profits &amp; organizations</li>
+                    <li><span className="text-primary font-medium">.net</span> — Tech &amp; network companies</li>
+                    <li><span className="text-primary font-medium">.shop</span> — Online stores</li>
+                    <li><span className="text-primary font-medium">.io</span> — Tech startups &amp; SaaS</li>
+                    <li><span className="text-primary font-medium">.co</span> — Modern alternative to .com</li>
+                  </ul>
+                  <p className="text-xs border-t border-border/50 pt-2">GimmeASite uses Instant Domain Search to check availability.</p>
+                </div>
+              )}
+              {showWhyPopup === "google" && (
+                <div>
+                  <p className="font-semibold text-foreground mb-2">How to find your Google Business link:</p>
+                  <ol className="list-decimal list-inside space-y-1.5 text-xs">
+                    <li>Search for your business name on Google</li>
+                    <li>Locate your Business Profile in the Knowledge Panel</li>
+                    <li>Click the Share button beneath your business name</li>
+                    <li>Copy and paste the link here</li>
+                  </ol>
+                </div>
+              )}
+            </div>
             <button
               type="button"
               onClick={() => setShowWhyPopup(null)}
@@ -1752,9 +1667,7 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
             <div>
               <Link href="/" className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                  <Globe className="w-6 h-6 text-primary-foreground" />
-                </div>
+                <img src="/favicon.svg" alt="GimmeASite" className="w-10 h-10" />
                 <span className="text-xl font-bold tracking-tight">GimmeASite</span>
               </Link>
               <p className="text-muted-foreground mb-6">
@@ -2242,6 +2155,12 @@ export default function Home() {
         }, 300);
       }, 100);
       window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Handle contact modal — keeps URL as gimmeasite.com
+    if (modal === "contact") {
+      window.history.replaceState({}, document.title, "/");
+      setTimeout(() => scrollToSection("contact"), 100);
     }
 
     // Handle hash for contact section scroll
