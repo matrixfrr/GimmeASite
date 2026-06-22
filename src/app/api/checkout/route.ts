@@ -186,6 +186,62 @@ export async function POST(request: Request) {
           },
         },
       });
+    } else if (priceType === "upfront-monthly") {
+      console.log("Creating UPFRONT + MONTHLY checkout session...");
+      const monthlyMatch = quote.notes?.match(/\[monthly_cents:(\d+)\]/);
+      const monthlyCents = monthlyMatch ? parseInt(monthlyMatch[1]) : null;
+
+      if (!monthlyCents) {
+        return NextResponse.json(
+          { error: "Quote is missing monthly pricing data. Please contact support." },
+          { status: 400 }
+        );
+      }
+
+      const cleanDescription = (quote.notes || "").replace(/\[monthly_cents:\d+\]\s*/g, "").trim();
+
+      session = await stripe.checkout.sessions.create({
+        ...commonParams,
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: "GimmeASite Monthly Website Package",
+                description: `Monthly website service for ${quote.name}.${cleanDescription ? ` ${cleanDescription}` : ""}`,
+              },
+              unit_amount: monthlyCents,
+              recurring: { interval: "month" },
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "subscription",
+        subscription_data: {
+          add_invoice_items: [
+            {
+              price_data: {
+                currency: "usd",
+                product_data: {
+                  name: "GimmeASite Upfront Setup Fee",
+                  description: `One-time setup fee for ${quote.name}.`,
+                },
+                unit_amount: quote.price_cents,
+              },
+            },
+          ],
+          metadata: {
+            plan: "upfront-monthly",
+            customerName: customerName || quote.name,
+            quoteId: quote.id,
+          },
+        },
+        metadata: {
+          plan: "upfront-monthly",
+          customerName: customerName || quote.name,
+          quoteId: quote.id,
+        },
+      });
     } else {
       return NextResponse.json(
         { error: "Invalid price type" },
