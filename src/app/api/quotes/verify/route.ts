@@ -56,7 +56,7 @@ export async function POST(request: Request) {
 
     // Quote found but plan type doesn't match
     if (planType && anyQuote.plan_type !== planType) {
-      const expectedPlan = anyQuote.plan_type === "monthly" ? "Monthly Plan" : "One-Time Fee";
+      const expectedPlan = anyQuote.plan_type === "monthly" ? "Monthly Plan" : "Upfront Fee";
       return NextResponse.json(
         {
           found: false,
