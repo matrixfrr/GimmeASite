@@ -130,7 +130,7 @@ export async function POST(request: Request) {
             price_data: {
               currency: "usd",
               product_data: {
-                name: "GimmeASite One-Time Website Package",
+                name: "GimmeASite Upfront Website Package",
                 description: `Custom website for ${quote.name}. ${quote.notes || ""}`.trim(),
               },
               unit_amount: quote.price_cents,
