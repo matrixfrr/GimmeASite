@@ -122,7 +122,10 @@ export async function POST(request: Request) {
       allow_promotion_codes: true,
     };
 
-    if (priceType === "one-time") {
+    // Detect upfront+monthly quotes stored as "one-time" (notes has [monthly_cents:N] prefix)
+    const isUpfrontMonthly = priceType === "one-time" && /\[monthly_cents:\d+\]/.test(quote.notes || "");
+
+    if (priceType === "one-time" && !isUpfrontMonthly) {
       console.log("Creating ONE-TIME checkout session...");
       session = await stripe.checkout.sessions.create({
         ...commonParams,
@@ -187,7 +190,7 @@ export async function POST(request: Request) {
           },
         },
       });
-    } else if (priceType === "upfront-monthly") {
+    } else if (isUpfrontMonthly || priceType === "upfront-monthly") {
       console.log("Creating UPFRONT + MONTHLY checkout session...");
       const monthlyMatch = quote.notes?.match(/\[monthly_cents:(\d+)\]/);
       const monthlyCents = monthlyMatch ? parseInt(monthlyMatch[1]) : null;
