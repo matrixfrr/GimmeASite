@@ -212,7 +212,7 @@ export async function POST(request: Request) {
                 description: `Monthly website service for ${quote.name}.${cleanDescription ? ` ${cleanDescription}` : ""}`,
               },
               unit_amount: monthlyCents,
-              recurring: { interval: "month" },
+              recurring: { interval: "month" as const },
             },
             quantity: 1,
           },
