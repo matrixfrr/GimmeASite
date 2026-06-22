@@ -407,7 +407,7 @@ function CheckoutContent() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Plan</span>
-                      <span className="font-medium capitalize">{planType.replace("-", " ")}</span>
+                      <span className="font-medium capitalize">{planType === "one-time" ? "Upfront" : planType}</span>
                     </div>
                     {quote.notes && (
                       <div className="pt-2">
