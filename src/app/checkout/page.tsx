@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-  Globe,
   Shield,
   CreditCard,
   ArrowRight,
@@ -32,7 +31,7 @@ interface Quote {
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
-  const [planType, setPlanType] = useState<"one-time" | "monthly">("one-time");
+  const [planType, setPlanType] = useState<"one-time" | "monthly" | "upfront-monthly">("one-time");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -45,8 +44,8 @@ function CheckoutContent() {
     const plan = searchParams.get("plan");
     const emailParam = searchParams.get("email");
 
-    if (plan === "monthly" || plan === "one-time") {
-      setPlanType(plan);
+    if (plan === "monthly" || plan === "one-time" || plan === "upfront-monthly") {
+      setPlanType(plan as "one-time" | "monthly" | "upfront-monthly");
     }
     if (emailParam) {
       setEmail(emailParam);
@@ -56,7 +55,7 @@ function CheckoutContent() {
     // Only do this once per page load
     if (
       emailParam &&
-      (plan === "monthly" || plan === "one-time") &&
+      (plan === "monthly" || plan === "one-time" || plan === "upfront-monthly") &&
       !hasAutoVerified.current
     ) {
       hasAutoVerified.current = true;
@@ -238,9 +237,7 @@ function CheckoutContent() {
       <header className="w-full border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-              <Globe className="w-5 h-5 text-white" />
-            </div>
+            <img src="/favicon.svg" alt="GimmeASite" className="w-9 h-9" />
             <span className="font-bold text-xl tracking-tight">
               GimmeASite
             </span>
@@ -322,7 +319,7 @@ function CheckoutContent() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Plan Type</label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     <button
                       type="button"
                       onClick={() => setPlanType("one-time")}
@@ -346,6 +343,18 @@ function CheckoutContent() {
                     >
                       <div className="font-semibold">Monthly</div>
                       <div className="text-sm text-muted-foreground">Subscription</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPlanType("upfront-monthly")}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        planType === "upfront-monthly"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-border/80"
+                      }`}
+                    >
+                      <div className="font-semibold text-sm">Upfront + Monthly</div>
+                      <div className="text-xs text-muted-foreground">Both</div>
                     </button>
                   </div>
                 </div>
@@ -407,12 +416,12 @@ function CheckoutContent() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Plan</span>
-                      <span className="font-medium capitalize">{planType === "one-time" ? "Upfront" : planType}</span>
+                      <span className="font-medium capitalize">{planType === "one-time" ? "Upfront" : planType === "upfront-monthly" ? "Upfront + Monthly" : "Monthly"}</span>
                     </div>
-                    {quote.notes && (
+                    {quote.notes && quote.notes.replace(/\[monthly_cents:\d+\]\s*/g, "").trim() && (
                       <div className="pt-2">
                         <span className="text-sm text-muted-foreground">Notes</span>
-                        <p className="text-sm mt-1">{quote.notes}</p>
+                        <p className="text-sm mt-1">{quote.notes.replace(/\[monthly_cents:\d+\]\s*/g, "").trim()}</p>
                       </div>
                     )}
                   </div>
@@ -422,11 +431,24 @@ function CheckoutContent() {
                   <div className="flex justify-between items-center">
                     <span className="font-semibold">Total</span>
                     <div className="text-right">
-                      <span className="text-2xl font-bold text-primary">
-                        {formatPrice(quote.priceCents)}
-                      </span>
-                      {planType === "monthly" && (
-                        <span className="text-sm text-muted-foreground">/month</span>
+                      {planType === "upfront-monthly" ? (() => {
+                        const monthlyMatch = quote.notes?.match(/\[monthly_cents:(\d+)\]/);
+                        const monthlyCents = monthlyMatch ? parseInt(monthlyMatch[1]) : 0;
+                        return (
+                          <div>
+                            <div className="text-sm text-muted-foreground">{formatPrice(quote.priceCents)} upfront</div>
+                            <div className="text-2xl font-bold text-primary">+ {formatPrice(monthlyCents)}<span className="text-sm text-muted-foreground">/mo</span></div>
+                          </div>
+                        );
+                      })() : (
+                        <>
+                          <span className="text-2xl font-bold text-primary">
+                            {formatPrice(quote.priceCents)}
+                          </span>
+                          {planType === "monthly" && (
+                            <span className="text-sm text-muted-foreground">/month</span>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
