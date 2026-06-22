@@ -2,15 +2,6 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabase } from "@/lib/supabase";
 
-interface SubscriptionDataWithInvoiceItems extends Stripe.Checkout.SessionCreateParams.SubscriptionData {
-  add_invoice_items: Array<{
-    price_data: {
-      currency: string;
-      product_data: { name: string; description: string };
-      unit_amount: number;
-    };
-  }>;
-}
 
 // Lazy initialization to avoid build-time errors
 function getStripe(): Stripe {
@@ -210,7 +201,7 @@ export async function POST(request: Request) {
 
       const cleanDescription = (quote.notes || "").replace(/\[monthly_cents:\d+\]\s*/g, "").trim();
 
-      session = await stripe.checkout.sessions.create({
+      const upfrontMonthlyParams = {
         ...commonParams,
         line_items: [
           {
@@ -226,32 +217,36 @@ export async function POST(request: Request) {
             quantity: 1,
           },
         ],
-        mode: "subscription",
+        mode: "subscription" as const,
         subscription_data: {
-          add_invoice_items: [
-            {
-              price_data: {
-                currency: "usd",
-                product_data: {
-                  name: "GimmeASite Upfront Setup Fee",
-                  description: `One-time setup fee for ${quote.name}.`,
-                },
-                unit_amount: quote.price_cents,
-              },
-            },
-          ],
           metadata: {
             plan: "upfront-monthly",
             customerName: customerName || quote.name,
             quoteId: quote.id,
           },
-        } as SubscriptionDataWithInvoiceItems,
+        },
         metadata: {
           plan: "upfront-monthly",
           customerName: customerName || quote.name,
           quoteId: quote.id,
         },
-      });
+      };
+
+      // add_invoice_items is a valid Stripe API field not yet reflected in older SDK types
+      (upfrontMonthlyParams.subscription_data as Record<string, unknown>).add_invoice_items = [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "GimmeASite Upfront Setup Fee",
+              description: `One-time setup fee for ${quote.name}.`,
+            },
+            unit_amount: quote.price_cents,
+          },
+        },
+      ];
+
+      session = await stripe.checkout.sessions.create(upfrontMonthlyParams);
     } else {
       return NextResponse.json(
         { error: "Invalid price type" },
