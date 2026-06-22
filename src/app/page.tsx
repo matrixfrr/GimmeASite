@@ -552,47 +552,13 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <div className="flex items-center gap-2 mb-2">
                 <h3 className="text-2xl font-bold">{plan.name}</h3>
                 {plan.name === "Equity / CMS" && (
-                  <>
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                      onClick={() => setShowEquityCmsPopup(true)}
-                    >
-                      ?
-                    </button>
-                    {showEquityCmsPopup && (
-                      <div
-                        className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
-                        onClick={() => setShowEquityCmsPopup(false)}
-                      >
-                        <div
-                          className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <h3 className="text-lg font-bold mb-4">Why?</h3>
-                          <div className="mb-3">
-                            <span className="font-semibold text-primary block mb-1">Equity Plan</span>
-                            <span className="text-sm text-muted-foreground block">
-                              Partner with us through a small equity share or revenue percentage. Perfect for startups and growing businesses looking to minimize upfront costs while investing in their online presence.
-                            </span>
-                          </div>
-                          <div className="mb-5">
-                            <span className="font-semibold text-primary block mb-1">CMS Plan</span>
-                            <span className="text-sm text-muted-foreground block">
-                              Take control of your content with our built-in content management system. Update text, images, and more anytime — no revision requests needed.
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setShowEquityCmsPopup(false)}
-                            className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-                          >
-                            Got it
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </>
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                    onClick={() => setShowEquityCmsPopup(true)}
+                  >
+                    ?
+                  </button>
                 )}
               </div>
               <div className="mb-4">
@@ -680,6 +646,40 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </div>
         )}
       </div>
+
+      {/* Equity/CMS popup — rendered at section level to avoid scroll glitch */}
+      {showEquityCmsPopup && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowEquityCmsPopup(false)}
+        >
+          <div
+            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold mb-4">What are these plans?</h3>
+            <div className="mb-3">
+              <span className="font-semibold text-primary block mb-1">Equity Plan</span>
+              <span className="text-sm text-muted-foreground block">
+                Partner with us through a small equity share or revenue percentage. Perfect for startups and growing businesses looking to minimize upfront costs while investing in their online presence.
+              </span>
+            </div>
+            <div className="mb-5">
+              <span className="font-semibold text-primary block mb-1">CMS Plan</span>
+              <span className="text-sm text-muted-foreground block">
+                Take control of your content with our built-in content management system. Update text, images, and more anytime — no revision requests needed.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowEquityCmsPopup(false)}
+              className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
@@ -1577,7 +1577,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-bold mb-3">
-              {showWhyPopup === "domain" ? "What is a domain?" : "Why?"}
+              {showWhyPopup === "domain" ? "What is a domain?" : showWhyPopup === "phone" ? "Work, Home, or Mobile?" : showWhyPopup === "plan" ? "Unsure?" : showWhyPopup === "google" ? "Where do I find this link?" : "Why?"}
             </h3>
             <div className="text-sm text-muted-foreground leading-relaxed">
               {showWhyPopup === "company" && (
@@ -1587,11 +1587,10 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <p>Sharing your social media profiles gives our team extra resources about your brand, helping us design a website that stays consistent with your existing online presence.</p>
               )}
               {showWhyPopup === "phone" && (
-                <p>Enter the mobile number you are best reached by — our team may reach out via texts or calls to discuss your project.</p>
+                <p>Enter the phone number you are best reached by — our team may reach out via texts or calls to discuss your project.</p>
               )}
               {showWhyPopup === "plan" && (
                 <div>
-                  <p className="mb-3">Unsure which payment plan is right for you?</p>
                   <button
                     type="button"
                     className="inline-flex items-center gap-1 text-primary hover:underline text-sm font-medium"
@@ -1617,15 +1616,12 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 </div>
               )}
               {showWhyPopup === "google" && (
-                <div>
-                  <p className="font-semibold text-foreground mb-2">How to find your Google Business link:</p>
-                  <ol className="list-decimal list-inside space-y-1.5 text-xs">
-                    <li>Search for your business name on Google</li>
-                    <li>Locate your Business Profile in the Knowledge Panel</li>
-                    <li>Click the Share button beneath your business name</li>
-                    <li>Copy and paste the link here</li>
-                  </ol>
-                </div>
+                <ol className="list-decimal list-inside space-y-1.5 text-xs">
+                  <li>Search for your business name on Google</li>
+                  <li>Locate your Business Profile in the Knowledge Panel</li>
+                  <li>Click the Share button beneath your business name</li>
+                  <li>Copy and paste the link here</li>
+                </ol>
               )}
             </div>
             <button
