@@ -106,7 +106,9 @@ export default function AdminPage() {
       let notes: string;
 
       if (formData.isUpfrontMonthly) {
-        plan_type = "upfront-monthly";
+        // Store as "one-time" so the Upfront modal on the site can find and match this quote.
+        // The [monthly_cents:N] prefix in notes signals the checkout API to create a combined session.
+        plan_type = "one-time";
         price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
         const monthlyCents = Math.round(parseFloat(formData.monthlyPrice) * 100);
         notes = `[monthly_cents:${monthlyCents}]${formData.notes ? ` ${formData.notes}` : ""}`;
@@ -504,11 +506,11 @@ export default function AdminPage() {
                               <span className={`text-xs px-2 py-0.5 rounded-full ${
                                 quote.plan_type === "monthly"
                                   ? "bg-blue-500/10 text-blue-500"
-                                  : quote.plan_type === "upfront-monthly"
+                                  : monthlyCents
                                   ? "bg-violet-500/10 text-violet-500"
                                   : "bg-purple-500/10 text-purple-500"
                               }`}>
-                                {quote.plan_type === "monthly" ? "Monthly" : quote.plan_type === "upfront-monthly" ? "Upfront + Monthly" : "Upfront"}
+                                {quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Upfront + Monthly" : "Upfront"}
                               </span>
                             </div>
                             <p className="text-sm text-muted-foreground truncate">{quote.email}</p>
@@ -520,7 +522,7 @@ export default function AdminPage() {
                             </p>
                           </div>
                           <div className="text-right flex-shrink-0">
-                            {quote.plan_type === "upfront-monthly" && monthlyCents ? (
+                            {monthlyCents ? (
                               <div>
                                 <p className="text-base font-bold text-primary">{formatPrice(quote.price_cents)}</p>
                                 <p className="text-xs text-muted-foreground">upfront</p>
