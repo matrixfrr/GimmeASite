@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Download GimmeASite Favicon</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a1a;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      margin: 0;
+    }
+    h1 { margin-bottom: 10px; }
+    p { color: #888; margin-bottom: 40px; }
+    .preview {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .preview-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .preview-item span {
+      color: #888;
+      font-size: 14px;
+    }
+    canvas {
+      border-radius: 8px;
+      background: #2a2a2a;
+    }
+    .buttons {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    button {
+      background: #ff6b35;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #e55a2b; }
+  </style>
+</head>
+<body>
+  <h1>GimmeASite Favicon</h1>
+  <p>Click a button below to download the PNG version</p>
+
+  <div class="preview">
+    <div class="preview-item">
+      <canvas id="canvas512" width="512" height="512"></canvas>
+      <span>512×512 (Stripe recommended)</span>
+    </div>
+    <div class="preview-item">
+      <canvas id="canvas256" width="256" height="256"></canvas>
+      <span>256×256</span>
+    </div>
+    <div class="preview-item">
+      <canvas id="canvas128" width="128" height="128"></canvas>
+      <span>128×128</span>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button onclick="download(512)">Download 512×512</button>
+    <button onclick="download(256)">Download 256×256</button>
+    <button onclick="download(128)">Download 128×128</button>
+  </div>
+
+  <script>
+    const svgString = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="6" fill="#ff6b35"/>
+      <circle cx="16" cy="16" r="9" stroke="white" stroke-width="2" fill="none"/>
+      <ellipse cx="16" cy="16" rx="4" ry="9" stroke="white" stroke-width="1.5" fill="none"/>
+      <line x1="7" y1="16" x2="25" y2="16" stroke="white" stroke-width="1.5"/>
+      <line x1="16" y1="7" x2="16" y2="25" stroke="white" stroke-width="1.5"/>
+    </svg>`;
+
+    function renderCanvas(canvasId, size) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+
+      img.onload = function() {
+        ctx.clearRect(0, 0, size, size);
+        ctx.drawImage(img, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+      };
+      img.src = url;
+    }
+
+    function download(size) {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+      const url = URL.createObjectURL(svgBlob);
+
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, size, size);
+        URL.revokeObjectURL(url);
+
+        const link = document.createElement('a');
+        link.download = `gimmeasite-favicon-${size}x${size}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      };
+      img.src = url;
+    }
+
+    // Render previews
+    renderCanvas('canvas512', 512);
+    renderCanvas('canvas256', 256);
+    renderCanvas('canvas128', 128);
+  </script>
+</body>
+</html>

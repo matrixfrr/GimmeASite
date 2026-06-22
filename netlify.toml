@@ -1,0 +1,18 @@
+[images]
+  remote_images = ["https://source.unsplash.com/.*", "https://images.unsplash.com/.*", "https://ext.same-assets.com/.*", "https://ugc.same-assets.com/.*"]
+
+# Note: billing.gimmeasite.com is configured in Stripe Dashboard for checkout, customer portal, and payment links
+# Do not add redirects here - Stripe handles routing automatically
+
+[build]
+  command = "npm install --legacy-peer-deps && npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = "pk_live_51THwuiRZ9AwoLBJ1LnQhk4GAjZJ0Z92e08UumO8lw27VYF2tejOj21uCg8yUeAMrPKgTv0dZ6XYN8k9EtickG1Ja00NgvvjHc4"
+  NEXT_PUBLIC_SUPABASE_URL = "https://spfifpabqgtozmqxrwmc.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNwZmlmcGFicWd0b3ptcXhyd21jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNjEyODEsImV4cCI6MjA5MDgzNzI4MX0.8cFgvKkD0Ew_069m1qwscFadeiAoRfQa66bR4Ex8Kq0"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
