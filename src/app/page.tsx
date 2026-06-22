@@ -342,7 +342,7 @@ function ServicesSection() {
             <span className="gradient-text">Succeed Online</span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            From concept to launch and beyond, we provide comprehensive web solutions for businesses of all sizes.
+            From concept to deploy and beyond, we provide comprehensive web solutions for businesses of all sizes.
           </p>
         </div>
 
@@ -378,12 +378,12 @@ function ProcessSection() {
     {
       number: "01",
       title: "Discovery",
-      description: "We discover your business, or you discover us. Regardless, we research your background to create a foundation.",
+      description: "Either we discover you or you discover us, followed by us researching your background to create a foundation.",
     },
     {
       number: "02",
       title: "Design",
-      description: "Our designers craft beautiful sites that align with your brand and user experience goals.",
+      description: "Our designers draft beautiful sites that align with your brand and user experience goals.",
     },
     {
       number: "03",
@@ -392,8 +392,8 @@ function ProcessSection() {
     },
     {
       number: "04",
-      title: "Launch",
-      description: "After thorough testing, we launch your site to the world and provide ongoing support. Conditions may apply.",
+      title: "Deploy",
+      description: "After thorough testing, we deploy your site to the world and provide ongoing support. Conditions may apply.",
     },
   ];
 
@@ -478,11 +478,11 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       priceLabel: "for more information",
       description: "",
       features: [
-        "Stunning, Fully Custom Design",
-        "Blazing-Fast Load Speeds",
-        "Flawless on Every Device",
-        "Three Months of Dedicated Support",
-        "Around-the-Clock Security Monitoring",
+        "Custom Design",
+        "Performance Optimization",
+        "Security Monitoring",
+        "Three Revisions",
+        "Six Months Support",
       ],
       popular: false,
     },
@@ -492,9 +492,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       priceLabel: "for more information",
       description: "Everything in Upfront, including:",
       features: [
-        "Priority Updates & Fresh Improvements",
-        "Worry-Free Ongoing Maintenance",
-        "Powerful Real-Time Analytics Dashboard",
+        "Advanced Security",
+        "Unlimited Revisions",
+        "Priority Support",
+        "Analytics Dashboard",
       ],
       popular: true,
     },
@@ -2178,7 +2179,7 @@ export default function Home() {
     } else if (modal === "faq") {
       setShowFaqPopup(true);
       window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (modal === "payment-one-time") {
+    } else if (modal === "payment-upfront" || modal === "payment-one-time") {
       // Scroll to pricing section first, then open modal
       setTimeout(() => {
         scrollToSection("pricing");
