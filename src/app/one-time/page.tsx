@@ -9,7 +9,7 @@ export default function OneTimePage() {
 
   useEffect(() => {
     // Redirect to home page with modal parameter
-    router.replace("/?modal=payment-one-time");
+    router.replace("/?modal=payment-upfront");
   }, [router]);
 
   return (
