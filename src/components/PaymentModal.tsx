@@ -50,7 +50,7 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
     "one-time": {
       name: "Upfront",
       price: "$499",
-      priceLabel: "one-time payment",
+      priceLabel: "upfront payment",
       features: [
         "Stunning, Fully Custom Design",
         "Blazing-Fast Load Speeds",
@@ -266,8 +266,9 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
         {/* Fine Print */}
         <div className="text-xs text-muted-foreground mb-6 space-y-1">
           <p>
-            • {planType === "one-time" ? "Three (3)" : "Five (5)"} revisions are included. Requesting extra revisions may incur{" "}
-            <span className="text-foreground">additional fees</span>.
+            {planType === "one-time"
+              ? "• Three (3) revisions are included (email support). Requesting extra revisions will incur additional fees."
+              : "• Unlimited revisions are included (email support). Requesting large-scale updates may incur additional fees."}
           </p>
           <p>
             • By proceeding, you agree to our{" "}
