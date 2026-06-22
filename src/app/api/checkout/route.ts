@@ -2,6 +2,16 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { supabase } from "@/lib/supabase";
 
+interface SubscriptionDataWithInvoiceItems extends Stripe.Checkout.SessionCreateParams.SubscriptionData {
+  add_invoice_items: Array<{
+    price_data: {
+      currency: string;
+      product_data: { name: string; description: string };
+      unit_amount: number;
+    };
+  }>;
+}
+
 // Lazy initialization to avoid build-time errors
 function getStripe(): Stripe {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -217,7 +227,6 @@ export async function POST(request: Request) {
           },
         ],
         mode: "subscription",
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         subscription_data: {
           add_invoice_items: [
             {
@@ -236,7 +245,7 @@ export async function POST(request: Request) {
             customerName: customerName || quote.name,
             quoteId: quote.id,
           },
-        } as any,
+        } as SubscriptionDataWithInvoiceItems,
         metadata: {
           plan: "upfront-monthly",
           customerName: customerName || quote.name,
