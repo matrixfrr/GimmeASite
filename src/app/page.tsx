@@ -689,6 +689,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     linkedin: "",
     googleBusiness: "",
   });
+  const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | null>(null);
   const [showPhoneTooltip, setShowPhoneTooltip] = useState(false);
   const [showPlanTooltip, setShowPlanTooltip] = useState(false);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
@@ -1185,7 +1186,16 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                   </div>
                   <div>
-                    <label htmlFor="company" className="block text-sm font-medium mb-2">Company <span className="text-muted-foreground font-normal">(optional)</span></label>
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <label htmlFor="company" className="text-sm font-medium">Company</label>
+                      <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">Recommended</span>
+                      <button
+                        type="button"
+                        onClick={() => setShowWhyPopup("company")}
+                        className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
+                        aria-label="Why is this recommended?"
+                      >?</button>
+                    </div>
                     <Input
                       id="company"
                       type="text"
@@ -1432,9 +1442,16 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
 
                 {/* Social Media Section */}
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Social Media <span className="text-muted-foreground font-normal">(optional)</span>
-                  </label>
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="text-sm font-medium">Social Media</span>
+                    <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">Recommended</span>
+                    <button
+                      type="button"
+                      onClick={() => setShowWhyPopup("social")}
+                      className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
+                      aria-label="Why is this recommended?"
+                    >?</button>
+                  </div>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <div className="flex items-center gap-1 mb-1">
@@ -1679,6 +1696,33 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           </Card>
         </div>
       </div>
+
+      {/* Why? popup for Company and Social Media */}
+      {showWhyPopup && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowWhyPopup(null)}
+        >
+          <div
+            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-bold mb-3">Why?</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              {showWhyPopup === "company"
+                ? "Providing your company name helps our team understand your business better and create a more tailored website design that aligns with your brand and industry."
+                : "Sharing your social media profiles gives our team extra resources about your brand, helping us design a website that stays consistent with your existing online presence."}
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowWhyPopup(null)}
+              className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Got it
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
