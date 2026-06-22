@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,7 +20,7 @@ interface ClientQuote {
   id: string;
   email: string;
   name: string;
-  plan_type: "one-time" | "monthly";
+  plan_type: "one-time" | "monthly" | "upfront-monthly";
   price_cents: number;
   notes?: string;
   created_at: string;
@@ -37,13 +37,15 @@ export default function AdminPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Form state
   const [formData, setFormData] = useState({
     email: "",
     name: "",
     plan_type: "one-time" as "one-time" | "monthly",
     price: "",
     notes: "",
+    isUpfrontMonthly: false,
+    upfrontPrice: "",
+    monthlyPrice: "",
   });
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -52,7 +54,6 @@ export default function AdminPage() {
     setError("");
 
     try {
-      // Verify password by making an authenticated request
       const response = await fetch("/api/quotes/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -65,11 +66,9 @@ export default function AdminPage() {
         return;
       }
 
-      // Password verified - store it and fetch quotes
       setAdminPassword(password);
       setIsAuthenticated(true);
 
-      // Now fetch the quotes
       const quotesResponse = await fetch(`/api/quotes`);
       const quotesData = await quotesResponse.json();
       setQuotes(quotesData.quotes || []);
@@ -102,15 +101,30 @@ export default function AdminPage() {
     setSuccess("");
 
     try {
+      let plan_type: string;
+      let price_cents: number;
+      let notes: string;
+
+      if (formData.isUpfrontMonthly) {
+        plan_type = "upfront-monthly";
+        price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
+        const monthlyCents = Math.round(parseFloat(formData.monthlyPrice) * 100);
+        notes = `[monthly_cents:${monthlyCents}]${formData.notes ? ` ${formData.notes}` : ""}`;
+      } else {
+        plan_type = formData.plan_type;
+        price_cents = Math.round(parseFloat(formData.price) * 100);
+        notes = formData.notes;
+      }
+
       const response = await fetch("/api/quotes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
           name: formData.name,
-          plan_type: formData.plan_type,
-          price_cents: Math.round(parseFloat(formData.price) * 100),
-          notes: formData.notes,
+          plan_type,
+          price_cents,
+          notes,
           adminPassword,
         }),
       });
@@ -129,6 +143,9 @@ export default function AdminPage() {
         plan_type: "one-time",
         price: "",
         notes: "",
+        isUpfrontMonthly: false,
+        upfrontPrice: "",
+        monthlyPrice: "",
       });
       fetchQuotes();
     } catch {
@@ -164,22 +181,22 @@ export default function AdminPage() {
     }
   };
 
-  const formatPrice = (cents: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(cents / 100);
+  const formatPrice = (cents: number) =>
+    new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
+
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("en-US", {
+      month: "short", day: "numeric", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
+    });
+
+  const getMonthlyFromNotes = (notes?: string): number | null => {
+    const match = notes?.match(/\[monthly_cents:(\d+)\]/);
+    return match ? parseInt(match[1]) : null;
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+  const cleanNotes = (notes?: string) =>
+    notes?.replace(/\[monthly_cents:\d+\]\s*/g, "").trim() || "";
 
   if (!isAuthenticated) {
     return (
@@ -191,11 +208,8 @@ export default function AdminPage() {
                 <Lock className="w-8 h-8 text-primary" />
               </div>
               <h1 className="text-2xl font-bold">Admin Access</h1>
-              <p className="text-muted-foreground mt-2">
-                Enter your admin password to continue
-              </p>
+              <p className="text-muted-foreground mt-2">Enter your admin password to continue</p>
             </div>
-
             <form onSubmit={handleLogin} className="space-y-4">
               <Input
                 type="password"
@@ -205,16 +219,8 @@ export default function AdminPage() {
                 className="bg-background"
                 required
               />
-
-              {error && (
-                <p className="text-red-500 text-sm text-center">{error}</p>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full bg-primary hover:bg-primary/90"
-                disabled={loading}
-              >
+              {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
                 {loading ? "Authenticating..." : "Access Admin Panel"}
               </Button>
             </form>
@@ -229,7 +235,6 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -238,31 +243,18 @@ export default function AdminPage() {
             </div>
             <div>
               <h1 className="font-bold text-lg">GimmeASite Admin</h1>
-              <p className="text-xs text-muted-foreground">
-                Client Quote Management
-              </p>
+              <p className="text-xs text-muted-foreground">Client Quote Management</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchQuotes}
-              disabled={loading}
-            >
-              <RefreshCw
-                className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`}
-              />
+            <Button variant="outline" size="sm" onClick={fetchQuotes} disabled={loading}>
+              <RefreshCw className={`w-4 h-4 mr-2 ${loading ? "animate-spin" : ""}`} />
               Refresh
             </Button>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => {
-                setIsAuthenticated(false);
-                setPassword("");
-                setAdminPassword("");
-              }}
+              onClick={() => { setIsAuthenticated(false); setPassword(""); setAdminPassword(""); }}
             >
               <LogOut className="w-4 h-4 mr-2" />
               Logout
@@ -326,9 +318,7 @@ export default function AdminPage() {
                   <Input
                     placeholder="John Doe"
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="bg-background"
                     required
                   />
@@ -342,9 +332,7 @@ export default function AdminPage() {
                     type="email"
                     placeholder="client@example.com"
                     value={formData.email}
-                    onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="bg-background"
                     required
                   />
@@ -353,64 +341,117 @@ export default function AdminPage() {
                   </p>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Plan Type <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    value={formData.plan_type}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        plan_type: e.target.value as "one-time" | "monthly",
-                      })
-                    }
-                    className="w-full h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm"
-                    required
-                  >
-                    <option value="one-time">Upfront</option>
-                    <option value="monthly">Monthly</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Price (USD) <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                      $
-                    </span>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      min="1"
-                      placeholder="1499.00"
-                      value={formData.price}
+                {/* Plan Type — hidden when Upfront + Monthly is toggled */}
+                {!formData.isUpfrontMonthly && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">
+                      Plan Type <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={formData.plan_type}
                       onChange={(e) =>
-                        setFormData({ ...formData, price: e.target.value })
+                        setFormData({ ...formData, plan_type: e.target.value as "one-time" | "monthly" })
                       }
-                      className="bg-background pl-7"
+                      className="w-full h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm"
                       required
-                    />
+                    >
+                      <option value="one-time">Upfront</option>
+                      <option value="monthly">Monthly</option>
+                    </select>
                   </div>
-                  {formData.plan_type === "monthly" && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                      This will be the recurring monthly charge
-                    </p>
+                )}
+
+                {/* Price field with Upfront + Monthly toggle */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-sm font-medium">
+                      Price (USD) <span className="text-red-500">*</span>
+                    </label>
+                    <label className="flex items-center gap-1.5 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={formData.isUpfrontMonthly}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            isUpfrontMonthly: e.target.checked,
+                            price: "",
+                            upfrontPrice: "",
+                            monthlyPrice: "",
+                          })
+                        }
+                        className="w-4 h-4 rounded border-border accent-primary"
+                      />
+                      <span className="text-xs text-muted-foreground font-medium">Upfront + Monthly?</span>
+                    </label>
+                  </div>
+
+                  {formData.isUpfrontMonthly ? (
+                    <div className="space-y-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <div>
+                        <label className="block text-xs font-medium text-muted-foreground mb-1">Upfront Cost</label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="499.00"
+                            value={formData.upfrontPrice}
+                            onChange={(e) => setFormData({ ...formData, upfrontPrice: e.target.value })}
+                            className="bg-background pl-7"
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-medium text-muted-foreground mb-1">Monthly Cost</label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                          <Input
+                            type="number"
+                            step="0.01"
+                            min="1"
+                            placeholder="199.00"
+                            value={formData.monthlyPrice}
+                            onChange={(e) => setFormData({ ...formData, monthlyPrice: e.target.value })}
+                            className="bg-background pl-7"
+                            required
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Client pays both at checkout; monthly continues thereafter
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="1"
+                        placeholder="1499.00"
+                        value={formData.price}
+                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                        className="bg-background pl-7"
+                        required
+                      />
+                      {formData.plan_type === "monthly" && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          This will be the recurring monthly charge
+                        </p>
+                      )}
+                    </div>
                   )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">
-                    Notes (optional)
-                  </label>
+                  <label className="block text-sm font-medium mb-2">Notes (optional)</label>
                   <Textarea
                     placeholder="Project details, special requirements..."
                     value={formData.notes}
-                    onChange={(e) =>
-                      setFormData({ ...formData, notes: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     className="bg-background min-h-[80px]"
                   />
                 </div>
@@ -420,18 +461,13 @@ export default function AdminPage() {
                     <p className="text-sm text-red-500">{error}</p>
                   </div>
                 )}
-
                 {success && (
                   <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
                     <p className="text-sm text-green-500">{success}</p>
                   </div>
                 )}
 
-                <Button
-                  type="submit"
-                  className="w-full bg-primary hover:bg-primary/90"
-                  disabled={loading}
-                >
+                <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
                   {loading ? "Creating..." : "Create Quote"}
                 </Button>
               </form>
@@ -453,62 +489,65 @@ export default function AdminPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {unpaidQuotes.map((quote) => (
-                    <div
-                      key={quote.id}
-                      className="bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
-                    >
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold truncate">
-                              {quote.name}
-                            </h3>
-                            <span
-                              className={`text-xs px-2 py-0.5 rounded-full ${
+                  {unpaidQuotes.map((quote) => {
+                    const monthlyCents = getMonthlyFromNotes(quote.notes);
+                    const displayNotes = cleanNotes(quote.notes);
+                    return (
+                      <div
+                        key={quote.id}
+                        className="bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h3 className="font-semibold truncate">{quote.name}</h3>
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${
                                 quote.plan_type === "monthly"
                                   ? "bg-blue-500/10 text-blue-500"
+                                  : quote.plan_type === "upfront-monthly"
+                                  ? "bg-violet-500/10 text-violet-500"
                                   : "bg-purple-500/10 text-purple-500"
-                              }`}
-                            >
-                              {quote.plan_type === "monthly"
-                                ? "Monthly"
-                                : "Upfront"}
-                            </span>
+                              }`}>
+                                {quote.plan_type === "monthly" ? "Monthly" : quote.plan_type === "upfront-monthly" ? "Upfront + Monthly" : "Upfront"}
+                              </span>
+                            </div>
+                            <p className="text-sm text-muted-foreground truncate">{quote.email}</p>
+                            {displayNotes && (
+                              <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{displayNotes}</p>
+                            )}
+                            <p className="text-xs text-muted-foreground mt-2">
+                              Created: {formatDate(quote.created_at)}
+                            </p>
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">
-                            {quote.email}
-                          </p>
-                          {quote.notes && (
-                            <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
-                              {quote.notes}
-                            </p>
-                          )}
-                          <p className="text-xs text-muted-foreground mt-2">
-                            Created: {formatDate(quote.created_at)}
-                          </p>
-                        </div>
-                        <div className="text-right flex-shrink-0">
-                          <p className="text-xl font-bold text-primary">
-                            {formatPrice(quote.price_cents)}
-                          </p>
-                          {quote.plan_type === "monthly" && (
-                            <p className="text-xs text-muted-foreground">
-                              /month
-                            </p>
-                          )}
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="mt-2 text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                            onClick={() => handleDelete(quote.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="text-right flex-shrink-0">
+                            {quote.plan_type === "upfront-monthly" && monthlyCents ? (
+                              <div>
+                                <p className="text-base font-bold text-primary">{formatPrice(quote.price_cents)}</p>
+                                <p className="text-xs text-muted-foreground">upfront</p>
+                                <p className="text-base font-bold text-primary">+ {formatPrice(monthlyCents)}</p>
+                                <p className="text-xs text-muted-foreground">/month</p>
+                              </div>
+                            ) : (
+                              <div>
+                                <p className="text-xl font-bold text-primary">{formatPrice(quote.price_cents)}</p>
+                                {quote.plan_type === "monthly" && (
+                                  <p className="text-xs text-muted-foreground">/month</p>
+                                )}
+                              </div>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="mt-2 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                              onClick={() => handleDelete(quote.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -520,26 +559,16 @@ export default function AdminPage() {
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   Paid ({paidQuotes.length})
                 </h2>
-
                 <div className="space-y-3">
                   {paidQuotes.map((quote) => (
-                    <div
-                      key={quote.id}
-                      className="bg-card border border-green-500/20 rounded-xl p-4 opacity-75"
-                    >
+                    <div key={quote.id} className="bg-card border border-green-500/20 rounded-xl p-4 opacity-75">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <h3 className="font-semibold truncate">
-                              {quote.name}
-                            </h3>
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-500">
-                              Paid
-                            </span>
+                            <h3 className="font-semibold truncate">{quote.name}</h3>
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-500">Paid</span>
                           </div>
-                          <p className="text-sm text-muted-foreground truncate">
-                            {quote.email}
-                          </p>
+                          <p className="text-sm text-muted-foreground truncate">{quote.email}</p>
                           {quote.paid_at && (
                             <p className="text-xs text-muted-foreground mt-2">
                               Paid: {formatDate(quote.paid_at)}
@@ -547,9 +576,7 @@ export default function AdminPage() {
                           )}
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <p className="text-xl font-bold text-green-500">
-                            {formatPrice(quote.price_cents)}
-                          </p>
+                          <p className="text-xl font-bold text-green-500">{formatPrice(quote.price_cents)}</p>
                         </div>
                       </div>
                     </div>
