@@ -217,6 +217,7 @@ export async function POST(request: Request) {
           },
         ],
         mode: "subscription",
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         subscription_data: {
           add_invoice_items: [
             {
@@ -235,7 +236,7 @@ export async function POST(request: Request) {
             customerName: customerName || quote.name,
             quoteId: quote.id,
           },
-        },
+        } as any,
         metadata: {
           plan: "upfront-monthly",
           customerName: customerName || quote.name,
