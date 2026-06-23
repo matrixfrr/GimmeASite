@@ -260,7 +260,7 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
           onClick={() => setShowAccountPopup(false)}
         >
           <div
-            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
+            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center gap-3 mb-4">
@@ -711,7 +711,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           onClick={() => setShowEquityCmsPopup(false)}
         >
           <div
-            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
+            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-bold mb-4">What are these plans?</h3>
@@ -1630,7 +1630,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           onClick={() => setShowWhyPopup(null)}
         >
           <div
-            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
+            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn"
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-bold mb-3">
@@ -2129,7 +2129,7 @@ function ThanksPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
         onClick={onClose}
         onKeyDown={(e) => e.key === "Escape" && onClose()}
       />
-      <div className="relative bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl animate-in fade-in zoom-in duration-300">
+      <div className="relative bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl animate-slideIn">
         <button
           type="button"
           onClick={onClose}
