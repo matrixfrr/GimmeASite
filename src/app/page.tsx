@@ -550,7 +550,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       features: [
         "Advanced Security",
         "Unlimited Revisions",
-        "Priority Support",
+        "Priority Ongoing Support",
         "Analytics Dashboard",
       ],
       popular: true,
