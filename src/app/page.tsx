@@ -759,7 +759,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     linkedin: "",
     googleBusiness: "",
   });
-  const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | "phone" | "plan" | "domain" | "google" | null>(null);
+  const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | "phone" | "plan" | "domain" | "google" | "ownsDomain" | null>(null);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -1259,9 +1259,9 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 </div>
 
                 {/* Domain Field */}
-                <div className="relative">
+                {!ownsDomain && <div className="relative">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <label htmlFor="domain" className="text-sm font-medium">Desired Domain {!ownsDomain && <span className="text-red-500">*</span>}</label>
+                    <label htmlFor="domain" className="text-sm font-medium">Desired Domain <span className="text-red-500">*</span></label>
                     <button
                       type="button"
                       className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
@@ -1322,9 +1322,9 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       {errors.domainSearch}
                     </p>
                   )}
-                </div>
+                </div>}
 
-                <label className="flex items-center gap-2.5 cursor-pointer select-none -mt-1">
+                <label className="flex items-center gap-2.5 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={ownsDomain}
@@ -1335,8 +1335,13 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     }}
                     className="w-4 h-4 rounded border-border accent-primary"
                   />
-                  <span className="text-sm text-muted-foreground">Do you own the domain you want already?</span>
+                  <span className="text-sm text-muted-foreground">Do you own your domain already?</span>
                 </label>
+                <button
+                  type="button"
+                  className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors -mt-1"
+                  onClick={(e) => { e.preventDefault(); setShowWhyPopup("ownsDomain"); }}
+                >?</button>
 
                 {ownsDomain && (
                   <div>
@@ -1686,7 +1691,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
             onClick={(e) => e.stopPropagation()}
           >
             <h3 className="text-lg font-bold mb-3">
-              {showWhyPopup === "domain" ? "What is a domain?" : showWhyPopup === "phone" ? "Work, Home, or Mobile?" : showWhyPopup === "plan" ? "Unsure?" : showWhyPopup === "google" ? "Where do I find this link?" : "Why?"}
+              {showWhyPopup === "domain" ? "What is a domain?" : showWhyPopup === "phone" ? "Work, Home, or Mobile?" : showWhyPopup === "plan" ? "Unsure?" : showWhyPopup === "google" ? "Where do I find this link?" : showWhyPopup === "ownsDomain" ? "What is this for?" : "Why?"}
             </h3>
             <div className="text-sm text-muted-foreground leading-relaxed">
               {showWhyPopup === "company" && (
@@ -1722,6 +1727,16 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <li><span className="text-primary font-medium">.co</span> — Modern alternative to .com</li>
                   </ul>
                   <p className="text-xs border-t border-border/50 pt-2">GimmeASite uses Instant Domain Search to check availability.</p>
+                </div>
+              )}
+              {showWhyPopup === "ownsDomain" && (
+                <div className="space-y-3">
+                  <p>Check this box if we&apos;re redesigning your existing site and you want to keep your current domain.</p>
+                  <p>Do <span className="font-semibold text-foreground">not</span> check this box if:</p>
+                  <ul className="space-y-1.5 text-xs list-none">
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">a.</span> We&apos;re redesigning your site and you want a brand new domain instead.</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">b.</span> This is your first website and you don&apos;t own a domain yet.</li>
+                  </ul>
                 </div>
               )}
               {showWhyPopup === "google" && (
