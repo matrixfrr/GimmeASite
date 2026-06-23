@@ -199,10 +199,11 @@ function CheckoutContent() {
       const url = data.url.trim();
       console.log("Received URL from API:", url.substring(0, 80));
 
-      // Valid checkout URLs must contain checkout.stripe.com (server converts custom domain to default)
-      if (!url.includes("checkout.stripe.com")) {
+      // Valid checkout URLs: custom domain or fallback Stripe domain
+      const isValidCheckout = url.includes("account.gimmeasite.com/c/pay/") || url.includes("checkout.stripe.com/c/pay/");
+      if (!isValidCheckout) {
         console.error("Invalid URL - not a Stripe checkout URL:", url);
-        throw new Error(`Invalid checkout URL. Expected checkout.stripe.com but got: ${url.substring(0, 50)}...`);
+        throw new Error(`Invalid checkout URL received. Please contact support at hello@gimmeasite.com.`);
       }
 
       // Reject billing portal URLs
