@@ -55,13 +55,16 @@ export async function POST(request: Request) {
     }
 
     // Quote found but plan type doesn't match
-    if (planType && anyQuote.plan_type !== planType) {
-      const expectedPlan = anyQuote.plan_type === "monthly" ? "Monthly Plan" : anyQuote.plan_type === "upfront-monthly" ? "Upfront + Monthly" : "Upfront Fee";
+    // Upfront + Monthly is stored as plan_type="one-time" with [monthly_cents:N] in notes
+    const isUpfrontMonthly = anyQuote.plan_type === "one-time" && anyQuote.notes?.includes("[monthly_cents:");
+    const effectivePlanType = isUpfrontMonthly ? "upfront-monthly" : anyQuote.plan_type;
+    if (planType && effectivePlanType !== planType) {
+      const expectedPlan = effectivePlanType === "monthly" ? "Monthly Plan" : effectivePlanType === "upfront-monthly" ? "Upfront + Monthly" : "Upfront Fee";
       return NextResponse.json(
         {
           found: false,
           reason: "plan_mismatch",
-          expectedPlanType: anyQuote.plan_type,
+          expectedPlanType: effectivePlanType,
           message: `Your quote is for the ${expectedPlan}. Please use the correct payment option or contact us at hello@gimmeasite.com.`
         },
         { status: 200 }
