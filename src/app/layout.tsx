@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 import ClientBody from "./ClientBody";
 
@@ -27,6 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <Script id="apollo-tracker" strategy="afterInteractive">{`function initApollo(){var n=Math.random().toString(36).substring(7),o=document.createElement("script");o.src="https://assets.apollo.io/micro/website-tracker/tracker.iife.js?nocache="+n,o.async=!0,o.defer=!0,o.onload=function(){window.trackingFunctions.onLoad({appId:"6a341b62653152000cc7f0ff"})},document.head.appendChild(o)}initApollo();`}</Script>
+      </head>
       <body className="antialiased">
         <ClientBody>{children}</ClientBody>
       </body>
