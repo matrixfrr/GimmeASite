@@ -289,6 +289,15 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4">
             <p className="text-sm text-red-500">{error}</p>
+            {!error.includes("email address") && !error.includes("terms") && (
+              <p className="text-xs text-red-400 mt-1">
+                Need help? Email us at{" "}
+                <a href="mailto:hello@gimmeasite.com" className="underline hover:text-red-300">
+                  hello@gimmeasite.com
+                </a>{" "}
+                and we&apos;ll send you a custom payment link.
+              </p>
+            )}
           </div>
         )}
 
