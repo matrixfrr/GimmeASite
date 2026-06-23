@@ -507,7 +507,7 @@ export default function AdminPage() {
                                 quote.plan_type === "monthly"
                                   ? "bg-blue-500/10 text-blue-500"
                                   : monthlyCents
-                                  ? "bg-violet-500/10 text-violet-500"
+                                  ? "bg-yellow-500/10 text-yellow-500"
                                   : "bg-purple-500/10 text-purple-500"
                               }`}>
                                 {quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Upfront + Monthly" : "Upfront"}
@@ -579,6 +579,14 @@ export default function AdminPage() {
                         </div>
                         <div className="text-right flex-shrink-0">
                           <p className="text-xl font-bold text-green-500">{formatPrice(quote.price_cents)}</p>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="mt-2 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                            onClick={() => handleDelete(quote.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     </div>
