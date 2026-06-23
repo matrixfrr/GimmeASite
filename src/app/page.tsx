@@ -376,7 +376,7 @@ function ServicesSection() {
       icon: Server,
       title: "Hosting",
       description: "Fast, reliable hosting that keeps your website online and loading quickly around the clock.",
-      features: ["99.9% Uptime", "SSL Security", "Domain"],
+      features: ["99.9% Uptime", "SSL", "Domain"],
     },
     {
       icon: Zap,
