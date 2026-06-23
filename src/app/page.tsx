@@ -976,6 +976,10 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       newErrors.domain = "Please enter a valid domain (e.g., example.com)";
     } else if (formData.domain.toLowerCase() === "gimmeasite.com") {
       newErrors.domain = "Hey, that's us! Nice try lol. Please try a different one.";
+    } else if (domainAvailability === null) {
+      newErrors.domainSearch = "Please search for domain availability before submitting";
+    } else if (domainAvailability === "unavailable") {
+      newErrors.domain = "This domain is already taken. Please choose a different one.";
     }
 
     if (!formData.paymentPlan) {
@@ -1265,6 +1269,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       } ${domainAvailability === "unavailable" ? "border-red-500" : ""}`}
                       value={formData.domain}
                       onChange={handleChange}
+                      onBlur={() => { if (formData.domain.trim()) handleDomainSearch(); }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter") {
                           e.preventDefault();
