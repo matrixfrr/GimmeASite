@@ -1335,13 +1335,15 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     }}
                     className="w-4 h-4 rounded border-border accent-primary"
                   />
-                  <span className="text-sm text-muted-foreground">Do you own your domain already?</span>
+                  <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                    Do you own your domain already?
+                    <button
+                      type="button"
+                      className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowWhyPopup("ownsDomain"); }}
+                    >?</button>
+                  </span>
                 </label>
-                <button
-                  type="button"
-                  className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors -mt-1"
-                  onClick={(e) => { e.preventDefault(); setShowWhyPopup("ownsDomain"); }}
-                >?</button>
 
                 {ownsDomain && (
                   <div>
