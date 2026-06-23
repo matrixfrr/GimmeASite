@@ -134,8 +134,8 @@ export async function POST(request: Request) {
             price_data: {
               currency: "usd",
               product_data: {
-                name: "GimmeASite Upfront Website Package",
-                description: `Custom website for ${quote.name}. ${quote.notes || ""}`.trim(),
+                name: "GimmeASite Upfront Fee",
+                description: `Upfront fee for ${quote.name}.`,
               },
               unit_amount: quote.price_cents,
             },
@@ -165,8 +165,8 @@ export async function POST(request: Request) {
             price_data: {
               currency: "usd",
               product_data: {
-                name: "GimmeASite Monthly Website Package",
-                description: `Monthly website service for ${quote.name}. ${quote.notes || ""}`.trim(),
+                name: "GimmeASite Monthly Plan",
+                description: `Recurring monthly fee for ${quote.name}.`,
               },
               unit_amount: quote.price_cents,
               recurring: {
@@ -213,8 +213,8 @@ export async function POST(request: Request) {
             price_data: {
               currency: "usd",
               product_data: {
-                name: "GimmeASite Setup Fee",
-                description: `One-time setup fee for ${quote.name}.${cleanDescription ? ` ${cleanDescription}` : ""}`,
+                name: "GimmeASite Upfront Fee",
+                description: `Upfront fee for ${quote.name}.`,
               },
               unit_amount: quote.price_cents,
             },
@@ -224,8 +224,8 @@ export async function POST(request: Request) {
             price_data: {
               currency: "usd",
               product_data: {
-                name: "GimmeASite Monthly Plan — First Month",
-                description: `First month of monthly service for ${quote.name}.`,
+                name: "GimmeASite Monthly Fee",
+                description: `Recurring monthly fee for ${quote.name}.`,
               },
               unit_amount: monthlyCents,
             },
