@@ -21,6 +21,7 @@ import {
   Search,
   Server,
   ChevronDown,
+  UserCircle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -171,6 +172,7 @@ function FaqPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void })
 // Navigation Component
 function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showAccountPopup, setShowAccountPopup] = useState(false);
 
   const handleNavClick = (sectionId: string) => {
     scrollToSection(sectionId);
@@ -204,6 +206,15 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
               >
                 <HelpCircle className="w-5 h-5" />
               </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground"
+                onClick={() => setShowAccountPopup(true)}
+                aria-label="Account"
+              >
+                <UserCircle className="w-5 h-5" />
+              </Button>
               <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handleNavClick("contact")}>
                 Get Started
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -231,12 +242,58 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
                   <HelpCircle className="w-4 h-4 mr-1" />
                   Help
                 </Button>
+                <Button variant="outline" size="sm" onClick={() => { setIsOpen(false); setShowAccountPopup(true); }}>
+                  <UserCircle className="w-4 h-4 mr-1" />
+                  Account
+                </Button>
                 <Button className="flex-1 bg-primary hover:bg-primary/90" onClick={() => handleNavClick("contact")}>Get Started</Button>
               </div>
             </div>
           )}
         </div>
       </nav>
+
+      {/* Account popup */}
+      {showAccountPopup && (
+        <div
+          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowAccountPopup(false)}
+        >
+          <div
+            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <UserCircle className="w-6 h-6 text-primary" />
+              </div>
+              <h3 className="text-lg font-bold">Account</h3>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+              You will be taken to your billing portal, where you can manage your subscription, update your payment method, and view invoices.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+              <span className="font-medium text-foreground">Note:</span> An account is only created for you after your first payment is processed.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => setShowAccountPopup(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1 bg-primary hover:bg-primary/90"
+                onClick={() => { window.location.href = "https://gimmeasite.com/billing"; }}
+              >
+                Proceed
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
