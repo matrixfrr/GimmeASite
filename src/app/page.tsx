@@ -285,7 +285,7 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
               </Button>
               <Button
                 className="flex-1 bg-primary hover:bg-primary/90"
-                onClick={() => { window.location.href = "https://gimmeasite.com/billing"; }}
+                onClick={() => { window.location.href = "https://account.gimmeasite.com"; }}
               >
                 Proceed
                 <ArrowRight className="w-4 h-4 ml-2" />
