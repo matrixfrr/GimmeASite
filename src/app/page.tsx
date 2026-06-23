@@ -2296,11 +2296,17 @@ export default function Home() {
       }, 100);
     }
 
-    // Handle #thanks hash for thank you popup
-    if (window.location.hash === "#thanks") {
+    // Handle ?thanks=1 (from /thank-you route) and legacy #thanks hash
+    if (urlParams.get("thanks") === "1" || window.location.hash === "#thanks") {
       setShowThanksPopup(true);
-      // Clean up URL hash
       window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Handle ?scroll= param (from /about and /pricing routes)
+    const scroll = urlParams.get("scroll");
+    if (scroll === "about" || scroll === "pricing") {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => scrollToSection(scroll), 100);
     }
   }, []);
 
