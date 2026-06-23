@@ -145,6 +145,22 @@ export default function SuccessPage() {
               </ul>
             </div>
 
+            {/* Google Review */}
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 mb-4">
+              <span className="text-xl flex-shrink-0">⭐</span>
+              <p className="text-sm">
+                Enjoying GimmeASite? We&apos;d love a review!{" "}
+                <a
+                  href="https://g.page/r/CTaID4fouMzCEBI/review"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-yellow-600 dark:text-yellow-400 hover:underline font-medium"
+                >
+                  Leave us a Google review
+                </a>
+              </p>
+            </div>
+
             {/* Contact info */}
             <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20 mb-6">
               <Mail className="w-5 h-5 text-primary flex-shrink-0" />
