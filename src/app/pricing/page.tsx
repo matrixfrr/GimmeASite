@@ -8,7 +8,7 @@ export default function PricingPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/#pricing");
+    router.replace("/?scroll=pricing");
   }, [router]);
 
   return (
