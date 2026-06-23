@@ -52,11 +52,11 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
       price: "$499",
       priceLabel: "upfront payment",
       features: [
-        "Stunning, Fully Custom Design",
-        "Blazing-Fast Load Speeds",
-        "Flawless on Every Device",
-        "Three Months of Dedicated Support",
-        "Around-the-Clock Security Monitoring",
+        "SSL + Security Integration",
+        "Mobile Responsiveness",
+        "Free Draft Before Payment",
+        "3 Rounds of Revisions",
+        "3 Months of Support",
       ],
     },
     monthly: {
