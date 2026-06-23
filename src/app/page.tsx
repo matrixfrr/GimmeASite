@@ -1734,7 +1734,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <li><span className="text-primary font-medium">.io</span> — Tech startups &amp; SaaS</li>
                     <li><span className="text-primary font-medium">.co</span> — Modern alternative to .com</li>
                   </ul>
-                  <p className="text-xs border-t border-border/50 pt-2">GimmeASite uses Instant Domain Search to check availability.</p>
+                  <p className="text-xs border-t border-border/50 pt-2">GimmeASite uses Instant Domain Search to check availability. Please note that the availability check is not 100% accurate — your chosen domain may need to be adjusted later in the process.</p>
                 </div>
               )}
               {showWhyPopup === "ownsDomain" && (
