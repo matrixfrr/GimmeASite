@@ -8,7 +8,6 @@ import {
   CheckCircle2,
   PartyPopper,
   ArrowRight,
-  Mail,
   Clock,
 } from "lucide-react";
 import Link from "next/link";
@@ -123,15 +122,7 @@ export default function SuccessPage() {
                     2
                   </span>
                   <span>
-                    Our team will reach out within 24 hours to discuss your project requirements.
-                  </span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="w-6 h-6 rounded-full bg-primary/20 text-primary flex items-center justify-center text-xs font-semibold flex-shrink-0 mt-0.5">
-                    3
-                  </span>
-                  <span>
-                    We&apos;ll start working on your website and keep you updated throughout the process.
+                    Our team will reach out within 30 minutes to discuss connecting your website to your domain.
                   </span>
                 </li>
               </ul>
@@ -150,56 +141,35 @@ export default function SuccessPage() {
                 >
                   Leave us a Google review
                 </a>
+                .
               </p>
-            </div>
-
-            {/* Contact info */}
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/10 border border-primary/20 mb-6">
-              <Mail className="w-5 h-5 text-primary flex-shrink-0" />
-              <p className="text-sm">
-                Questions? Contact us at{" "}
-                <a
-                  href="mailto:hello@gimmeasite.com"
-                  className="text-primary hover:underline font-medium"
-                >
-                  hello@gimmeasite.com
-                </a>
-              </p>
-            </div>
-
-            {/* Celebrate again button */}
-            <div className="flex gap-3 mb-4">
-              <Button
-                variant="outline"
-                onClick={fireConfetti}
-                className="flex-1 h-12 text-base"
-              >
-                <PartyPopper className="w-5 h-5 mr-2" />
-                Celebrate Again
-              </Button>
             </div>
 
             {/* CTA Button */}
-            <Button asChild className="w-full h-12 text-base font-semibold mb-8">
+            <Button asChild className="w-full h-12 text-base font-semibold mb-3">
               <Link href="/">
                 Return to GimmeASite
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </Button>
 
+            {/* Celebrate again button */}
+            <div className="flex justify-center mb-8">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={fireConfetti}
+                className="text-muted-foreground hover:text-foreground text-xs"
+              >
+                <PartyPopper className="w-3.5 h-3.5 mr-1.5" />
+                Celebrate Again
+              </Button>
+            </div>
+
             {/* Personal closing message */}
             <div className="border-t border-border/50 pt-6 text-sm text-muted-foreground space-y-3 leading-relaxed">
               <p>
-                If you&apos;re loving the experience, we&apos;d be so grateful if you shared us with a friend or family member who could use a website — or dropped us a quick review at{" "}
-                <a
-                  href="https://g.page/r/CTaID4fouMzCEBM/review"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  g.page/r/CTaID4fouMzCEBM/review
-                </a>
-                . You can also follow us on Instagram for new products and updates at{" "}
+                If you&apos;re loving the experience, we&apos;d be so grateful if you shared us with a friend or family member who could use a website. You can also follow us on Instagram for new products and updates at{" "}
                 <a
                   href="https://instagram.com/gimmeasite"
                   target="_blank"
