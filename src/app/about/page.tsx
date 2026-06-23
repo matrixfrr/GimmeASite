@@ -8,7 +8,7 @@ export default function AboutPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/#about");
+    router.replace("/?scroll=about");
   }, [router]);
 
   return (
