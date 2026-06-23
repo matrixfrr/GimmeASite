@@ -2153,23 +2153,18 @@ function ThanksPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
           <p className="text-muted-foreground mb-6">
             We've received your message and will get back to you within 24 business hours. We're excited to help bring your vision to life!
           </p>
-          <div className="flex flex-col gap-3">
+          <Button
+            asChild
+            className="bg-primary hover:bg-primary/90 w-full px-8"
+          >
             <a
               href="https://calendar.app.google/wQdwGP7Trr5ThAKn6"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-content w-full rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
             >
-              📅 Book a Call to Review Your Draft
+              Book a Call to Review Your Draft
             </a>
-            <Button
-              onClick={onClose}
-              variant="outline"
-              className="px-8"
-            >
-              Got It
-            </Button>
-          </div>
+          </Button>
         </div>
       </div>
     </div>
