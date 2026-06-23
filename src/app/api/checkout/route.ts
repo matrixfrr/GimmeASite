@@ -73,13 +73,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // upfront-monthly is stored as plan_type="one-time" with [monthly_cents:N] in notes
+    const dbPlanType = priceType === "upfront-monthly" ? "one-time" : priceType;
+
     // Look up the quote for this email
     const { data: quote, error: quoteError } = await supabase
       .from("client_quotes")
       .select("*")
       .eq("email", customerEmail.toLowerCase())
       .eq("paid", false)
-      .eq("plan_type", priceType)
+      .eq("plan_type", dbPlanType)
       .order("created_at", { ascending: false })
       .limit(1)
       .single();
@@ -295,20 +298,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Convert custom domain to default Stripe URL to avoid DNS/SSL issues
-    const finalCheckoutUrl = convertToDefaultStripeUrl(checkoutUrl);
-
     console.log("=== Checkout session created successfully ===");
     console.log("Session ID:", session.id);
-    console.log("Original URL:", checkoutUrl.substring(0, 80));
-    console.log("Final URL:", finalCheckoutUrl.substring(0, 80));
+    console.log("URL:", checkoutUrl.substring(0, 80));
     console.log("Email:", customerEmail);
     console.log("Plan:", priceType);
     console.log("Amount:", quote.price_cents, "cents");
 
     return NextResponse.json({
       sessionId: session.id,
-      url: finalCheckoutUrl,
+      url: checkoutUrl,
       quotedPrice: quote.price_cents,
       clientName: quote.name,
     });
