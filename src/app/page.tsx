@@ -976,10 +976,6 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       newErrors.domain = "Please enter a valid domain (e.g., example.com)";
     } else if (formData.domain.toLowerCase() === "gimmeasite.com") {
       newErrors.domain = "Hey, that's us! Nice try lol. Please try a different one.";
-    } else if (domainAvailability === null) {
-      newErrors.domainSearch = "Please search for domain availability before submitting";
-    } else if (domainAvailability === "unavailable") {
-      newErrors.domain = "This domain is unavailable. Please try a different one.";
     }
 
     if (!formData.paymentPlan) {
@@ -1068,9 +1064,12 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         setDomainAvailability(null);
         setSocialValidated({});
         setErrors({});
+      } else {
+        setErrors(prev => ({ ...prev, submit: "Something went wrong. Please try again or email us at hello@gimmeasite.com." }));
       }
     } catch (error) {
       console.error("Form submission error:", error);
+      setErrors(prev => ({ ...prev, submit: "Unable to send your message. Please email us directly at hello@gimmeasite.com." }));
     } finally {
       setIsSubmitting(false);
     }
@@ -1609,6 +1608,9 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </div>
                 </div>
 
+                {errors.submit && (
+                  <p className="text-sm text-red-500 text-center -mt-2">{errors.submit}</p>
+                )}
                 <Button
                   type="submit"
                   className="w-full bg-primary hover:bg-primary/90 text-lg py-6"
