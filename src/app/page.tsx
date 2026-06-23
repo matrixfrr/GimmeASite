@@ -1035,7 +1035,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           email: formData.email,
           phone: formData.phone,
           company: formData.company,
-          domain: formData.domain,
+          domain: ownsDomain ? "" : formData.domain,
           paymentPlan: formData.paymentPlan,
           message: formData.message,
           instagram: formData.instagram,
@@ -1330,7 +1330,12 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     checked={ownsDomain}
                     onChange={(e) => {
                       setOwnsDomain(e.target.checked);
-                      if (!e.target.checked) setExistingDomain("");
+                      if (e.target.checked) {
+                        setFormData(prev => ({ ...prev, domain: "" }));
+                        setDomainAvailability(null);
+                      } else {
+                        setExistingDomain("");
+                      }
                       setErrors(prev => ({ ...prev, domain: "", domainSearch: "", existingDomain: "" }));
                     }}
                     className="w-4 h-4 rounded border-border accent-primary"
@@ -1348,7 +1353,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 {ownsDomain && (
                   <div>
                     <label htmlFor="existingDomain" className="text-sm font-medium block mb-2">
-                      What is it? <span className="text-red-500">*</span>
+                      What is the domain? <span className="text-red-500">*</span>
                     </label>
                     <Input
                       id="existingDomain"
@@ -2211,6 +2216,7 @@ function ThanksPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
               href="https://calendar.app.google/wQdwGP7Trr5ThAKn6"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={onClose}
             >
               Book a Call to Review Your Draft
             </a>
