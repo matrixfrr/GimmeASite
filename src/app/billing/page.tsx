@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-const STRIPE_BILLING_PORTAL_URL = "https://account.gimmeasite.com";
+const STRIPE_BILLING_PORTAL_URL = "https://account.gimmeasite.com/p/login/dRmfZjaqK6e87c6gsz0co00";
 
 function BillingContent() {
   const handleAccessPortal = () => {
