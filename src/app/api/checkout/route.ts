@@ -29,9 +29,9 @@ function isValidCheckoutUrl(url: string | null): boolean {
 
   // Valid checkout URLs can be:
   // 1. Default Stripe checkout: checkout.stripe.com
-  // 2. Custom domain: billing.gimmeasite.com (configured in Stripe Dashboard)
+  // 2. Custom domain: account.gimmeasite.com (configured in Stripe Dashboard)
   const isStripeCheckout = cleanUrl.includes("checkout.stripe.com");
-  const isCustomCheckoutDomain = cleanUrl.includes("billing.gimmeasite.com/c/pay/");
+  const isCustomCheckoutDomain = cleanUrl.includes("account.gimmeasite.com/c/pay/");
 
   if (!isStripeCheckout && !isCustomCheckoutDomain) return false;
 
@@ -41,7 +41,7 @@ function isValidCheckoutUrl(url: string | null): boolean {
   if (cleanUrl.includes("billingportal")) return false;
 
   // Also reject if it's a portal path on custom domain
-  if (cleanUrl.includes("billing.gimmeasite.com/p/")) return false;
+  if (cleanUrl.includes("account.gimmeasite.com/p/")) return false;
 
   return true;
 }
@@ -50,9 +50,9 @@ function isValidCheckoutUrl(url: string | null): boolean {
 // This is needed because the custom domain may not be properly configured
 function convertToDefaultStripeUrl(url: string): string {
   // If using custom domain, convert to default Stripe checkout URL
-  // billing.gimmeasite.com/c/pay/SESSION_ID -> checkout.stripe.com/c/pay/SESSION_ID
-  if (url.includes("billing.gimmeasite.com")) {
-    return url.replace("billing.gimmeasite.com", "checkout.stripe.com");
+  // account.gimmeasite.com/c/pay/SESSION_ID -> checkout.stripe.com/c/pay/SESSION_ID
+  if (url.includes("account.gimmeasite.com")) {
+    return url.replace("account.gimmeasite.com", "checkout.stripe.com");
   }
   return url;
 }
