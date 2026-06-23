@@ -533,8 +533,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       priceLabel: "for more information",
       description: "",
       features: [
+        "Custom Design",
         "SSL + Security Integration",
-        "Mobile Responsiveness",
+        "Performance Optimization",
         "Free Draft Before Payment",
         "3 Rounds of Revisions",
         "3 Months of Support",
