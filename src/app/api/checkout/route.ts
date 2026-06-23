@@ -17,7 +17,7 @@ function getStripe(): Stripe {
   if (secretKey.includes("YOUR_SECRET_KEY_HERE") || secretKey === "sk_live_" || secretKey === "sk_test_") {
     throw new Error("STRIPE_SECRET_KEY is set to a placeholder value. Please configure your actual Stripe secret key.");
   }
-  return new Stripe(secretKey, { apiVersion: "2023-10-16" } as never);
+  return new Stripe(secretKey);
 }
 
 // Validate that the URL is a valid Stripe Checkout URL
@@ -204,52 +204,48 @@ export async function POST(request: Request) {
 
       const cleanDescription = (quote.notes || "").replace(/\[monthly_cents:\d+\]\s*/g, "").trim();
 
-      const upfrontMonthlyParams = {
+      // Use payment mode with two line items (setup fee + first month).
+      // The recurring monthly subscription is created manually in Stripe after payment.
+      session = await stripe.checkout.sessions.create({
         ...commonParams,
         line_items: [
           {
             price_data: {
               currency: "usd",
               product_data: {
-                name: "GimmeASite Monthly Website Package",
-                description: `Monthly website service for ${quote.name}.${cleanDescription ? ` ${cleanDescription}` : ""}`,
+                name: "GimmeASite Setup Fee",
+                description: `One-time setup fee for ${quote.name}.${cleanDescription ? ` ${cleanDescription}` : ""}`,
+              },
+              unit_amount: quote.price_cents,
+            },
+            quantity: 1,
+          },
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: "GimmeASite Monthly Plan — First Month",
+                description: `First month of monthly service for ${quote.name}.`,
               },
               unit_amount: monthlyCents,
-              recurring: { interval: "month" as const },
             },
             quantity: 1,
           },
         ],
-        mode: "subscription" as const,
-        subscription_data: {
+        mode: "payment",
+        metadata: {
+          plan: "upfront-monthly",
+          customerName: customerName || quote.name,
+          quoteId: quote.id,
+        },
+        payment_intent_data: {
           metadata: {
             plan: "upfront-monthly",
             customerName: customerName || quote.name,
             quoteId: quote.id,
           },
         },
-        metadata: {
-          plan: "upfront-monthly",
-          customerName: customerName || quote.name,
-          quoteId: quote.id,
-        },
-      };
-
-      // add_invoice_items is a valid Stripe API field not yet reflected in older SDK types
-      (upfrontMonthlyParams.subscription_data as Record<string, unknown>).add_invoice_items = [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "GimmeASite Upfront Setup Fee",
-              description: `One-time setup fee for ${quote.name}.`,
-            },
-            unit_amount: quote.price_cents,
-          },
-        },
-      ];
-
-      session = await stripe.checkout.sessions.create(upfrontMonthlyParams);
+      });
     } else {
       return NextResponse.json(
         { error: "Invalid price type" },
