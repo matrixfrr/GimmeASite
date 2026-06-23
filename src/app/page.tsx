@@ -769,6 +769,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
   const [socialValidated, setSocialValidated] = useState<Record<string, boolean>>({});
   const [checkingDomain, setCheckingDomain] = useState(false);
   const [domainAvailability, setDomainAvailability] = useState<"available" | "unavailable" | null>(null);
+  const [ownsDomain, setOwnsDomain] = useState(false);
 
   // Hide toast after 5 seconds
   useEffect(() => {
@@ -970,15 +971,15 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     }
 
     // Domain validation
-    if (!formData.domain.trim()) {
+    if (!ownsDomain && !formData.domain.trim()) {
       newErrors.domain = "Domain is required";
-    } else if (!validateDomainFormat(formData.domain)) {
+    } else if (formData.domain.trim() && !validateDomainFormat(formData.domain)) {
       newErrors.domain = "Please enter a valid domain (e.g., example.com)";
     } else if (formData.domain.toLowerCase() === "gimmeasite.com") {
       newErrors.domain = "Hey, that's us! Nice try lol. Please try a different one.";
-    } else if (domainAvailability === null) {
+    } else if (!ownsDomain && formData.domain.trim() && domainAvailability === null) {
       newErrors.domainSearch = "Please search for domain availability before submitting";
-    } else if (domainAvailability === "unavailable") {
+    } else if (!ownsDomain && domainAvailability === "unavailable") {
       newErrors.domain = "This domain is already taken. Please choose a different one.";
     }
 
@@ -1040,6 +1041,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           tiktok: formData.tiktok,
           linkedin: formData.linkedin,
           googleBusiness: formData.googleBusiness,
+          ownsDomain: ownsDomain ? "yes" : "no",
           _replyto: formData.email,
           _subject: `New GimmeASite Inquiry from ${formData.name}`,
         }),
@@ -1066,6 +1068,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           googleBusiness: "",
         });
         setDomainAvailability(null);
+        setOwnsDomain(false);
         setSocialValidated({});
         setErrors({});
       } else {
@@ -1252,7 +1255,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 {/* Domain Field */}
                 <div className="relative">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <label htmlFor="domain" className="text-sm font-medium">Desired Domain <span className="text-red-500">*</span></label>
+                    <label htmlFor="domain" className="text-sm font-medium">Desired Domain {!ownsDomain && <span className="text-red-500">*</span>}</label>
                     <button
                       type="button"
                       className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
@@ -1314,6 +1317,19 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     </p>
                   )}
                 </div>
+
+                <label className="flex items-center gap-2.5 cursor-pointer select-none -mt-1">
+                  <input
+                    type="checkbox"
+                    checked={ownsDomain}
+                    onChange={(e) => {
+                      setOwnsDomain(e.target.checked);
+                      setErrors(prev => ({ ...prev, domain: "", domainSearch: "" }));
+                    }}
+                    className="w-4 h-4 rounded border-border accent-primary"
+                  />
+                  <span className="text-sm text-muted-foreground">Do you own the domain you want already?</span>
+                </label>
 
                 <div className="relative">
                   <div className="flex items-center gap-1.5 mb-2">
