@@ -119,7 +119,7 @@ export async function POST(request: Request) {
     // Common session parameters
     const commonParams = {
       payment_method_types: ["card", "link"] as ("card" | "link")[],
-      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/checkout/cancel`,
       customer_email: customerEmail,
       allow_promotion_codes: true,
