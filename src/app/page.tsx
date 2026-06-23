@@ -770,6 +770,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
   const [checkingDomain, setCheckingDomain] = useState(false);
   const [domainAvailability, setDomainAvailability] = useState<"available" | "unavailable" | null>(null);
   const [ownsDomain, setOwnsDomain] = useState(false);
+  const [existingDomain, setExistingDomain] = useState("");
 
   // Hide toast after 5 seconds
   useEffect(() => {
@@ -982,6 +983,9 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     } else if (!ownsDomain && domainAvailability === "unavailable") {
       newErrors.domain = "This domain is already taken. Please choose a different one.";
     }
+    if (ownsDomain && !existingDomain.trim()) {
+      newErrors.existingDomain = "Please enter your existing domain";
+    }
 
     if (!formData.paymentPlan) {
       newErrors.paymentPlan = "Payment plan is required";
@@ -1042,6 +1046,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           linkedin: formData.linkedin,
           googleBusiness: formData.googleBusiness,
           ownsDomain: ownsDomain ? "yes" : "no",
+          existingDomain: ownsDomain ? existingDomain : "",
           _replyto: formData.email,
           _subject: `New GimmeASite Inquiry from ${formData.name}`,
         }),
@@ -1069,6 +1074,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         });
         setDomainAvailability(null);
         setOwnsDomain(false);
+        setExistingDomain("");
         setSocialValidated({});
         setErrors({});
       } else {
@@ -1324,12 +1330,35 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     checked={ownsDomain}
                     onChange={(e) => {
                       setOwnsDomain(e.target.checked);
-                      setErrors(prev => ({ ...prev, domain: "", domainSearch: "" }));
+                      if (!e.target.checked) setExistingDomain("");
+                      setErrors(prev => ({ ...prev, domain: "", domainSearch: "", existingDomain: "" }));
                     }}
                     className="w-4 h-4 rounded border-border accent-primary"
                   />
                   <span className="text-sm text-muted-foreground">Do you own the domain you want already?</span>
                 </label>
+
+                {ownsDomain && (
+                  <div>
+                    <label htmlFor="existingDomain" className="text-sm font-medium block mb-2">
+                      What is it? <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      id="existingDomain"
+                      type="text"
+                      placeholder="example.com"
+                      className={`bg-background ${errors.existingDomain ? "border-red-500" : ""}`}
+                      value={existingDomain}
+                      onChange={(e) => {
+                        setExistingDomain(e.target.value);
+                        setErrors(prev => ({ ...prev, existingDomain: "" }));
+                      }}
+                    />
+                    {errors.existingDomain && (
+                      <p className="text-red-500 text-xs mt-1">{errors.existingDomain}</p>
+                    )}
+                  </div>
+                )}
 
                 <div className="relative">
                   <div className="flex items-center gap-1.5 mb-2">
