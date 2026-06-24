@@ -67,6 +67,13 @@ export async function POST(request: Request) {
       );
     }
 
+    if (parseInt(price_cents) < 1) {
+      return NextResponse.json(
+        { error: "Price must be at least $0.01." },
+        { status: 400 }
+      );
+    }
+
     const { data, error } = await supabase
       .from("client_quotes")
       .insert([
