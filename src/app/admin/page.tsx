@@ -109,8 +109,8 @@ export default function AdminPage() {
         plan_type = "one-time";
         price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
         const monthlyCents = Math.round(parseFloat(formData.monthlyPrice) * 100);
-        if (price_cents < 1 || monthlyCents < 1) {
-          setError("All prices must be at least $0.01.");
+        if (price_cents < 2 || monthlyCents < 2) {
+          setError("All prices must be at least $0.02.");
           setLoading(false);
           return;
         }
@@ -118,8 +118,8 @@ export default function AdminPage() {
       } else {
         plan_type = formData.plan_type;
         price_cents = Math.round(parseFloat(formData.price) * 100);
-        if (price_cents < 1) {
-          setError("Price must be at least $0.01.");
+        if (price_cents < 2) {
+          setError("Price must be at least $0.02.");
           setLoading(false);
           return;
         }
