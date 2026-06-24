@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-  Globe,
   CheckCircle2,
   PartyPopper,
   ArrowRight,
@@ -68,12 +67,8 @@ export default function SuccessPage() {
       <header className="w-full border-b border-border/50 bg-background/80 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-              <Globe className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-xl tracking-tight">
-              GimmeASite
-            </span>
+            <img src="/favicon.svg" alt="GimmeASite" className="w-10 h-10" />
+            <span className="text-xl font-bold tracking-tight">GimmeASite</span>
           </Link>
         </div>
       </header>
@@ -132,16 +127,15 @@ export default function SuccessPage() {
             <div className="flex items-center gap-3 p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/20 mb-4">
               <span className="text-xl flex-shrink-0">⭐</span>
               <p className="text-sm">
-                Enjoying GimmeASite? We&apos;d love a review!{" "}
+                Enjoying GimmeASite? We&apos;d love to hear about it!{" "}
                 <a
                   href="https://g.page/r/CTaID4fouMzCEBI/review"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-yellow-600 dark:text-yellow-400 hover:underline font-medium"
                 >
-                  Leave us a Google review
+                  Leave us a Google review.
                 </a>
-                .
               </p>
             </div>
 
@@ -169,7 +163,7 @@ export default function SuccessPage() {
             {/* Personal closing message */}
             <div className="border-t border-border/50 pt-6 text-sm text-muted-foreground space-y-3 leading-relaxed">
               <p>
-                If you&apos;re loving the experience, we&apos;d be so grateful if you shared us with a friend or family member who could use a website. You can also follow us on Instagram for new products and updates at{" "}
+                If you&apos;re loving the experience, we&apos;d be so grateful if you recommended us to friends or family who could use a website. You can also follow us on Instagram for updates at{" "}
                 <a
                   href="https://instagram.com/gimmeasite"
                   target="_blank"
