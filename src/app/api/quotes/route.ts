@@ -67,9 +67,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (parseInt(price_cents) < 1) {
+    if (parseInt(price_cents) < 2) {
       return NextResponse.json(
-        { error: "Price must be at least $0.01." },
+        { error: "Price must be at least $0.02." },
         { status: 400 }
       );
     }
