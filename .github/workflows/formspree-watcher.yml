@@ -1,0 +1,23 @@
+name: GimmeASite Formspree Watcher
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run watcher
+        env:
+          CLAUDE_API_KEY: ${{ secrets.CLAUDE_API_KEY }}
+          GMAIL_USER: ${{ secrets.FORMSPREE_EMAIL }}
+          GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+          GITHUB_TOKEN_SECRET: ${{ secrets.GIST_TOKEN }}
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+          INBOX_GIST_ID: ${{ secrets.INBOX_GIST_ID }}
+        run: python3 .github/workflows/watcher.py
