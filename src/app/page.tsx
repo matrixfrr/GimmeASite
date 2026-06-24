@@ -307,10 +307,6 @@ function HeroSection() {
 
       <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
-          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm animate-slideIn opacity-0 stagger-1">
-            Professional Web Design Agency
-          </Badge>
-
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.9] mb-8 animate-slideIn opacity-0 stagger-2">
             We Build
             <br />
