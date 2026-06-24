@@ -106,15 +106,23 @@ export default function AdminPage() {
       let notes: string;
 
       if (formData.isUpfrontMonthly) {
-        // Store as "one-time" so the Upfront modal on the site can find and match this quote.
-        // The [monthly_cents:N] prefix in notes signals the checkout API to create a combined session.
         plan_type = "one-time";
         price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
         const monthlyCents = Math.round(parseFloat(formData.monthlyPrice) * 100);
+        if (price_cents < 1 || monthlyCents < 1) {
+          setError("All prices must be at least $0.01.");
+          setLoading(false);
+          return;
+        }
         notes = `[monthly_cents:${monthlyCents}]${formData.notes ? ` ${formData.notes}` : ""}`;
       } else {
         plan_type = formData.plan_type;
         price_cents = Math.round(parseFloat(formData.price) * 100);
+        if (price_cents < 1) {
+          setError("Price must be at least $0.01.");
+          setLoading(false);
+          return;
+        }
         notes = formData.notes;
       }
 
