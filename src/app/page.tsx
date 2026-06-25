@@ -496,11 +496,11 @@ function AboutUsSection() {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto mb-12">
           <Card className="p-8 bg-card/50 border-border/50 hover-lift text-center">
-            <h3 className="text-2xl font-bold mb-2">Matthew Marciano</h3>
+            <h3 className="text-2xl font-bold mb-2">Matthew</h3>
             <div className="text-primary font-semibold">Co-Founder</div>
           </Card>
           <Card className="p-8 bg-card/50 border-border/50 hover-lift text-center">
-            <h3 className="text-2xl font-bold mb-2">Christopher Maher</h3>
+            <h3 className="text-2xl font-bold mb-2">Christopher</h3>
             <div className="text-primary font-semibold">Co-Founder</div>
           </Card>
         </div>
