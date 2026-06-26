@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // upfront-monthly is stored as plan_type="one-time" with [monthly_cents:N] in notes
+    // bundle is stored as plan_type="bundle" (migrated); old rows were plan_type="one-time" with [monthly_cents:N]
     const dbPlanType = priceType === "upfront-monthly" ? "one-time" : priceType;
 
     // Look up the quote for this email
@@ -125,8 +125,9 @@ export async function POST(request: Request) {
       allow_promotion_codes: true,
     };
 
-    // Detect upfront+monthly quotes stored as "one-time" (notes has [monthly_cents:N] prefix)
-    const isUpfrontMonthly = priceType === "one-time" && /\[monthly_cents:\d+\]/.test(quote.notes || "");
+    // Bundle quotes: stored as plan_type="bundle", or legacy "one-time" with [monthly_cents:N] notes
+    const isUpfrontMonthly = priceType === "bundle" ||
+      (priceType === "one-time" && /\[monthly_cents:\d+\]/.test(quote.notes || ""));
 
     if (priceType === "annual") {
       console.log("Creating ANNUAL (subscription) checkout session...");
@@ -227,7 +228,7 @@ export async function POST(request: Request) {
           },
         },
       });
-    } else if (isUpfrontMonthly || priceType === "upfront-monthly") {
+    } else if (isUpfrontMonthly) {
       console.log("Creating UPFRONT + MONTHLY checkout session...");
       const monthlyMatch = quote.notes?.match(/\[monthly_cents:(\d+)\]/);
       const monthlyCents = monthlyMatch ? parseInt(monthlyMatch[1]) : null;
@@ -271,13 +272,13 @@ export async function POST(request: Request) {
         ],
         mode: "payment",
         metadata: {
-          plan: "upfront-monthly",
+          plan: "bundle",
           customerName: customerName || quote.name,
           quoteId: quote.id,
         },
         payment_intent_data: {
           metadata: {
-            plan: "upfront-monthly",
+            plan: "bundle",
             customerName: customerName || quote.name,
             quoteId: quote.id,
           },
