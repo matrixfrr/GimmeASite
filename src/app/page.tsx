@@ -1764,6 +1764,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
               {showWhyPopup === "ownsDomain" && (
                 <div className="space-y-3">
                   <p>Check this box if we&apos;re redesigning your existing site and you want to keep your current domain.</p>
+                  <p>Already owning your domain will result in <span className="font-semibold text-foreground">savings</span> for you — since we won&apos;t need to acquire it on your behalf, it won&apos;t be factored into our price.</p>
                   <p>Do <span className="font-semibold text-foreground">not</span> check this box if:</p>
                   <ul className="space-y-1.5 text-xs list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">a.</span> We&apos;re redesigning your site and you want a brand new domain instead.</li>
@@ -2303,11 +2304,21 @@ export default function Home() {
       }, 100);
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (modal === "payment-monthly") {
-      // Scroll to pricing section first, then open modal
       setTimeout(() => {
         scrollToSection("pricing");
         setTimeout(() => {
           setPaymentPlanType("monthly");
+          setPaymentBillingCycle("monthly");
+          setPaymentModalOpen(true);
+        }, 300);
+      }, 100);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (modal === "payment-annual") {
+      setTimeout(() => {
+        scrollToSection("pricing");
+        setTimeout(() => {
+          setPaymentPlanType("monthly");
+          setPaymentBillingCycle("annual");
           setPaymentModalOpen(true);
         }, 300);
       }, 100);
