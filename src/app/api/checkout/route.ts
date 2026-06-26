@@ -95,20 +95,35 @@ export async function POST(request: Request) {
       );
     }
 
-    // For annual, fall back to legacy rows stored as plan_type="monthly" with [annual] in notes
+    // Fallback lookups for legacy storage formats
     let resolvedQuote = quoteData;
     if (!resolvedQuote && priceType === "annual") {
+      // Legacy: annual stored as plan_type="monthly" + [annual] in notes
       const { data: legacyAnnual } = await supabase
         .from("client_quotes")
         .select("*")
         .eq("email", customerEmail.toLowerCase())
         .eq("paid", false)
         .eq("plan_type", "monthly")
-        .ilike("notes", "[annual]%")
+        .ilike("notes", "%[annual]%")
         .order("created_at", { ascending: false })
         .limit(1)
         .single();
       resolvedQuote = legacyAnnual;
+    }
+    if (!resolvedQuote && priceType === "hybrid") {
+      // Legacy: hybrid stored as plan_type="one-time" + [monthly_cents:N] in notes
+      const { data: legacyHybrid } = await supabase
+        .from("client_quotes")
+        .select("*")
+        .eq("email", customerEmail.toLowerCase())
+        .eq("paid", false)
+        .eq("plan_type", "one-time")
+        .ilike("notes", "%[monthly_cents:%")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      resolvedQuote = legacyHybrid;
     }
 
     // If no quote found for this email, return error
