@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // bundle is stored as plan_type="bundle" (migrated); old rows were plan_type="one-time" with [monthly_cents:N]
+    // bundle is stored as plan_type="hybrid" (migrated); old rows were plan_type="one-time" with [monthly_cents:N]
     const dbPlanType = priceType === "upfront-monthly" ? "one-time" : priceType;
 
     // Look up the quote for this email
@@ -141,8 +141,8 @@ export async function POST(request: Request) {
       allow_promotion_codes: true,
     };
 
-    // Bundle quotes: stored as plan_type="bundle", or legacy "one-time" with [monthly_cents:N] notes
-    const isUpfrontMonthly = priceType === "bundle" ||
+    // Bundle quotes: stored as plan_type="hybrid", or legacy "one-time" with [monthly_cents:N] notes
+    const isUpfrontMonthly = priceType === "hybrid" ||
       (priceType === "one-time" && /\[monthly_cents:\d+\]/.test(resolvedQuote.notes || ""));
 
     if (priceType === "annual") {
@@ -289,13 +289,13 @@ export async function POST(request: Request) {
         ],
         mode: "payment",
         metadata: {
-          plan: "bundle",
+          plan: "hybrid",
           customerName: customerName || resolvedQuote.name,
           quoteId: resolvedQuote.id,
         },
         payment_intent_data: {
           metadata: {
-            plan: "bundle",
+            plan: "hybrid",
             customerName: customerName || resolvedQuote.name,
             quoteId: resolvedQuote.id,
           },
