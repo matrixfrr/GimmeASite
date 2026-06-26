@@ -43,7 +43,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What's included in the plans?",
-    answer: "All plans include custom design, hosting, maintenance, and the support period specified in each plan.",
+    answer: "All plans include custom design, hosting, maintenance / revisions, the support period specified in each plan, etc.",
   },
   {
     question: "Can I update my site myself?",
@@ -51,7 +51,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What if I need revisions to my site?",
-    answer: "A different amount of revisions are included in each plan. You can make your revision request known to us by emailing support.",
+    answer: "A different amount of revisions are included in each plan. You can make your revision request known to us by emailing support. Requesting extra revisions or full, large-scale redesigns may incur additional fees.",
   },
   {
     question: "Where do I manage my subscription?",
@@ -530,7 +530,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "SSL + Security Integration",
         "Performance Optimization",
         "Free Draft Before Payment",
-        "3 Revisions",
+        "3 Total Revisions",
       ],
       popular: false,
     },
@@ -644,7 +644,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <div className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Priority Ongoing Support", "Analytics Dashboard"].includes(f)), "Subdomain Configuration", "Full Redesigns"]
+                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Priority Ongoing Support", "Analytics Dashboard", "2 Revisions Per Month"].includes(f)), "Unlimited Revisions (Full Redesigns)", "Subdomain Configuration"]
                     : plan.features
                   ).map((feature: string) => (
                     <div key={feature} className="flex items-center gap-3">
@@ -708,7 +708,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   The Equity / CMS plan is currently in development. We're working hard to bring you an exciting new way to partner with us!
                 </p>
                 <p className="text-sm text-muted-foreground mb-6">
-                  In the meantime, check out our <span className="text-primary font-semibold">Upfront</span>, <span className="text-primary font-semibold">Monthly</span>, or <span className="text-primary font-semibold">Annual</span> plans.
+                  In the meantime, check out our <button type="button" onClick={() => { setShowComingSoon(false); setTimeout(() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-primary font-semibold underline">available</button> plans.
                 </p>
                 <Button
                   onClick={() => setShowComingSoon(false)}
@@ -1451,6 +1451,15 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                           onClick={() => handlePlanSelect("Monthly")}
                         >
                           Monthly
+                        </button>
+                        <button
+                          type="button"
+                          className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors ${
+                            formData.paymentPlan === "Hybrid" ? "bg-primary/10 text-primary" : ""
+                          }`}
+                          onClick={() => handlePlanSelect("Hybrid")}
+                        >
+                          Hybrid
                         </button>
                         <button
                           type="button"
