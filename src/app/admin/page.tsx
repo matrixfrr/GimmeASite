@@ -380,7 +380,7 @@ export default function AdminPage() {
                     <option value="one-time">Upfront</option>
                     <option value="monthly">Monthly</option>
                     <option value="annual">Annual</option>
-                    <option value="upfront-monthly">Upfront + Monthly</option>
+                    <option value="upfront-monthly">Bundle</option>
                   </select>
                 </div>
 
@@ -521,7 +521,7 @@ export default function AdminPage() {
                                   ? "bg-yellow-500/10 text-yellow-500"
                                   : "bg-purple-500/10 text-purple-500"
                               }`}>
-                                {isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Upfront + Monthly" : "Upfront"}
+                                {isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Bundle" : "Upfront"}
                               </span>
                             </div>
                             <p className="text-sm text-muted-foreground truncate">{quote.email}</p>
