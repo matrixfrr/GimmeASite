@@ -60,7 +60,7 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
       ],
     },
     monthly: {
-      name: "Monthly Plan",
+      name: "Monthly",
       price: "$199",
       priceLabel: "per month",
       features: [
@@ -249,7 +249,7 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
         <div className="text-xs text-muted-foreground mb-6 space-y-1">
           <p>
             {planType === "one-time"
-              ? "• Three (3) revisions are included (email support). Requesting extra revisions or large-scale updates will incur additional fees."
+              ? "• Three (3) revisions are included (email support). Requesting extra revisions or large-scale updates may incur additional fees."
               : "• Unlimited revisions are included (email support)."}
           </p>
           <p>
