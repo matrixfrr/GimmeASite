@@ -31,7 +31,7 @@ interface Quote {
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
-  const [planType, setPlanType] = useState<"one-time" | "monthly" | "upfront-monthly" | "annual">("one-time");
+  const [planType, setPlanType] = useState<"one-time" | "monthly" | "bundle" | "annual">("one-time");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -44,8 +44,8 @@ function CheckoutContent() {
     const plan = searchParams.get("plan");
     const emailParam = searchParams.get("email");
 
-    if (plan === "monthly" || plan === "one-time" || plan === "upfront-monthly" || plan === "annual") {
-      setPlanType(plan as "one-time" | "monthly" | "upfront-monthly" | "annual");
+    if (plan === "monthly" || plan === "one-time" || plan === "bundle" || plan === "annual") {
+      setPlanType(plan as "one-time" | "monthly" | "bundle" | "annual");
     }
     if (emailParam) {
       setEmail(emailParam);
@@ -55,7 +55,7 @@ function CheckoutContent() {
     // Only do this once per page load
     if (
       emailParam &&
-      (plan === "monthly" || plan === "one-time" || plan === "upfront-monthly" || plan === "annual") &&
+      (plan === "monthly" || plan === "one-time" || plan === "bundle" || plan === "annual") &&
       !hasAutoVerified.current
     ) {
       hasAutoVerified.current = true;
@@ -359,9 +359,9 @@ function CheckoutContent() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setPlanType("upfront-monthly")}
+                      onClick={() => setPlanType("bundle")}
                       className={`p-4 rounded-xl border-2 transition-all ${
-                        planType === "upfront-monthly"
+                        planType === "bundle"
                           ? "border-primary bg-primary/10"
                           : "border-border hover:border-border/80"
                       }`}
