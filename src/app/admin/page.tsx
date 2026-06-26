@@ -105,14 +105,14 @@ export default function AdminPage() {
       let notes: string;
 
       if (formData.plan_type === "annual") {
-        plan_type = "monthly";
+        plan_type = "annual";
         price_cents = Math.round(parseFloat(formData.price) * 100);
         if (price_cents < 2) {
           setError("Price must be at least $0.02.");
           setLoading(false);
           return;
         }
-        notes = `[annual]${formData.notes ? ` ${formData.notes}` : ""}`;
+        notes = formData.notes;
       } else if (formData.plan_type === "upfront-monthly") {
         plan_type = "one-time";
         price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
@@ -212,10 +212,8 @@ export default function AdminPage() {
     return match ? parseInt(match[1]) : null;
   };
 
-  const isAnnualQuote = (notes?: string) => !!(notes?.includes("[annual]"));
-
   const cleanNotes = (notes?: string) =>
-    notes?.replace(/\[monthly_cents:\d+\]\s*/g, "").replace(/\[annual\]\s*/g, "").trim() || "";
+    notes?.replace(/\[monthly_cents:\d+\]\s*/g, "").trim() || "";
 
   if (!isAuthenticated) {
     return (
@@ -503,7 +501,7 @@ export default function AdminPage() {
                 <div className="space-y-3">
                   {unpaidQuotes.map((quote) => {
                     const monthlyCents = getMonthlyFromNotes(quote.notes);
-                    const isAnnual = isAnnualQuote(quote.notes);
+                    const isAnnual = quote.plan_type === "annual";
                     const displayNotes = cleanNotes(quote.notes);
                     return (
                       <div
