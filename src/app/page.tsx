@@ -39,15 +39,11 @@ const scrollToSection = (sectionId: string) => {
 const faqItems: { question: string; answer: React.ReactNode }[] = [
   {
     question: "How long does it take for my site to be built?",
-    answer: "We value expeditious services at GimmeASite. All sites are completed within one business week depending on complexity. However, some sites can even be delivered same-day!",
+    answer: "We value expedited services at GimmeASite. All sites are completed within one business week depending on complexity. However, some sites can even be delivered same-day!",
   },
   {
     question: "What's included in the plans?",
     answer: "All plans include custom design, hosting, maintenance, and the support period specified in each plan.",
-  },
-  {
-    question: "Do you offer refunds?",
-    answer: "We offer satisfaction guaranteed. If you're not happy with your site before payment, we'll work with you to make it right. However, all sales are final thereafter. With our monthly plan, you can always cancel your subscription anytime.",
   },
   {
     question: "Can I update my site myself?",
@@ -333,7 +329,7 @@ function HeroSection() {
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-primary" />
-              <span>Expeditious Delivery</span>
+              <span>Expedited Delivery</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-primary" />
@@ -496,11 +492,11 @@ function AboutUsSection() {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto mb-12">
           <Card className="p-8 bg-card/50 border-border/50 hover-lift text-center">
-            <h3 className="text-2xl font-bold mb-2">Matthew</h3>
+            <h3 className="text-2xl font-bold mb-2">Matthew M.</h3>
             <div className="text-primary font-semibold">Co-Founder</div>
           </Card>
           <Card className="p-8 bg-card/50 border-border/50 hover-lift text-center">
-            <h3 className="text-2xl font-bold mb-2">Christopher</h3>
+            <h3 className="text-2xl font-bold mb-2">Christopher M.</h3>
             <div className="text-primary font-semibold">Co-Founder</div>
           </Card>
         </div>
@@ -508,7 +504,7 @@ function AboutUsSection() {
         <div className="max-w-3xl mx-auto">
           <Card className="p-8 bg-card/50 border-border/50">
             <p className="text-lg text-muted-foreground leading-relaxed text-center">
-              Matthew and Christopher became friends in high school, but later began this project in 2025 to deliver websites to businesses of all types and sizes. Their focus was to improve the online presence and customer outreach of their clients. Their drive for web design inspired them to create professional websites for all.
+              Matthew and Christopher became friends in high school, but later began this project in 2025 as college students to deliver websites in an unusually expedited fashion to businesses of all types and sizes. They continue to focus on improving the online presence and customer outreach of their clients, as their drive for web design inspired them to create professional websites while slowly expanding into broader marketing endeavors.
             </p>
           </Card>
         </div>
