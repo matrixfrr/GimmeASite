@@ -543,7 +543,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "Advanced Security",
         "Unlimited Revisions",
         "Priority Ongoing Support",
-        "Analytics Dashboard",
       ],
       popular: true,
     },
@@ -589,25 +588,27 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 </Badge>
               )}
               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <h3 className="text-2xl font-bold">{plan.name}</h3>
+                <h3 className="text-2xl font-bold">
+                  {plan.name === "Monthly" ? (monthlyBilling === "annual" ? "Annual" : "Monthly") : plan.name}
+                </h3>
                 {plan.name === "Monthly" && (
-                  <div className="flex items-center gap-1 ml-1">
-                    <button
-                      type="button"
-                      onClick={() => setMonthlyBilling("monthly")}
-                      className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${monthlyBilling === "monthly" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                    >
-                      Monthly
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMonthlyBilling("annual")}
-                      className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${monthlyBilling === "annual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-                    >
-                      Annual
-                    </button>
-                    {monthlyBilling === "annual" && (
-                      <span className="text-xs text-green-400 font-medium">Save 15%</span>
+                  <div className="flex items-center gap-1.5 ml-1">
+                    {monthlyBilling === "monthly" ? (
+                      <button
+                        type="button"
+                        onClick={() => setMonthlyBilling("annual")}
+                        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        Annual <span className="text-green-400 font-medium">Save 15%</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setMonthlyBilling("monthly")}
+                        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        Monthly
+                      </button>
                     )}
                   </div>
                 )}
@@ -635,9 +636,12 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <p className="text-muted-foreground mb-4 font-medium">{plan.description}</p>
               )}
               <Separator className="mb-6" />
-              {plan.features.length > 0 ? (
+              {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <ul className="space-y-3 mb-8">
-                  {plan.features.map((feature) => (
+                  {(plan.name === "Monthly" && monthlyBilling === "annual"
+                    ? [...plan.features, "Subdomain Configuration", "Full Redesigns", "Analytics Dashboard"]
+                    : plan.features
+                  ).map((feature) => (
                     <li key={feature} className="flex items-center gap-3">
                       <Check className="w-5 h-5 text-primary flex-shrink-0" />
                       <span>{feature}</span>
