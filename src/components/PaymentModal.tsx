@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   ExternalLink,
   Lock,
+  ChevronDown,
 } from "lucide-react";
 
 interface PaymentModalProps {
@@ -20,31 +21,44 @@ interface PaymentModalProps {
   billingCycle?: "monthly" | "annual";
 }
 
+type PlanKey = "upfront" | "monthly" | "annual" | "hybrid";
+
+const PLANS: { key: PlanKey; label: string }[] = [
+  { key: "upfront", label: "Upfront" },
+  { key: "monthly", label: "Monthly" },
+  { key: "annual", label: "Annual" },
+  { key: "hybrid", label: "Hybrid" },
+];
+
+function planKeyToVerifyType(key: PlanKey): string {
+  if (key === "upfront") return "one-time";
+  if (key === "annual") return "annual";
+  if (key === "hybrid") return "hybrid";
+  return "monthly";
+}
+
+function planKeyToCheckoutParam(key: PlanKey): string {
+  if (key === "upfront") return "one-time";
+  return key;
+}
+
 export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthly" }: PaymentModalProps) {
+  const initKey: PlanKey =
+    planType === "one-time" ? "upfront"
+    : planType === "hybrid" ? "hybrid"
+    : billingCycle === "annual" ? "annual"
+    : "monthly";
+
+  const [selectedPlan, setSelectedPlan] = useState<PlanKey>(initKey);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState<string>("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const isAnnual = planType === "monthly" && billingCycle === "annual";
-
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validateEmail = (emailValue: string) => {
-    if (!emailValue.trim()) { setEmailError(""); return; }
-    if (!isValidEmail(emailValue)) {
-      setEmailError("Please enter a valid email address");
-    } else {
-      setEmailError("");
-    }
-  };
-
-  const planName = isAnnual ? "Annual" : planType === "one-time" ? "Upfront" : planType === "hybrid" ? "Hybrid" : "Monthly";
-
+  // Reset when modal opens/closes
   useEffect(() => {
     if (!isOpen) {
       setEmail("");
@@ -52,8 +66,32 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
       setAgreedToTerms(false);
       setError("");
       setIsLoading(false);
+      setDropdownOpen(false);
+    } else {
+      setSelectedPlan(initKey);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const validateEmail = (v: string) => {
+    if (!v.trim()) { setEmailError(""); return; }
+    setEmailError(isValidEmail(v) ? "" : "Please enter a valid email address");
+  };
+
+  const planLabel = PLANS.find(p => p.key === selectedPlan)?.label ?? "Upfront";
 
   const handleProceedToCheckout = async () => {
     if (!email.trim()) { setError("Please enter your email address"); return; }
@@ -71,7 +109,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
       const response = await fetch("/api/quotes/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.toLowerCase(), planType: isAnnual ? "annual" : planType }),
+        body: JSON.stringify({ email: email.toLowerCase(), planType: planKeyToVerifyType(selectedPlan) }),
       });
 
       const data = await response.json();
@@ -88,8 +126,8 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
         return;
       }
 
-      window.location.href = `/checkout?email=${encodeURIComponent(email)}&plan=${isAnnual ? "annual" : planType}`;
-    } catch (err) {
+      window.location.href = `/checkout?email=${encodeURIComponent(email)}&plan=${planKeyToCheckoutParam(selectedPlan)}`;
+    } catch {
       setError("Something went wrong. Please try again or contact us at hello@gimmeasite.com.");
       setIsLoading(false);
     }
@@ -99,16 +137,10 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
-        onClick={onClose}
-      />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
       <div className="relative bg-card border border-border rounded-2xl p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-slideIn">
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-        >
+        <button type="button" onClick={onClose}
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors">
           <X className="w-5 h-5" />
         </button>
 
@@ -118,7 +150,32 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
             <CreditCard className="w-8 h-8 text-primary" />
           </div>
           <h3 className="text-2xl font-bold mb-1">Proceed to Checkout</h3>
-          <p className="text-muted-foreground">{planName}</p>
+          {/* Plan name with switcher */}
+          <div className="flex items-center justify-center gap-1.5 relative" ref={dropdownRef}>
+            <span className="text-muted-foreground">{planLabel}</span>
+            <button
+              type="button"
+              onClick={() => setDropdownOpen(o => !o)}
+              className="text-muted-foreground hover:text-foreground transition-colors p-0.5 rounded"
+              aria-label="Switch plan"
+            >
+              <ChevronDown className={`w-4 h-4 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
+            </button>
+            {dropdownOpen && (
+              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-card border border-border rounded-lg shadow-lg z-10 overflow-hidden min-w-[140px]">
+                {PLANS.map(p => (
+                  <button
+                    key={p.key}
+                    type="button"
+                    className={`w-full px-4 py-2 text-sm text-left hover:bg-primary/10 transition-colors ${selectedPlan === p.key ? "text-primary font-medium" : "text-foreground"}`}
+                    onClick={() => { setSelectedPlan(p.key); setDropdownOpen(false); setError(""); }}
+                  >
+                    {p.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Important Notice */}
@@ -128,9 +185,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
               <AlertTriangle className="w-5 h-5 text-red-500" />
             </div>
             <div>
-              <h4 className="font-bold text-red-500 text-sm mb-2 uppercase tracking-wide">
-                Important Notice
-              </h4>
+              <h4 className="font-bold text-red-500 text-sm mb-2 uppercase tracking-wide">Important Notice</h4>
               <p className="text-sm font-bold text-red-500">
                 Do not pay unless you have approved your site with one of our agents.
               </p>
@@ -196,15 +251,6 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4">
             <p className="text-sm text-red-500">{error}</p>
-            {!error.startsWith("Please") && (
-              <p className="text-xs text-red-400 mt-1">
-                Need help? Email us at{" "}
-                <a href="mailto:hello@gimmeasite.com" className="underline hover:text-red-300">
-                  hello@gimmeasite.com
-                </a>{" "}
-                and we&apos;ll send you a custom payment link.
-              </p>
-            )}
           </div>
         )}
 
