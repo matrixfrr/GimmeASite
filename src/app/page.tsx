@@ -2263,7 +2263,7 @@ export default function Home() {
   const [showFaqPopup, setShowFaqPopup] = useState(false);
   const [showThanksPopup, setShowThanksPopup] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [paymentPlanType, setPaymentPlanType] = useState<"one-time" | "monthly">("one-time");
+  const [paymentPlanType, setPaymentPlanType] = useState<"one-time" | "monthly" | "bundle">("one-time");
   const [paymentBillingCycle, setPaymentBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [paymentStatus, setPaymentStatus] = useState<"success" | "cancelled" | null>(null);
 
@@ -2323,6 +2323,12 @@ export default function Home() {
         }, 300);
       }, 100);
       window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (modal === "payment-bundle") {
+      setTimeout(() => {
+        setPaymentPlanType("bundle");
+        setPaymentModalOpen(true);
+      }, 100);
+      window.history.replaceState({}, document.title, window.location.pathname);
     }
 
     // Handle contact modal — keeps URL as gimmeasite.com
@@ -2358,7 +2364,7 @@ export default function Home() {
     window.dispatchEvent(new Event('openPrivacyPolicy'));
   };
 
-  const handleOpenPayment = (plan: "one-time" | "monthly", billing: "monthly" | "annual" = "monthly") => {
+  const handleOpenPayment = (plan: "one-time" | "monthly" | "bundle", billing: "monthly" | "annual" = "monthly") => {
     setPaymentPlanType(plan);
     setPaymentBillingCycle(billing);
     setPaymentModalOpen(true);
