@@ -608,19 +608,24 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               )}
               {plan.name === "Monthly" ? (
                 <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-2xl font-bold">
+                      {monthlyBilling === "annual" ? "Annual" : "Monthly"}
+                    </h3>
+                  </div>
                   <div className="relative flex rounded-full border border-border/50 bg-muted/30 p-1">
                     <div className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-foreground transition-all duration-300 ease-in-out ${monthlyBilling === "annual" ? "translate-x-[calc(100%+4px)]" : "translate-x-0"}`} />
                     <button
                       type="button"
                       onClick={() => setMonthlyBilling("monthly")}
-                      className={`relative z-10 flex-1 py-2 text-center text-2xl font-bold rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`relative z-10 flex-1 py-1.5 text-center text-sm font-semibold rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       Monthly
                     </button>
                     <button
                       type="button"
                       onClick={() => setMonthlyBilling("annual")}
-                      className={`relative z-10 flex-1 py-2 text-center text-2xl font-bold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`relative z-10 flex-1 py-1.5 text-center text-sm font-semibold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       Annual <span className="text-xs font-normal text-green-500">Save 15%</span>
                     </button>
@@ -763,7 +768,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             <div className="mb-3">
               <span className="font-semibold text-primary block mb-1">Equity Plan</span>
               <span className="text-sm text-muted-foreground block">
-                Partner with us through a small equity share or revenue percentage. Perfect for startups and growing businesses looking to minimize upfront costs while investing in their online presence.
+                Partner with us through a small equity share or revenue percentage. Perfect for startups and small businesses looking to minimize upfront and/or recurring costs while investing in their online presence.
               </span>
             </div>
             <button
@@ -771,7 +776,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               onClick={() => setShowEquityCmsPopup(false)}
               className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              Got it
+              Got It
             </button>
           </div>
         </div>
@@ -1520,7 +1525,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </label>
                   <Textarea
                     id="message"
-                    placeholder="Describe what type of business you run, your website ideas, and any other specific requirements..."
+                    placeholder="Be as detailed as possible. Describe your business, design vision and ideas, site features, and any other specific requirements..."
                     className={`bg-background min-h-[150px] ${errors.message ? "border-red-500" : ""}`}
                     value={formData.message}
                     onChange={handleChange}
@@ -1833,7 +1838,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 onClick={() => setShowWhyPopup(null)}
                 className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
               >
-                Got it
+                Got It
               </button>
             )}
           </div>
@@ -2055,7 +2060,7 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
               <h4 className="text-foreground font-semibold mt-6">Payment Terms</h4>
               <ul className="list-disc pl-6 space-y-1">
                 <li>Payment is required as specified in your project agreement</li>
-                <li>For monthly plans, recurring payments will be charged on the agreed billing date</li>
+                <li>For subscriptions, recurring payments will be charged on the agreed billing date</li>
                 <li>Upfront fees are due upon project completion unless otherwise agreed</li>
               </ul>
 
