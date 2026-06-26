@@ -212,7 +212,7 @@ export default function AdminPage() {
     return match ? parseInt(match[1]) : null;
   };
 
-  const isAnnualQuote = (notes?: string): boolean => !!(notes?.includes("[annual]"));
+  const isAnnualQuote = (notes?: string) => !!(notes?.includes("[annual]"));
 
   const cleanNotes = (notes?: string) =>
     notes?.replace(/\[monthly_cents:\d+\]\s*/g, "").replace(/\[annual\]\s*/g, "").trim() || "";
