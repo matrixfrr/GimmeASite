@@ -129,7 +129,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
       }
 
       // Email verified and plan matches - proceed to checkout
-      window.location.href = `/checkout?email=${encodeURIComponent(email)}&plan=${planType}${planType === "monthly" && billingCycle === "annual" ? "&billing=annual" : ""}`;
+      window.location.href = `/checkout?email=${encodeURIComponent(email)}&plan=${billingCycle === "annual" ? "annual" : planType}`;
     } catch (err) {
       setError("Something went wrong. Please try again or contact us at hello@gimmeasite.com.");
       setIsLoading(false);
