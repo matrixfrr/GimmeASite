@@ -74,20 +74,32 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data, error } = await supabase
-      .from("client_quotes")
-      .insert([
-        {
-          email: email.toLowerCase(),
-          name,
-          plan_type,
-          price_cents: parseInt(price_cents),
-          notes: notes || null,
-          paid: false,
-        },
-      ])
-      .select()
-      .single();
+    let insertPlanType = plan_type;
+    let insertNotes = notes || null;
+
+    const tryInsert = async (pt: string, n: string | null) => {
+      return supabase
+        .from("client_quotes")
+        .insert([{ email: email.toLowerCase(), name, plan_type: pt, price_cents: parseInt(price_cents), notes: n, paid: false }])
+        .select()
+        .single();
+    };
+
+    let { data, error } = await tryInsert(insertPlanType, insertNotes);
+
+    // If DB constraint rejects 'annual' or 'hybrid', fall back to legacy storage formats
+    // that are already understood by the verify/checkout routes.
+    if (error && (error.code === "23514" || error.message?.includes("check"))) {
+      if (plan_type === "annual") {
+        insertPlanType = "monthly";
+        insertNotes = `[annual]${notes ? " " + notes : ""}`;
+      } else if (plan_type === "hybrid") {
+        insertPlanType = "one-time";
+        // notes already contains [monthly_cents:N] from the admin form
+        insertNotes = notes || null;
+      }
+      ({ data, error } = await tryInsert(insertPlanType, insertNotes));
+    }
 
     if (error) {
       console.error("Supabase error:", error);
