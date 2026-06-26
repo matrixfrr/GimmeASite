@@ -1988,13 +1988,13 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
               <p>GimmeASite's liability is limited to the amount paid for services. We are not liable for indirect, incidental, or consequential damages.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Service Availability and Technical Issues</h4>
-              <p>GimmeASite endeavors to deliver websites that meet agreed-upon specifications; however, we make no warranties, express or implied, regarding the uninterrupted availability, error-free operation, or absolute security of any website, application, or digital asset delivered under our services. To the fullest extent permitted by applicable law, GimmeASite shall not be held responsible for any losses, damages, or liabilities arising from or in connection with: (a) unauthorized access to, alteration of, or disclosure of data transmitted through or stored on websites we build or maintain, including but not limited to security incidents, data breaches, or intrusions caused by third-party actors; (b) typographical errors, display inconsistencies, layout disruptions, broken functionality, or other technical defects that may occur as a result of browser updates, third-party platform changes, hosting environment modifications, or factors outside of our reasonable control; (c) temporary or prolonged service interruptions, page load failures, or inaccessibility of delivered websites due to hosting provider outages, domain registrar issues, DNS propagation delays, or infrastructure events; or (d) any reliance placed on the accuracy, completeness, or fitness for purpose of content displayed on a delivered website. Clients are encouraged to maintain independent backups of all content and to implement their own security measures where applicable. GimmeASite's total aggregate liability under these Terms shall in no event exceed the total fees paid by the client for the specific service giving rise to the claim.</p>
+              <p>GimmeASite makes no warranties regarding the uninterrupted availability, error-free operation, or absolute security of any website we deliver. We are not responsible for losses arising from security incidents caused by third parties, technical issues resulting from browser or platform updates outside our control, hosting or DNS outages, or reliance on content displayed on a delivered website. Our total liability shall not exceed the fees paid for the specific service giving rise to the claim.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Refund Policy</h4>
               <p>All sales are final. GimmeASite does not offer refunds once payment has been processed. For monthly subscribers, you may cancel your subscription at any time to prevent future charges, but no refunds will be issued for the current or any prior billing periods. If you are dissatisfied with your site prior to payment, we will work with you to make it right before any transaction takes place.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Automated Processes</h4>
-              <p>Client acknowledges that certain services may be delivered in whole or in part through automated, algorithmic, or machine-driven processes. GimmeASite makes no representation that any deliverable is produced exclusively through manual human effort, and the use of such processes does not diminish the quality, ownership rights, or agreed scope of the work delivered.</p>
+              <p>Client acknowledges that certain services may be delivered in whole or in part through automated, algorithmic, or machine-driven processes. The use of such processes does not diminish the quality, ownership rights, or agreed scope of the work delivered.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Contact</h4>
               <p>For questions about these terms, contact us at <a href="mailto:hello@gimmeasite.com" className="text-primary hover:underline">hello@gimmeasite.com</a>.</p>
@@ -2048,12 +2048,6 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
 
               <h4 className="text-foreground font-semibold mt-6">Updates to This Policy</h4>
               <p>We may update this Cookie Policy periodically. Please check back for any changes.</p>
-
-              <h4 className="text-foreground font-semibold mt-6">Refund Policy</h4>
-              <p>All sales are final. GimmeASite does not offer refunds once payment has been processed. For monthly subscribers, you may cancel your subscription at any time to prevent future charges, but no refunds will be issued for the current or any prior billing periods. If you are dissatisfied with your site prior to payment, we will work with you to make it right before any transaction takes place.</p>
-
-              <h4 className="text-foreground font-semibold mt-6">Automated Processes</h4>
-              <p>Client acknowledges that certain services may be delivered in whole or in part through automated, algorithmic, or machine-driven processes. GimmeASite makes no representation that any deliverable is produced exclusively through manual human effort, and the use of such processes does not diminish the quality, ownership rights, or agreed scope of the work delivered.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Contact</h4>
               <p>For questions about our use of cookies, contact us at <a href="mailto:hello@gimmeasite.com" className="text-primary hover:underline">hello@gimmeasite.com</a>.</p>
