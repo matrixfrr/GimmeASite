@@ -46,10 +46,6 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
     answer: "All plans include custom design, hosting, maintenance / revisions, the support period specified in each plan, etc.",
   },
   {
-    question: "Can I update my site myself?",
-    answer: "Unfortunately, for now, that is not an option. However, don't fret! We are currently working on a content management system (CMS) plan that allows you to update text and images whenever you please. We will be announcing more details on this soon.",
-  },
-  {
     question: "What if I need revisions to my site?",
     answer: "A different amount of revisions are included in each plan. You can make your revision request known to us by emailing support. Requesting extra revisions or full, large-scale redesigns may incur additional fees.",
   },
@@ -548,7 +544,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       popular: true,
     },
     {
-      name: "Equity / CMS",
+      name: "Equity",
       price: "Contact us",
       priceLabel: "for more information",
       description: "",
@@ -613,7 +609,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     )}
                   </div>
                 )}
-                {plan.name === "Equity / CMS" && (
+                {plan.name === "Equity" && (
                   <button
                     type="button"
                     className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
@@ -671,7 +667,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 className={`w-full ${
                   plan.popular
                     ? "bg-primary hover:bg-primary/90"
-                    : plan.name === "Equity / CMS"
+                    : plan.name === "Equity"
                     ? "bg-secondary text-muted-foreground hover:bg-secondary hover:text-muted-foreground cursor-pointer"
                     : "bg-primary hover:bg-primary/90"
                 } transition-all duration-300`}
@@ -680,7 +676,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     onOpenPayment("one-time");
                   } else if (plan.name === "Monthly") {
                     onOpenPayment("monthly", monthlyBilling);
-                  } else if (plan.name === "Equity / CMS") {
+                  } else if (plan.name === "Equity") {
                     setShowComingSoon(true);
                   }
                 }}
@@ -712,7 +708,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Coming Soon</h3>
                 <p className="text-muted-foreground mb-6">
-                  The Equity / CMS plan is currently in development. We're working hard to bring you an exciting new way to partner with us!
+                  The Equity plan is currently in development. We're working hard to bring you an exciting new way to partner with us!
                 </p>
                 <p className="text-sm text-muted-foreground mb-6">
                   In the meantime, check out our <button type="button" onClick={() => { setShowComingSoon(false); setTimeout(() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-primary font-semibold underline">available</button> plans.
@@ -744,12 +740,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <span className="font-semibold text-primary block mb-1">Equity Plan</span>
               <span className="text-sm text-muted-foreground block">
                 Partner with us through a small equity share or revenue percentage. Perfect for startups and growing businesses looking to minimize upfront costs while investing in their online presence.
-              </span>
-            </div>
-            <div className="mb-5">
-              <span className="font-semibold text-primary block mb-1">CMS Plan</span>
-              <span className="text-sm text-muted-foreground block">
-                Take control of your content with our built-in content management system. Update text, images, and more anytime — no revision requests needed.
               </span>
             </div>
             <button
@@ -1482,7 +1472,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                           className="w-full px-3 py-2 text-left text-sm text-muted-foreground/50 cursor-not-allowed"
                           disabled
                         >
-                          Equity / CMS <span className="text-xs ml-1">(Coming soon)</span>
+                          Equity <span className="text-xs ml-1">(Coming soon)</span>
                         </button>
                       </div>
                     )}
@@ -2343,8 +2333,11 @@ export default function Home() {
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (modal === "payment-hybrid") {
       setTimeout(() => {
-        setPaymentPlanType("hybrid");
-        setPaymentModalOpen(true);
+        scrollToSection("pricing");
+        setTimeout(() => {
+          setPaymentPlanType("hybrid");
+          setPaymentModalOpen(true);
+        }, 300);
       }, 100);
       window.history.replaceState({}, document.title, window.location.pathname);
     }
