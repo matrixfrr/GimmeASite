@@ -9,14 +9,21 @@ export async function GET(request: Request) {
   return NextResponse.json({
     message: "Run the following SQL in Supabase Dashboard → SQL Editor:",
     sql: [
-      "-- 1. Drop the old plan_type constraint",
+      "-- 1. Convert plan_type to TEXT in case it is a Postgres enum",
+      "ALTER TABLE client_quotes ALTER COLUMN plan_type TYPE TEXT;",
+      "",
+      "-- 2. Drop any existing CHECK constraint on plan_type",
       "ALTER TABLE client_quotes DROP CONSTRAINT IF EXISTS client_quotes_plan_type_check;",
       "",
-      "-- 2. Rename old upfront-monthly rows (stored as one-time+notes) to bundle",
-      "UPDATE client_quotes SET plan_type = 'bundle' WHERE plan_type = 'one-time' AND notes LIKE '[monthly_cents:%';",
+      "-- 3. Migrate legacy bundle rows to hybrid",
+      "UPDATE client_quotes SET plan_type = \'hybrid\' WHERE plan_type = \'bundle\';",
+      "UPDATE client_quotes SET plan_type = \'hybrid\' WHERE plan_type = \'one-time\' AND notes LIKE \'[monthly_cents:%\';",
       "",
-      "-- 3. Add updated constraint",
-      "ALTER TABLE client_quotes ADD CONSTRAINT client_quotes_plan_type_check CHECK (plan_type IN ('one-time', 'monthly', 'annual', 'bundle'));",
+      "-- 4. Migrate legacy annual rows (plan_type=monthly + [annual] in notes)",
+      "UPDATE client_quotes SET plan_type = \'annual\', notes = TRIM(REPLACE(notes, \'[annual]\', \'\')) WHERE plan_type = \'monthly\' AND notes ILIKE \'%[annual]%\';",
+      "",
+      "-- 5. Add updated CHECK constraint",
+      "ALTER TABLE client_quotes ADD CONSTRAINT client_quotes_plan_type_check CHECK (plan_type IN (\'one-time\', \'monthly\', \'annual\', \'hybrid\'));",
     ].join("\n"),
   });
 }
