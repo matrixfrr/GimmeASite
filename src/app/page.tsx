@@ -47,7 +47,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What if I need revisions to my site?",
-    answer: "A different set of revisions are included in each plan. You can make your revision requests known by contacting us at hello@gimmeasite.com. Requesting extra revisions or full, large-scale redesigns may incur additional fees depending on the conditions of your selected plan.",
+    answer: "A different set of revisions are included in each plan. You can make your revision requests known by contacting support. Requesting extra revisions or full, large-scale redesigns may incur additional fees depending on the conditions of your selected plan.",
   },
   {
     question: "Where do I manage my subscription?",
@@ -2029,7 +2029,7 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
               </ul>
 
               <h4 className="text-foreground font-semibold mt-6">Intellectual Property</h4>
-              <p>Upon full payment, you will own the rights to your completed website design and content. We retain the right to display the work in our portfolio unless otherwise agreed.</p>
+              <p>GimmeASite retains all intellectual property rights to websites, designs, and code produced under our services. Upon receipt of full payment, clients are granted a limited, non-exclusive license to use and display the delivered website for its intended commercial purpose. Full transfer of ownership rights is not included as part of any standard service plan and remains the property of GimmeASite unless separately arranged in writing. We reserve the right to display delivered work in our portfolio unless a written opt-out is agreed upon.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Revisions and Support</h4>
               <p>Each project includes a reasonable number of revisions as specified in your plan, as well as a designated support period. Additional revisions and continued support outside of your plan may incur extra charges.</p>
