@@ -160,11 +160,8 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
           </div>
           <h3 className="text-2xl font-bold mb-1">Proceed to Checkout</h3>
           <p className="text-muted-foreground">
-            {plan.name}
+            {planType === "monthly" && billingCycle === "annual" ? "Annual" : plan.name}
           </p>
-          {planType === "monthly" && billingCycle === "annual" && (
-            <p className="text-xs text-green-400 mt-1">Annual billing — Save 15%</p>
-          )}
         </div>
 
         {/* Important Notice */}
