@@ -57,7 +57,6 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
         "Performance Optimization",
         "Free Draft Before Payment",
         "3 Rounds of Revisions",
-        "3 Months of Support",
       ],
     },
     monthly: {
@@ -241,24 +240,6 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
               >
                 Terms of Service
               </button>
-              {planType === "one-time" && (
-                <>
-                  {" "}
-                  and understand that this transaction is{" "}
-                  <span className="text-foreground font-semibold">
-                    non-refundable
-                  </span>
-                </>
-              )}
-              {planType === "monthly" && (
-                <>
-                  {" "}
-                  and understand that any future transactions from this plan, including the initial payment, are{" "}
-                  <span className="text-foreground font-semibold">
-                    non-refundable
-                  </span>
-                </>
-              )}
               .
             </span>
           </label>
@@ -268,8 +249,8 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
         <div className="text-xs text-muted-foreground mb-6 space-y-1">
           <p>
             {planType === "one-time"
-              ? "• Three (3) revisions are included (email support). Requesting extra revisions will incur additional fees."
-              : "• Unlimited revisions are included (email support). Requesting large-scale updates may incur additional fees."}
+              ? "• Three (3) revisions are included (email support). Requesting extra revisions or large-scale updates will incur additional fees."
+              : "• Unlimited revisions are included (email support)."}
           </p>
           <p>
             • By proceeding, you agree to our{" "}
