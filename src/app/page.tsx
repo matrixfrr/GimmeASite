@@ -1759,7 +1759,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <li><span className="text-primary font-medium">.shop</span> — Online stores</li>
                     <li><span className="text-primary font-medium">.io</span> — Tech startups &amp; SaaS</li>
                     <li><span className="text-primary font-medium">.co</span> — Modern alternative to .com</li>
-                  </div>
+                  </ul>
                   <p className="text-xs border-t border-border/50 pt-2">GimmeASite uses Instant Domain Search to check availability. Please note that the availability check is not 100% accurate — your chosen domain may need to be adjusted later in the process.</p>
                 </div>
               )}
@@ -1771,7 +1771,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   <ul className="space-y-1.5 text-xs list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">a.</span> We&apos;re redesigning your site and you want a brand new domain instead.</li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">b.</span> This is your first website and you don&apos;t own a domain yet.</li>
-                  </div>
+                  </ul>
                 </div>
               )}
               {showWhyPopup === "google" && (
