@@ -121,10 +121,10 @@ export async function POST(request: Request) {
     }
 
     console.log("Quote found:", {
-      id: quote.id,
-      name: quote.name,
-      priceCents: quote.price_cents,
-      planType: quote.plan_type,
+      id: resolvedQuote.id,
+      name: resolvedQuote.name,
+      priceCents: resolvedQuote.price_cents,
+      planType: resolvedQuote.plan_type,
     });
 
     // Get the origin for redirect URLs
@@ -143,7 +143,7 @@ export async function POST(request: Request) {
 
     // Bundle quotes: stored as plan_type="bundle", or legacy "one-time" with [monthly_cents:N] notes
     const isUpfrontMonthly = priceType === "bundle" ||
-      (priceType === "one-time" && /\[monthly_cents:\d+\]/.test(quote.notes || ""));
+      (priceType === "one-time" && /\[monthly_cents:\d+\]/.test(resolvedQuote.notes || ""));
 
     if (priceType === "annual") {
       console.log("Creating ANNUAL (subscription) checkout session...");
@@ -155,9 +155,9 @@ export async function POST(request: Request) {
               currency: "usd",
               product_data: {
                 name: "GimmeASite Annual Plan",
-                description: `Recurring yearly fee for ${quote.name}.`,
+                description: `Recurring yearly fee for ${resolvedQuote.name}.`,
               },
-              unit_amount: quote.price_cents,
+              unit_amount: resolvedQuote.price_cents,
               recurring: {
                 interval: "year",
               },
@@ -168,15 +168,15 @@ export async function POST(request: Request) {
         mode: "subscription",
         metadata: {
           plan: "annual",
-          customerName: customerName || quote.name,
-          quoteId: quote.id,
+          customerName: customerName || resolvedQuote.name,
+          quoteId: resolvedQuote.id,
         },
         subscription_data: {
-          description: `Recurring yearly fee for ${quote.name}. Billed yearly.`,
+          description: `Recurring yearly fee for ${resolvedQuote.name}. Billed yearly.`,
           metadata: {
             plan: "annual",
-            customerName: customerName || quote.name,
-            quoteId: quote.id,
+            customerName: customerName || resolvedQuote.name,
+            quoteId: resolvedQuote.id,
           },
         },
       });
@@ -190,9 +190,9 @@ export async function POST(request: Request) {
               currency: "usd",
               product_data: {
                 name: "GimmeASite Upfront Fee",
-                description: `Upfront fee for ${quote.name}.`,
+                description: `Upfront fee for ${resolvedQuote.name}.`,
               },
-              unit_amount: quote.price_cents,
+              unit_amount: resolvedQuote.price_cents,
             },
             quantity: 1,
           },
@@ -200,14 +200,14 @@ export async function POST(request: Request) {
         mode: "payment",
         metadata: {
           plan: "one-time",
-          customerName: customerName || quote.name,
-          quoteId: quote.id,
+          customerName: customerName || resolvedQuote.name,
+          quoteId: resolvedQuote.id,
         },
         payment_intent_data: {
           metadata: {
             plan: "one-time",
-            customerName: customerName || quote.name,
-            quoteId: quote.id,
+            customerName: customerName || resolvedQuote.name,
+            quoteId: resolvedQuote.id,
           },
         },
       });
@@ -221,9 +221,9 @@ export async function POST(request: Request) {
               currency: "usd",
               product_data: {
                 name: "GimmeASite Monthly Plan",
-                description: `Recurring monthly fee for ${quote.name}.`,
+                description: `Recurring monthly fee for ${resolvedQuote.name}.`,
               },
-              unit_amount: quote.price_cents,
+              unit_amount: resolvedQuote.price_cents,
               recurring: {
                 interval: "month",
               },
@@ -234,20 +234,20 @@ export async function POST(request: Request) {
         mode: "subscription",
         metadata: {
           plan: "monthly",
-          customerName: customerName || quote.name,
-          quoteId: quote.id,
+          customerName: customerName || resolvedQuote.name,
+          quoteId: resolvedQuote.id,
         },
         subscription_data: {
           metadata: {
             plan: "monthly",
-            customerName: customerName || quote.name,
-            quoteId: quote.id,
+            customerName: customerName || resolvedQuote.name,
+            quoteId: resolvedQuote.id,
           },
         },
       });
     } else if (isUpfrontMonthly) {
       console.log("Creating UPFRONT + MONTHLY checkout session...");
-      const monthlyMatch = quote.notes?.match(/\[monthly_cents:(\d+)\]/);
+      const monthlyMatch = resolvedQuote.notes?.match(/\[monthly_cents:(\d+)\]/);
       const monthlyCents = monthlyMatch ? parseInt(monthlyMatch[1]) : null;
 
       if (!monthlyCents) {
@@ -257,7 +257,7 @@ export async function POST(request: Request) {
         );
       }
 
-      const cleanDescription = (quote.notes || "").replace(/\[monthly_cents:\d+\]\s*/g, "").trim();
+      const cleanDescription = (resolvedQuote.notes || "").replace(/\[monthly_cents:\d+\]\s*/g, "").trim();
 
       // Use payment mode with two line items (setup fee + first month).
       // The recurring monthly subscription is created manually in Stripe after payment.
@@ -269,9 +269,9 @@ export async function POST(request: Request) {
               currency: "usd",
               product_data: {
                 name: "GimmeASite Upfront Fee",
-                description: `Upfront fee for ${quote.name}.`,
+                description: `Upfront fee for ${resolvedQuote.name}.`,
               },
-              unit_amount: quote.price_cents,
+              unit_amount: resolvedQuote.price_cents,
             },
             quantity: 1,
           },
@@ -280,7 +280,7 @@ export async function POST(request: Request) {
               currency: "usd",
               product_data: {
                 name: "GimmeASite Monthly Fee",
-                description: `Recurring monthly fee for ${quote.name}.`,
+                description: `Recurring monthly fee for ${resolvedQuote.name}.`,
               },
               unit_amount: monthlyCents,
             },
@@ -290,14 +290,14 @@ export async function POST(request: Request) {
         mode: "payment",
         metadata: {
           plan: "bundle",
-          customerName: customerName || quote.name,
-          quoteId: quote.id,
+          customerName: customerName || resolvedQuote.name,
+          quoteId: resolvedQuote.id,
         },
         payment_intent_data: {
           metadata: {
             plan: "bundle",
-            customerName: customerName || quote.name,
-            quoteId: quote.id,
+            customerName: customerName || resolvedQuote.name,
+            quoteId: resolvedQuote.id,
           },
         },
       });
@@ -355,13 +355,13 @@ export async function POST(request: Request) {
     console.log("URL:", checkoutUrl.substring(0, 80));
     console.log("Email:", customerEmail);
     console.log("Plan:", priceType);
-    console.log("Amount:", quote.price_cents, "cents");
+    console.log("Amount:", resolvedQuote.price_cents, "cents");
 
     return NextResponse.json({
       sessionId: session.id,
       url: checkoutUrl,
-      quotedPrice: quote.price_cents,
-      clientName: quote.name,
+      quotedPrice: resolvedQuote.price_cents,
+      clientName: resolvedQuote.name,
     });
   } catch (error) {
     console.error("=== Stripe checkout error ===");
