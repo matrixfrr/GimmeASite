@@ -530,7 +530,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "SSL + Security Integration",
         "Performance Optimization",
         "Free Draft Before Payment",
-        "3 Rounds of Revisions",
+        "3 Revisions",
       ],
       popular: false,
     },
@@ -538,10 +538,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       name: "Monthly",
       price: "Contact us",
       priceLabel: "for more information",
-      description: "Everything in Upfront, including:",
+      description: "Everything in __Upfront__, including:",
       features: [
         "Advanced Security",
-        "Unlimited Revisions",
+        "2 Revisions Per Month",
         "Priority Ongoing Support",
         "Analytics Dashboard",
       ],
@@ -635,22 +635,26 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               </div>
               {plan.description && (
                 <p className="text-muted-foreground mb-4 font-medium">
-                  {plan.name === "Monthly" && monthlyBilling === "annual" ? "Everything in Monthly, including:" : plan.description}
+{plan.name === "Monthly" && monthlyBilling === "annual"
+                    ? <>Everything in <strong>Monthly</strong>, including:</>
+                    : plan.description === "Everything in __Upfront__, including:"
+                    ? <>Everything in <strong>Upfront</strong>, including:</>
+                    : plan.description}
                 </p>
               )}
               <Separator className="mb-6" />
               {plan.features.length > 0 || plan.name === "Monthly" ? (
-                <ul className="space-y-3 mb-8">
+                <div className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features, "Subdomain Configuration", "Full Redesigns"]
+                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Priority Ongoing Support", "Analytics Dashboard"].includes(f)), "Subdomain Configuration", "Full Redesigns"]
                     : plan.features
-                  ).map((feature) => (
-                    <li key={feature} className="flex items-center gap-3">
+                  ).map((feature: string) => (
+                    <div key={feature} className="flex items-center gap-3">
                       <Check className="w-5 h-5 text-primary flex-shrink-0" />
                       <span>{feature}</span>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               ) : (
                 <div className="mb-8 rounded-xl border border-dashed border-primary/30 bg-primary/5 px-4 py-8 text-center">
                   <Zap className="w-7 h-7 text-primary mx-auto mb-3 animate-pulse" />
@@ -1757,7 +1761,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <li><span className="text-primary font-medium">.shop</span> — Online stores</li>
                     <li><span className="text-primary font-medium">.io</span> — Tech startups &amp; SaaS</li>
                     <li><span className="text-primary font-medium">.co</span> — Modern alternative to .com</li>
-                  </ul>
+                  </div>
                   <p className="text-xs border-t border-border/50 pt-2">GimmeASite uses Instant Domain Search to check availability. Please note that the availability check is not 100% accurate — your chosen domain may need to be adjusted later in the process.</p>
                 </div>
               )}
@@ -1769,7 +1773,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   <ul className="space-y-1.5 text-xs list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">a.</span> We&apos;re redesigning your site and you want a brand new domain instead.</li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">b.</span> This is your first website and you don&apos;t own a domain yet.</li>
-                  </ul>
+                  </div>
                 </div>
               )}
               {showWhyPopup === "google" && (
