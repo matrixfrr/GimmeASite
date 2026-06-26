@@ -430,29 +430,31 @@ export default function AdminPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        min="1"
-                        placeholder={formData.plan_type === "annual" ? "2030.00" : "1499.00"}
-                        value={formData.price}
-                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                        className="bg-background pl-7"
-                        required
-                      />
-                    </div>
-                    {formData.plan_type === "monthly" && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        This will be the recurring monthly charge
-                      </p>
-                    )}
-                    {formData.plan_type === "annual" && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        This will be the recurring annual charge.
-                      </p>
-                    )}
+                    <>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">$</span>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          min="1"
+                          placeholder={formData.plan_type === "annual" ? "2030.00" : "1499.00"}
+                          value={formData.price}
+                          onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                          className="bg-background pl-7"
+                          required
+                        />
+                      </div>
+                      {formData.plan_type === "monthly" && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          This will be the recurring monthly charge
+                        </p>
+                      )}
+                      {formData.plan_type === "annual" && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          This will be the recurring annual charge.
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
 
