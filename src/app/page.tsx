@@ -514,9 +514,10 @@ function AboutUsSection() {
 }
 
 // Pricing Section
-function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | "monthly") => void }) {
+function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | "monthly", billing?: "monthly" | "annual") => void }) {
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
+  const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
 
   const plans = [
     {
@@ -572,28 +573,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </p>
         </div>
 
-        {/* Creative disclaimer to request quote first - smaller version */}
-        <div className="max-w-xl mx-auto mb-10">
-          <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl text-center">
-            <p className="text-sm text-muted-foreground">
-              <span className="text-primary font-medium">Tip:</span> Request a{" "}
-              <button type="button" onClick={() => scrollToSection("contact")} className="text-primary font-semibold hover:underline">free personalized draft</button>
-              {" "}before choosing a plan!
-            </p>
-          </div>
-        </div>
-
-        {/* Upfront + Monthly combo callout */}
-        <div className="max-w-2xl mx-auto mb-10">
-          <div className="p-5 bg-primary/5 border border-primary/30 rounded-2xl text-center space-y-1">
-            <p className="text-sm font-semibold text-foreground">Did you know? You can combine plans.</p>
-            <p className="text-sm text-muted-foreground">
-              Clients who pay the <span className="text-primary font-medium">Upfront</span> fee unlock a <span className="text-primary font-medium">reduced monthly retainer</span> — get all the benefits of both plans at a lower ongoing cost.{" "}
-              <button type="button" onClick={() => scrollToSection("contact")} className="text-primary font-semibold hover:underline">Ask us about it.</button>
-            </p>
-          </div>
-        </div>
-
         <div className="grid md:grid-cols-3 gap-8">
           {plans.map((plan) => (
             <Card
@@ -609,8 +588,29 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   Most Popular
                 </Badge>
               )}
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="text-2xl font-bold">{plan.name}</h3>
+                {plan.name === "Monthly" && (
+                  <div className="flex items-center gap-1 ml-1">
+                    <button
+                      type="button"
+                      onClick={() => setMonthlyBilling("monthly")}
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${monthlyBilling === "monthly" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                    >
+                      Monthly
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMonthlyBilling("annual")}
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${monthlyBilling === "annual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                    >
+                      Annual
+                    </button>
+                    {monthlyBilling === "annual" && (
+                      <span className="text-xs text-green-400 font-medium">Save 15%</span>
+                    )}
+                  </div>
+                )}
                 {plan.name === "Equity / CMS" && (
                   <button
                     type="button"
@@ -622,7 +622,13 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 )}
               </div>
               <div className="mb-4">
-                <span className="text-3xl font-extrabold">{plan.price}</span>
+                <button
+                  type="button"
+                  className="text-3xl font-extrabold text-primary hover:underline"
+                  onClick={() => scrollToSection("contact")}
+                >
+                  {plan.price}
+                </button>
                 <span className="text-muted-foreground"> {plan.priceLabel}</span>
               </div>
               {plan.description && (
@@ -657,7 +663,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   if (plan.name === "Upfront") {
                     onOpenPayment("one-time");
                   } else if (plan.name === "Monthly") {
-                    onOpenPayment("monthly");
+                    onOpenPayment("monthly", monthlyBilling);
                   } else if (plan.name === "Equity / CMS") {
                     setShowComingSoon(true);
                   }
@@ -693,7 +699,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   The Equity / CMS plan is currently in development. We're working hard to bring you an exciting new way to partner with us!
                 </p>
                 <p className="text-sm text-muted-foreground mb-6">
-                  In the meantime, check out our <span className="text-primary font-semibold">Upfront</span> or <span className="text-primary font-semibold">Monthly</span> plans.
+                  In the meantime, check out our <span className="text-primary font-semibold">Upfront</span>, <span className="text-primary font-semibold">Monthly</span>, or <span className="text-primary font-semibold">Annual</span> plans.
                 </p>
                 <Button
                   onClick={() => setShowComingSoon(false)}
@@ -1436,6 +1442,15 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                           onClick={() => handlePlanSelect("Monthly")}
                         >
                           Monthly
+                        </button>
+                        <button
+                          type="button"
+                          className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors ${
+                            formData.paymentPlan === "Annual" ? "bg-primary/10 text-primary" : ""
+                          }`}
+                          onClick={() => handlePlanSelect("Annual")}
+                        >
+                          Annual
                         </button>
                         <button
                           type="button"
@@ -2241,6 +2256,7 @@ export default function Home() {
   const [showThanksPopup, setShowThanksPopup] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [paymentPlanType, setPaymentPlanType] = useState<"one-time" | "monthly">("one-time");
+  const [paymentBillingCycle, setPaymentBillingCycle] = useState<"monthly" | "annual">("monthly");
   const [paymentStatus, setPaymentStatus] = useState<"success" | "cancelled" | null>(null);
 
   // Handle URL parameters for payment status and modals
@@ -2324,8 +2340,9 @@ export default function Home() {
     window.dispatchEvent(new Event('openPrivacyPolicy'));
   };
 
-  const handleOpenPayment = (plan: "one-time" | "monthly") => {
+  const handleOpenPayment = (plan: "one-time" | "monthly", billing: "monthly" | "annual" = "monthly") => {
     setPaymentPlanType(plan);
+    setPaymentBillingCycle(billing);
     setPaymentModalOpen(true);
   };
 
@@ -2350,6 +2367,7 @@ export default function Home() {
         isOpen={paymentModalOpen}
         onClose={handleClosePayment}
         planType={paymentPlanType}
+        billingCycle={paymentBillingCycle}
       />
       <PaymentStatusToast
         status={paymentStatus}
