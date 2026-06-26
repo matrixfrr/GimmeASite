@@ -635,10 +635,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               </div>
               {plan.description && (
                 <p className="text-muted-foreground mb-4 font-medium">
-{plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? <>Everything in <strong>Monthly</strong>, including:</>
-                    : plan.description === "Everything in __Upfront__, including:"
-                    ? <>Everything in <strong>Upfront</strong>, including:</>
+                  {plan.name === "Monthly"
+                    ? <span>Everything in <strong>{monthlyBilling === "annual" ? "Monthly" : "Upfront"}</strong>, including:</span>
                     : plan.description}
                 </p>
               )}
