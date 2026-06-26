@@ -43,7 +43,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What's included in the plans?",
-    answer: "All plans include custom design, hosting, maintenance / revisions, the support period specified in each plan, etc.",
+    answer: "All plans include custom design, hosting, revisions, specified support periods, etc.",
   },
   {
     question: "What if I need revisions to my site?",
@@ -373,16 +373,15 @@ function ServicesSection() {
       icon: Zap,
       title: "Maintenance",
       description: "Keep your website secure, updated, and performing at its best 24/7.",
-      features: ["Security Updates", "Performance", "Backups"],
+      features: ["Security Updates", "Revisions", "Backups"],
     },
   ];
 
-  const [highlightedService, setHighlightedService] = useState<string | null>(null);
+  const [serviceAnimKeys, setServiceAnimKeys] = useState<Record<string, number>>({});
   useEffect(() => {
     const handler = (e: Event) => {
       const svc = (e as CustomEvent).detail as string;
-      setHighlightedService(svc);
-      setTimeout(() => setHighlightedService(null), 10000);
+      setServiceAnimKeys(prev => ({ ...prev, [svc]: (prev[svc] || 0) + 1 }));
     };
     window.addEventListener("highlightService", handler);
     return () => window.removeEventListener("highlightService", handler);
@@ -390,7 +389,7 @@ function ServicesSection() {
 
   return (
     <>
-      <style>{`@keyframes servicePop{0%{transform:scale(1)}7%{transform:scale(1.04)}16%{transform:scale(1)}26%{transform:scale(1.02)}36%{transform:scale(1)}100%{transform:scale(1)}} .service-pop{animation:servicePop 10s ease-out forwards}`}</style>
+      <style>{`@keyframes servicePop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.1);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.96);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.06);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .service-pop{animation:servicePop 15s ease-out forwards}`}</style>
       <section id="services" className="py-20 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -408,8 +407,8 @@ function ServicesSection() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service) => (
             <Card
-              key={service.title}
-              className={`p-8 bg-card/50 hover-lift card-shine group cursor-pointer border transition-all ${highlightedService === service.title ? "service-pop border-primary/40 shadow-primary/10" : "border-border/50"}`}
+              key={`${service.title}-${serviceAnimKeys[service.title] || 0}`}
+              className={`p-8 bg-card/50 border-border/50 hover-lift card-shine group cursor-pointer ${serviceAnimKeys[service.title] ? "service-pop" : ""}`}
             >
               <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
                 <service.icon className="w-7 h-7 text-primary" />
@@ -531,14 +530,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
   const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
-  const [descHighlight, setDescHighlight] = useState(false);
-  const [_descHLInit, _setDescHLInit] = useState(false);
+  const [descAnimKey, setDescAnimKey] = useState(-1);
   useEffect(() => {
-    if (!_descHLInit) { _setDescHLInit(true); return; }
-    setDescHighlight(true);
-    const _t = setTimeout(() => setDescHighlight(false), 5000);
-    return () => clearTimeout(_t);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    setDescAnimKey(k => k + 1);
   }, [monthlyBilling]);
 
   const plans = [
@@ -582,7 +576,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <style>{`@keyframes descPop{0%{transform:scale(1)}8%{transform:scale(1.06)}16%{transform:scale(0.98)}24%{transform:scale(1.02)}32%{transform:scale(1)}100%{transform:scale(1)}} .desc-pop{animation:descPop 5s ease-out forwards}`}</style>
+      <style>{`@keyframes descPop{0%{transform:scale(1)}6%{transform:scale(1.13)}14%{transform:scale(0.95)}22%{transform:scale(1.06)}30%{transform:scale(0.99)}38%{transform:scale(1)}100%{transform:scale(1)}} .desc-pop{animation:descPop 8s ease-out forwards}`}</style>
       <section id="pricing" className="py-32 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -603,7 +597,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               key={plan.name}
               className={`p-8 relative group ${
                 plan.popular
-                  ? "bg-primary/5 border-primary/30 animate-attention-bounce"
+                  ? "bg-primary/5 border-primary/30"
                   : "bg-card/50 border-border/50"
               } hover-lift`}
             >
@@ -628,7 +622,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                       onClick={() => setMonthlyBilling("annual")}
                       className={`relative z-10 flex-1 py-2 text-center text-2xl font-bold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
-                      Annual <span className={`text-xs font-normal ${monthlyBilling === "annual" ? "text-green-700" : "text-green-500"}`}>Save 15%</span>
+                      Annual <span className="text-xs font-normal text-green-500">Save 15%</span>
                     </button>
                   </div>
                 </div>
@@ -657,9 +651,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <span className="text-muted-foreground"> {plan.priceLabel}</span>
               </div>
               {plan.description && (
-                <p className={`mb-4 font-medium text-muted-foreground ${plan.name === "Monthly" && descHighlight ? "desc-pop" : ""}`}>
+                <p key={descAnimKey} className={`mb-4 font-medium text-muted-foreground ${plan.name === "Monthly" && descAnimKey > 0 ? "desc-pop" : ""}`}>
                   {plan.name === "Monthly"
-                    ? <span>Everything in <strong>{monthlyBilling === "annual" ? "Monthly" : "Upfront"}</strong>, including:</span>
+                    ? <span>Everything in <strong>{monthlyBilling === "annual" ? "Monthly" : "Upfront"}</strong>, including:<span title="Conditions may apply." className="text-red-500 font-bold text-sm cursor-help ml-0.5 align-middle">*</span></span>
                     : plan.description}
                 </p>
               )}
