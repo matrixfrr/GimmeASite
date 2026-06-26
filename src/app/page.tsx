@@ -530,7 +530,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "Performance Optimization",
         "Free Draft Before Payment",
         "3 Rounds of Revisions",
-        "3 Months of Support",
       ],
       popular: false,
     },
@@ -580,6 +579,17 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <span className="text-primary font-medium">Tip:</span> Request a{" "}
               <button type="button" onClick={() => scrollToSection("contact")} className="text-primary font-semibold hover:underline">free personalized draft</button>
               {" "}before choosing a plan!
+            </p>
+          </div>
+        </div>
+
+        {/* Upfront + Monthly combo callout */}
+        <div className="max-w-2xl mx-auto mb-10">
+          <div className="p-5 bg-primary/5 border border-primary/30 rounded-2xl text-center space-y-1">
+            <p className="text-sm font-semibold text-foreground">Did you know? You can combine plans.</p>
+            <p className="text-sm text-muted-foreground">
+              Clients who pay the <span className="text-primary font-medium">Upfront</span> fee unlock a <span className="text-primary font-medium">reduced monthly retainer</span> — get all the benefits of both plans at a lower ongoing cost.{" "}
+              <button type="button" onClick={() => scrollToSection("contact")} className="text-primary font-semibold hover:underline">Ask us about it.</button>
             </p>
           </div>
         </div>
