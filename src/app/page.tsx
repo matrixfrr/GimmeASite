@@ -255,11 +255,14 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
             className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                <UserCircle className="w-6 h-6 text-primary" />
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <UserCircle className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-bold">Account</h3>
               </div>
-              <h3 className="text-lg font-bold">Account</h3>
+              <button type="button" onClick={() => setShowAccountPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors mt-0.5"><X className="w-4 h-4" /></button>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed mb-2">
               You will be taken to your billing portal, where you can manage your subscription, update your payment method, and view invoices.
@@ -374,8 +377,21 @@ function ServicesSection() {
     },
   ];
 
+  const [highlightedService, setHighlightedService] = useState<string | null>(null);
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const svc = (e as CustomEvent).detail as string;
+      setHighlightedService(svc);
+      setTimeout(() => setHighlightedService(null), 10000);
+    };
+    window.addEventListener("highlightService", handler);
+    return () => window.removeEventListener("highlightService", handler);
+  }, []);
+
   return (
-    <section id="services" className="py-20 relative noise-bg">
+    <>
+      <style>{`@keyframes servicePop{0%{transform:scale(1)}7%{transform:scale(1.04)}16%{transform:scale(1)}26%{transform:scale(1.02)}36%{transform:scale(1)}100%{transform:scale(1)}} .service-pop{animation:servicePop 10s ease-out forwards}`}</style>
+      <section id="services" className="py-20 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Our Services</Badge>
@@ -393,7 +409,7 @@ function ServicesSection() {
           {services.map((service) => (
             <Card
               key={service.title}
-              className="p-8 bg-card/50 border-border/50 hover-lift card-shine group cursor-pointer"
+              className={`p-8 bg-card/50 hover-lift card-shine group cursor-pointer border transition-all ${highlightedService === service.title ? "service-pop border-primary/40 shadow-primary/10" : "border-border/50"}`}
             >
               <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/20 transition-colors">
                 <service.icon className="w-7 h-7 text-primary" />
@@ -412,6 +428,7 @@ function ServicesSection() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 
@@ -519,7 +536,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   useEffect(() => {
     if (!_descHLInit) { _setDescHLInit(true); return; }
     setDescHighlight(true);
-    const _t = setTimeout(() => setDescHighlight(false), 700);
+    const _t = setTimeout(() => setDescHighlight(false), 5000);
     return () => clearTimeout(_t);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [monthlyBilling]);
@@ -564,7 +581,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   ];
 
   return (
-    <section id="pricing" className="py-32 relative noise-bg">
+    <>
+      <style>{`@keyframes descPop{0%{transform:scale(1)}8%{transform:scale(1.06)}16%{transform:scale(0.98)}24%{transform:scale(1.02)}32%{transform:scale(1)}100%{transform:scale(1)}} .desc-pop{animation:descPop 5s ease-out forwards}`}</style>
+      <section id="pricing" className="py-32 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
@@ -596,20 +615,20 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.name === "Monthly" ? (
                 <div className="mb-3">
                   <div className="relative flex rounded-full border border-border/50 bg-muted/30 p-1">
-                    <div className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-primary transition-all duration-300 ease-in-out ${monthlyBilling === "annual" ? "translate-x-[calc(100%+4px)]" : "translate-x-0"}`} />
+                    <div className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-foreground transition-all duration-300 ease-in-out ${monthlyBilling === "annual" ? "translate-x-[calc(100%+4px)]" : "translate-x-0"}`} />
                     <button
                       type="button"
                       onClick={() => setMonthlyBilling("monthly")}
-                      className={`relative z-10 flex-1 py-2 text-center text-xl font-bold rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`relative z-10 flex-1 py-2 text-center text-2xl font-bold rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       Monthly
                     </button>
                     <button
                       type="button"
                       onClick={() => setMonthlyBilling("annual")}
-                      className={`relative z-10 flex-1 py-2 text-center text-xl font-bold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`relative z-10 flex-1 py-2 text-center text-2xl font-bold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
-                      Annual <span className={`text-xs font-normal ${monthlyBilling === "annual" ? "text-green-300" : "text-green-500"}`}>Save 15%</span>
+                      Annual <span className={`text-xs font-normal ${monthlyBilling === "annual" ? "text-green-700" : "text-green-500"}`}>Save 15%</span>
                     </button>
                   </div>
                 </div>
@@ -638,7 +657,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <span className="text-muted-foreground"> {plan.priceLabel}</span>
               </div>
               {plan.description && (
-                <p className={`mb-4 font-medium transition-colors duration-500 ${plan.name === "Monthly" && descHighlight ? "text-primary" : "text-muted-foreground"}`}>
+                <p className={`mb-4 font-medium text-muted-foreground ${plan.name === "Monthly" && descHighlight ? "desc-pop" : ""}`}>
                   {plan.name === "Monthly"
                     ? <span>Everything in <strong>{monthlyBilling === "annual" ? "Monthly" : "Upfront"}</strong>, including:</span>
                     : plan.description}
@@ -743,7 +762,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold mb-4">What are these plans?</h3>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-bold">What is this plan?</h3>
+              <button type="button" onClick={() => setShowEquityCmsPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
+            </div>
             <div className="mb-3">
               <span className="font-semibold text-primary block mb-1">Equity Plan</span>
               <span className="text-sm text-muted-foreground block">
@@ -761,6 +783,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         </div>
       )}
     </section>
+    </>
   );
 }
 
@@ -1748,9 +1771,12 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
             className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-lg font-bold mb-3">
-              {showWhyPopup === "domain" ? "What is a domain?" : showWhyPopup === "phone" ? "Work, Home, or Mobile?" : showWhyPopup === "plan" ? "Unsure?" : showWhyPopup === "google" ? "Where do I find this link?" : showWhyPopup === "ownsDomain" ? "What is this for?" : "Why?"}
-            </h3>
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-bold pr-2">
+                {showWhyPopup === "domain" ? "What is a domain?" : showWhyPopup === "phone" ? "Work, Home, or Mobile?" : showWhyPopup === "plan" ? "Unsure?" : showWhyPopup === "google" ? "Where do I find this link?" : showWhyPopup === "ownsDomain" ? "What is this for?" : "Why?"}
+              </h3>
+              <button type="button" onClick={() => setShowWhyPopup(null)} className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 mt-0.5"><X className="w-4 h-4" /></button>
+            </div>
             <div className="text-sm text-muted-foreground leading-relaxed">
               {showWhyPopup === "company" && (
                 <p>Providing your company name helps our team understand your business better and create a more tailored website design that aligns with your brand and industry.</p>
@@ -1807,13 +1833,15 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 </ol>
               )}
             </div>
-            <button
-              type="button"
-              onClick={() => setShowWhyPopup(null)}
-              className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
-            >
-              Got it
-            </button>
+            {showWhyPopup !== "plan" && (
+              <button
+                type="button"
+                onClick={() => setShowWhyPopup(null)}
+                className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+              >
+                Got it
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -1860,9 +1888,9 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
             <div>
               <h4 className="font-semibold mb-4">Services</h4>
               <ul className="space-y-3 text-muted-foreground">
-                <li><button type="button" onClick={() => scrollToSection("services")} className="hover:text-foreground transition-colors">Web Design</button></li>
-                <li><button type="button" onClick={() => scrollToSection("services")} className="hover:text-foreground transition-colors">Hosting</button></li>
-                <li><button type="button" onClick={() => scrollToSection("services")} className="hover:text-foreground transition-colors">Maintenance</button></li>
+                <li><button type="button" onClick={() => { scrollToSection("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: "Website Design" })), 600); }} className="hover:text-foreground transition-colors">Web Design</button></li>
+                <li><button type="button" onClick={() => { scrollToSection("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: "Hosting" })), 600); }} className="hover:text-foreground transition-colors">Hosting</button></li>
+                <li><button type="button" onClick={() => { scrollToSection("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: "Maintenance" })), 600); }} className="hover:text-foreground transition-colors">Maintenance</button></li>
               </ul>
             </div>
 
