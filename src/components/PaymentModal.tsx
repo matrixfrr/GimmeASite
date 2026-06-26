@@ -7,7 +7,6 @@ import { Separator } from "@/components/ui/separator";
 import {
   X,
   CreditCard,
-  Check,
   Loader2,
   AlertTriangle,
   ExternalLink,
@@ -43,54 +42,6 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
       setEmailError("");
     }
   };
-
-  const upfrontFeatures = [
-    "Custom Design",
-    "SSL + Security Integration",
-    "Performance Optimization",
-    "Free Draft Before Payment",
-    "3 Revisions",
-  ];
-
-  const monthlyAdditionalFeatures = [
-    "Priority Updates & Fresh Improvements",
-    "Worry-Free Ongoing Maintenance",
-    "Analytics Dashboard",
-    "Priority Ongoing Support",
-    "Advanced Security",
-    "2 Revisions Per Month",
-  ];
-
-  const annualExcluded = new Set(["Analytics Dashboard", "Priority Ongoing Support", "Advanced Security"]);
-  const annualAdditionalFeatures = [
-    ...monthlyAdditionalFeatures.filter(f => !annualExcluded.has(f)),
-    "Subdomain Configuration",
-    "Full Redesigns",
-  ];
-
-  let featuresHeader: React.ReactNode = null;
-  let displayFeatures: string[] = [];
-
-  if (planType === "one-time") {
-    displayFeatures = upfrontFeatures;
-  } else if (isAnnual) {
-    featuresHeader = <>Everything in <strong>Monthly</strong>, including:</>;
-    displayFeatures = annualAdditionalFeatures;
-  } else if (planType === "monthly") {
-    featuresHeader = <>Everything in <strong>Upfront</strong>, including:</>;
-    displayFeatures = monthlyAdditionalFeatures;
-  } else if (planType === "bundle") {
-    featuresHeader = <>Everything in <strong>Upfront</strong> and <strong>Monthly</strong>, including:</>;
-    displayFeatures = [
-      "Priority Updates & Fresh Improvements",
-      "Worry-Free Ongoing Maintenance",
-      "Analytics Dashboard",
-      "Priority Ongoing Support",
-      "Advanced Security",
-      "Subdomain Configuration",
-      "2 Revisions Per Month",
-    ];
-  }
 
   const planName = isAnnual ? "Annual" : planType === "one-time" ? "Upfront" : planType === "bundle" ? "Bundle" : "Monthly";
 
@@ -189,28 +140,10 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
 
         <Separator className="mb-6" />
 
-        {/* Features */}
-        <div className="mb-6 space-y-2">
-          {featuresHeader && (
-            <p className="text-sm font-semibold mb-3">{featuresHeader}</p>
-          )}
-          {displayFeatures.map((feature, i) => (
-            <div key={i} className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4 text-primary flex-shrink-0" />
-              <span>{feature}</span>
-            </div>
-          ))}
-        </div>
-
-        <Separator className="mb-6" />
-
         {/* Email Input */}
         <div className="space-y-4 mb-6">
           <div>
-            <label
-              htmlFor="payment-email"
-              className="block text-sm font-medium mb-2"
-            >
+            <label htmlFor="payment-email" className="block text-sm font-medium mb-2">
               Email Address <span className="text-red-500">*</span>
             </label>
             <Input
@@ -227,9 +160,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
               className={`bg-background ${emailError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
               required
             />
-            {emailError && (
-              <p className="text-red-500 text-sm mt-1">{emailError}</p>
-            )}
+            {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
             <p className="text-xs text-muted-foreground mt-1">
               Use the same email address from your contact form submission.
             </p>
@@ -242,33 +173,18 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
             <input
               type="checkbox"
               checked={agreedToTerms}
-              onChange={(e) => {
-                setAgreedToTerms(e.target.checked);
-                setError("");
-              }}
+              onChange={(e) => { setAgreedToTerms(e.target.checked); setError(""); }}
               className="mt-1 w-4 h-4 rounded border-border accent-primary"
             />
             <span className="text-sm text-muted-foreground">
               I agree to the{" "}
-              <button
-                type="button"
-                className="text-primary hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.dispatchEvent(new Event("openTermsOfService"));
-                }}
-              >
+              <button type="button" className="text-primary hover:underline"
+                onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openTermsOfService")); }}>
                 Terms of Service
               </button>
               {" "}and{" "}
-              <button
-                type="button"
-                className="text-primary hover:underline"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.dispatchEvent(new Event("openPrivacyPolicy"));
-                }}
-              >
+              <button type="button" className="text-primary hover:underline"
+                onClick={(e) => { e.preventDefault(); window.dispatchEvent(new Event("openPrivacyPolicy")); }}>
                 Privacy Policy
               </button>
               .
@@ -280,10 +196,8 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
         <div className="text-xs text-muted-foreground mb-6 space-y-1">
           <p>
             {planType === "one-time"
-              ? "3 revisions are included (email support). Requesting extra revisions or large-scale updates may incur additional fees."
-              : isAnnual || planType === "bundle"
-              ? "Revisions are included (email support). Large-scale updates may incur additional fees."
-              : "2 revisions per month are included (email support)."}
+              ? "Three (3) revisions are included (email support). Requesting extra revisions or large-scale updates may incur additional fees."
+              : "Unlimited revisions are included (email support)."}
           </p>
         </div>
 
@@ -333,10 +247,8 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
           </div>
           <p className="text-xs text-muted-foreground mt-2">
             Not working?{" "}
-            <a
-              href="mailto:hello@gimmeasite.com"
-              className="text-orange-500 underline hover:text-orange-400 transition-colors"
-            >
+            <a href="mailto:hello@gimmeasite.com"
+              className="text-orange-500 underline hover:text-orange-400 transition-colors">
               Contact us
             </a>{" "}
             and we'll send you a secure payment link.
