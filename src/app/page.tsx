@@ -543,6 +543,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "Advanced Security",
         "Unlimited Revisions",
         "Priority Ongoing Support",
+        "Analytics Dashboard",
       ],
       popular: true,
     },
@@ -572,7 +573,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-8 items-start">
           {plans.map((plan) => (
             <Card
               key={plan.name}
@@ -597,9 +598,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                       <button
                         type="button"
                         onClick={() => setMonthlyBilling("annual")}
-                        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                       >
-                        Annual <span className="text-green-400 font-medium">Save 15%</span>
+                        Annual <span className="text-xs text-green-400">Save 15%</span>
                       </button>
                     ) : (
                       <button
@@ -633,7 +634,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <span className="text-muted-foreground"> {plan.priceLabel}</span>
               </div>
               {plan.description && (
-                <p className="text-muted-foreground mb-4 font-medium">{plan.description}</p>
+                <p className="text-muted-foreground mb-4 font-medium">
+                  {plan.name === "Monthly" && monthlyBilling === "annual" ? "Everything in Monthly, including:" : plan.description}
+                </p>
               )}
               <Separator className="mb-6" />
               {plan.features.length > 0 || plan.name === "Monthly" ? (
