@@ -121,7 +121,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
       const response = await fetch("/api/quotes/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.toLowerCase(), planType }),
+        body: JSON.stringify({ email: email.toLowerCase(), planType: billingCycle === "annual" ? "annual" : planType }),
       });
 
       const data = await response.json();
