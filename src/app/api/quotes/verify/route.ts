@@ -56,14 +56,13 @@ export async function POST(request: Request) {
 
     // Quote found but plan type doesn't match
     // Upfront + Monthly is stored as plan_type="one-time" with [monthly_cents:N] in notes
-    const isUpfrontMonthly = anyQuote.plan_type === "one-time" && anyQuote.notes?.includes("[monthly_cents:");
-    const effectivePlanType = isUpfrontMonthly ? "upfront-monthly" : anyQuote.plan_type;
-    // "one-time" (Upfront modal) is also valid for Upfront+Monthly customers
-    const planMatches = !planType ||
-      effectivePlanType === planType ||
-      (effectivePlanType === "upfront-monthly" && planType === "one-time");
+    // Bundle is stored as plan_type="bundle" (migrated from "one-time" + [monthly_cents] notes)
+    const isBundle = anyQuote.plan_type === "bundle" ||
+      (anyQuote.plan_type === "one-time" && !!anyQuote.notes?.includes("[monthly_cents:"));
+    const effectivePlanType = isBundle ? "bundle" : anyQuote.plan_type;
+    const planMatches = !planType || effectivePlanType === planType;
     if (!planMatches) {
-      const expectedPlan = effectivePlanType === "monthly" ? "Monthly Plan" : effectivePlanType === "upfront-monthly" ? "Upfront + Monthly" : effectivePlanType === "annual" ? "Annual Plan" : "Upfront Fee";
+      const expectedPlan = effectivePlanType === "monthly" ? "Monthly Plan" : effectivePlanType === "bundle" ? "Bundle" : effectivePlanType === "annual" ? "Annual Plan" : "Upfront Fee";
       return NextResponse.json(
         {
           found: false,
