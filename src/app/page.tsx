@@ -514,6 +514,14 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
   const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
+  const [descHighlight, setDescHighlight] = useState(false);
+  const _descHLFirst = useRef(true);
+  useEffect(() => {
+    if (_descHLFirst.current) { _descHLFirst.current = false; return; }
+    setDescHighlight(true);
+    const _t = setTimeout(() => setDescHighlight(false), 700);
+    return () => clearTimeout(_t);
+  }, [monthlyBilling]);
 
   const plans = [
     {
@@ -526,6 +534,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "SSL + Security Integration",
         "Performance Optimization",
         "3 Total Revisions",
+        "90-Day Support",
       ],
       popular: false,
     },
@@ -583,41 +592,40 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   Most Popular
                 </Badge>
               )}
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <h3 className="text-2xl font-bold">
-                  {plan.name === "Monthly" ? (monthlyBilling === "annual" ? "Annual" : "Monthly") : plan.name}
-                </h3>
-                {plan.name === "Monthly" && (
-                  <div className="flex items-center gap-1.5 ml-1">
-                    {monthlyBilling === "monthly" ? (
-                      <button
-                        type="button"
-                        onClick={() => setMonthlyBilling("annual")}
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        Annual <span className="text-xs text-green-400">Save 15%</span>
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setMonthlyBilling("monthly")}
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        Monthly
-                      </button>
-                    )}
+              {plan.name === "Monthly" ? (
+                <div className="mb-3">
+                  <div className="relative flex rounded-full border border-border/50 bg-muted/30 p-1">
+                    <div className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-primary transition-all duration-300 ease-in-out ${monthlyBilling === "annual" ? "translate-x-[calc(100%+4px)]" : "translate-x-0"}`} />
+                    <button
+                      type="button"
+                      onClick={() => setMonthlyBilling("monthly")}
+                      className={`relative z-10 flex-1 py-2 text-center text-xl font-bold rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                    >
+                      Monthly
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMonthlyBilling("annual")}
+                      className={`relative z-10 flex-1 py-2 text-center text-xl font-bold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                    >
+                      Annual <span className={`text-xs font-normal ${monthlyBilling === "annual" ? "text-green-300" : "text-green-500"}`}>Save 15%</span>
+                    </button>
                   </div>
-                )}
-                {plan.name === "Equity" && (
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                    onClick={() => setShowEquityCmsPopup(true)}
-                  >
-                    ?
-                  </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <h3 className="text-2xl font-bold">{plan.name}</h3>
+                  {plan.name === "Equity" && (
+                    <button
+                      type="button"
+                      className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                      onClick={() => setShowEquityCmsPopup(true)}
+                    >
+                      ?
+                    </button>
+                  )}
+                </div>
+              )}
               <div className="mb-4">
                 <button
                   type="button"
@@ -629,7 +637,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <span className="text-muted-foreground"> {plan.priceLabel}</span>
               </div>
               {plan.description && (
-                <p className="text-muted-foreground mb-4 font-medium">
+                <p className={`mb-4 font-medium transition-colors duration-500 ${plan.name === "Monthly" && descHighlight ? "text-primary" : "text-muted-foreground"}`}>
                   {plan.name === "Monthly"
                     ? <span>Everything in <strong>{monthlyBilling === "annual" ? "Monthly" : "Upfront"}</strong>, including:</span>
                     : plan.description}
