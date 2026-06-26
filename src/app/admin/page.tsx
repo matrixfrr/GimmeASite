@@ -104,7 +104,16 @@ export default function AdminPage() {
       let price_cents: number;
       let notes: string;
 
-      if (formData.plan_type === "upfront-monthly") {
+      if (formData.plan_type === "annual") {
+        plan_type = "monthly";
+        price_cents = Math.round(parseFloat(formData.price) * 100);
+        if (price_cents < 2) {
+          setError("Price must be at least $0.02.");
+          setLoading(false);
+          return;
+        }
+        notes = `[annual]${formData.notes ? ` ${formData.notes}` : ""}`;
+      } else if (formData.plan_type === "upfront-monthly") {
         plan_type = "one-time";
         price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
         const monthlyCents = Math.round(parseFloat(formData.monthlyPrice) * 100);
@@ -203,8 +212,10 @@ export default function AdminPage() {
     return match ? parseInt(match[1]) : null;
   };
 
+  const isAnnualQuote = (notes?: string): boolean => !!(notes?.includes("[annual]"));
+
   const cleanNotes = (notes?: string) =>
-    notes?.replace(/\[monthly_cents:\d+\]\s*/g, "").trim() || "";
+    notes?.replace(/\[monthly_cents:\d+\]\s*/g, "").replace(/\[annual\]\s*/g, "").trim() || "";
 
   if (!isAuthenticated) {
     return (
@@ -431,17 +442,17 @@ export default function AdminPage() {
                         className="bg-background pl-7"
                         required
                       />
-                      {formData.plan_type === "monthly" && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          This will be the recurring monthly charge
-                        </p>
-                      )}
-                      {formData.plan_type === "annual" && (
-                        <p className="text-xs text-muted-foreground mt-1">
-                          This will be the yearly charge
-                        </p>
-                      )}
                     </div>
+                    {formData.plan_type === "monthly" && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        This will be the recurring monthly charge
+                      </p>
+                    )}
+                    {formData.plan_type === "annual" && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        This will be the recurring annual charge.
+                      </p>
+                    )}
                   )}
                 </div>
 
@@ -490,6 +501,7 @@ export default function AdminPage() {
                 <div className="space-y-3">
                   {unpaidQuotes.map((quote) => {
                     const monthlyCents = getMonthlyFromNotes(quote.notes);
+                    const isAnnual = isAnnualQuote(quote.notes);
                     const displayNotes = cleanNotes(quote.notes);
                     return (
                       <div
@@ -501,13 +513,15 @@ export default function AdminPage() {
                             <div className="flex items-center gap-2 mb-1">
                               <h3 className="font-semibold truncate">{quote.name}</h3>
                               <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                quote.plan_type === "monthly"
+                                isAnnual
+                                  ? "bg-cyan-500/10 text-cyan-400"
+                                  : quote.plan_type === "monthly"
                                   ? "bg-blue-500/10 text-blue-500"
                                   : monthlyCents
                                   ? "bg-yellow-500/10 text-yellow-500"
                                   : "bg-purple-500/10 text-purple-500"
                               }`}>
-                                {quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Upfront + Monthly" : "Upfront"}
+                                {isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Upfront + Monthly" : "Upfront"}
                               </span>
                             </div>
                             <p className="text-sm text-muted-foreground truncate">{quote.email}</p>
@@ -529,9 +543,11 @@ export default function AdminPage() {
                             ) : (
                               <div>
                                 <p className="text-xl font-bold text-primary">{formatPrice(quote.price_cents)}</p>
-                                {quote.plan_type === "monthly" && (
-                                  <p className="text-xs text-muted-foreground">/month</p>
-                                )}
+                                {isAnnual
+                                  ? <p className="text-xs text-muted-foreground">/year</p>
+                                  : quote.plan_type === "monthly"
+                                  ? <p className="text-xs text-muted-foreground">/month</p>
+                                  : null}
                               </div>
                             )}
                             <Button
