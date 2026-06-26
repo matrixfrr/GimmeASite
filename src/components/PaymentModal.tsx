@@ -26,8 +26,8 @@ type PlanKey = "upfront" | "monthly" | "annual" | "hybrid";
 const PLANS: { key: PlanKey; label: string }[] = [
   { key: "upfront", label: "Upfront" },
   { key: "monthly", label: "Monthly" },
-  { key: "annual", label: "Annual" },
   { key: "hybrid", label: "Hybrid" },
+  { key: "annual", label: "Annual" },
 ];
 
 function planKeyToVerifyType(key: PlanKey): string {
