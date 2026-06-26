@@ -73,8 +73,9 @@ export async function POST(request: Request) {
       );
     }
 
-    // upfront-monthly is stored as plan_type="one-time" with [monthly_cents:N] in notes
-    const dbPlanType = priceType === "upfront-monthly" ? "one-time" : priceType;
+    // upfront-monthly stored as plan_type="one-time" with [monthly_cents:N] in notes
+    // annual stored as plan_type="monthly" with [annual] in notes
+    const dbPlanType = priceType === "upfront-monthly" ? "one-time" : priceType === "annual" ? "monthly" : priceType;
 
     // Look up the quote for this email
     const { data: quote, error: quoteError } = await supabase
@@ -127,8 +128,44 @@ export async function POST(request: Request) {
 
     // Detect upfront+monthly quotes stored as "one-time" (notes has [monthly_cents:N] prefix)
     const isUpfrontMonthly = priceType === "one-time" && /\[monthly_cents:\d+\]/.test(quote.notes || "");
+    // Detect annual quotes stored as "monthly" with [annual] in notes
+    const isAnnual = (priceType === "annual" || priceType === "monthly") && (quote.notes || "").includes("[annual]");
 
-    if (priceType === "one-time" && !isUpfrontMonthly) {
+    if (isAnnual) {
+      console.log("Creating ANNUAL (subscription) checkout session...");
+      session = await stripe.checkout.sessions.create({
+        ...commonParams,
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: "GimmeASite Annual Plan",
+                description: `Recurring annual fee for ${quote.name}.`,
+              },
+              unit_amount: quote.price_cents,
+              recurring: {
+                interval: "year",
+              },
+            },
+            quantity: 1,
+          },
+        ],
+        mode: "subscription",
+        metadata: {
+          plan: "annual",
+          customerName: customerName || quote.name,
+          quoteId: quote.id,
+        },
+        subscription_data: {
+          metadata: {
+            plan: "annual",
+            customerName: customerName || quote.name,
+            quoteId: quote.id,
+          },
+        },
+      });
+    } else if (priceType === "one-time" && !isUpfrontMonthly) {
       console.log("Creating ONE-TIME checkout session...");
       session = await stripe.checkout.sessions.create({
         ...commonParams,
@@ -159,7 +196,7 @@ export async function POST(request: Request) {
           },
         },
       });
-    } else if (priceType === "monthly") {
+    } else if (priceType === "monthly" && !isAnnual) {
       console.log("Creating MONTHLY (subscription) checkout session...");
       session = await stripe.checkout.sessions.create({
         ...commonParams,
