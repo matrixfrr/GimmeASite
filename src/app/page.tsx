@@ -569,7 +569,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             <span className="gradient-text">No Surprises</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choose the perfect plan for your business. All plans include our quality guaranteed.
+            Choose the perfect plan for your business. All plans include our quality and satisfaction guaranteed.
           </p>
         </div>
 
@@ -644,13 +644,20 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <div className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Priority Ongoing Support", "Analytics Dashboard", "2 Revisions Per Month"].includes(f)), "Unlimited Revisions (Full Redesigns)", "Subdomain Configuration"]
+                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Priority Ongoing Support", "Analytics Dashboard", "2 Revisions Per Month"].includes(f)), "Unlimited Revisions", "__sub__Full Redesigns", "Real-Time Analytics", "Subdomain Configuration"]
                     : plan.features
                   ).map((feature: string) => (
-                    <div key={feature} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-primary flex-shrink-0" />
-                      <span>{feature}</span>
-                    </div>
+                    feature.startsWith("__sub__") ? (
+                      <div key={feature} className="flex items-center gap-3 pl-6">
+                        <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                        <span className="text-sm">{feature.replace("__sub__", "")}</span>
+                      </div>
+                    ) : (
+                      <div key={feature} className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                        <span>{feature}</span>
+                      </div>
+                    )
                   ))}
                 </div>
               ) : (
