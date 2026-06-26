@@ -26,7 +26,7 @@ export interface ClientQuote {
   id: string;
   email: string;
   name: string;
-  plan_type: 'one-time' | 'monthly' | 'annual';
+  plan_type: 'one-time' | 'monthly' | 'annual' | 'bundle';
   price_cents: number; // Price in cents (e.g., 149900 = $1499.00)
   notes?: string;
   created_at: string;
