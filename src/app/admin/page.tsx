@@ -20,7 +20,7 @@ interface ClientQuote {
   id: string;
   email: string;
   name: string;
-  plan_type: "one-time" | "monthly" | "annual" | "bundle";
+  plan_type: "one-time" | "monthly" | "annual" | "hybrid";
   price_cents: number;
   notes?: string;
   created_at: string;
@@ -36,12 +36,11 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [fixAnnualStatus, setFixAnnualStatus] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
     name: "",
-    plan_type: "one-time" as "one-time" | "monthly" | "annual" | "bundle",
+    plan_type: "one-time" as "one-time" | "monthly" | "annual" | "hybrid",
     price: "",
     notes: "",
     upfrontPrice: "",
@@ -72,6 +71,12 @@ export default function AdminPage() {
       const quotesResponse = await fetch(`/api/quotes`);
       const quotesData = await quotesResponse.json();
       setQuotes(quotesData.quotes || []);
+      // Auto-migrate legacy annual/bundle rows silently
+      fetch("/api/admin/fix-annual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminPassword: password }),
+      }).catch(() => {});
     } catch {
       setError("Failed to authenticate");
     } finally {
@@ -114,8 +119,8 @@ export default function AdminPage() {
           return;
         }
         notes = formData.notes;
-      } else if (formData.plan_type === "bundle") {
-        plan_type = "bundle";
+      } else if (formData.plan_type === "hybrid") {
+        plan_type = "hybrid";
         price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
         const monthlyCents = Math.round(parseFloat(formData.monthlyPrice) * 100);
         if (price_cents < 2 || monthlyCents < 2) {
@@ -251,21 +256,6 @@ export default function AdminPage() {
   const unpaidQuotes = quotes.filter((q) => !q.paid);
   const paidQuotes = quotes.filter((q) => q.paid);
 
-  const handleFixAnnualQuotes = async () => {
-    setFixAnnualStatus("Running...");
-    try {
-      const res = await fetch("/api/admin/fix-annual", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ adminPassword: password }),
-      });
-      const data = await res.json();
-      setFixAnnualStatus(data.message || data.error || "Done");
-    } catch {
-      setFixAnnualStatus("Error — check console");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
@@ -384,7 +374,7 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        plan_type: e.target.value as "one-time" | "monthly" | "annual" | "bundle",
+                        plan_type: e.target.value as "one-time" | "monthly" | "annual" | "hybrid",
                         price: "",
                         upfrontPrice: "",
                         monthlyPrice: "",
@@ -396,7 +386,7 @@ export default function AdminPage() {
                     <option value="one-time">Upfront</option>
                     <option value="monthly">Monthly</option>
                     <option value="annual">Annual</option>
-                    <option value="bundle">Bundle</option>
+                    <option value="hybrid">Hybrid</option>
                   </select>
                 </div>
 
@@ -405,7 +395,7 @@ export default function AdminPage() {
                   <label className="block text-sm font-medium mb-2">
                     Price (USD) <span className="text-red-500">*</span>
                   </label>
-                  {formData.plan_type === "bundle" ? (
+                  {formData.plan_type === "hybrid" ? (
                     <div className="space-y-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
                       <div>
                         <label className="block text-xs font-medium text-muted-foreground mb-1">Upfront Cost</label>
@@ -537,7 +527,7 @@ export default function AdminPage() {
                                   ? "bg-yellow-500/10 text-yellow-500"
                                   : "bg-purple-500/10 text-purple-500"
                               }`}>
-                                {isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Bundle" : "Upfront"}
+                                {isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Hybrid" : "Upfront"}
                               </span>
                             </div>
                             <p className="text-sm text-muted-foreground truncate">{quote.email}</p>
@@ -625,21 +615,6 @@ export default function AdminPage() {
             )}
           </div>
 
-          {/* Fix Annual Quotes */}
-          <div className="mt-8 p-4 border border-border rounded-xl bg-card">
-            <h3 className="font-semibold mb-2">Database Maintenance</h3>
-            <p className="text-sm text-muted-foreground mb-3">Migrate legacy Annual quotes (stored as Monthly + [annual] note) to <code>plan_type="annual"</code>.</p>
-            <button
-              type="button"
-              onClick={handleFixAnnualQuotes}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors"
-            >
-              Fix Annual Quotes
-            </button>
-            {fixAnnualStatus && (
-              <p className="text-sm mt-2 text-muted-foreground">{fixAnnualStatus}</p>
-            )}
-          </div>
         </div>
       </main>
     </div>
