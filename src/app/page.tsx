@@ -531,6 +531,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
   const [showUpfrontPopup, setShowUpfrontPopup] = useState(false);
   const [showMonthlyPopup, setShowMonthlyPopup] = useState(false);
+  const [showComparePopup, setShowComparePopup] = useState(false);
   const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
 
 
@@ -719,6 +720,17 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 Go Live
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
+              {plan.name === "Monthly" && (
+                <div className="text-center mt-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowComparePopup(true)}
+                    className="text-xs text-orange-500 underline hover:text-orange-400 transition-colors"
+                  >
+                    Still confused?
+                  </button>
+                </div>
+              )}
             </Card>
           ))}
         </div>
@@ -759,6 +771,58 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </div>
         )}
       </div>
+
+      {/* Plan Comparison Popup */}
+      {showComparePopup && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowComparePopup(false)}>
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-2xl w-full shadow-xl animate-slideIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-5">
+              <h3 className="text-lg font-bold">Plan Comparison</h3>
+              <button type="button" onClick={() => setShowComparePopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr>
+                    <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/2">Perk</th>
+                    <th className="text-center py-2 px-2 font-semibold text-foreground">Upfront</th>
+                    <th className="text-center py-2 px-2 font-semibold text-foreground">Monthly</th>
+                    <th className="text-center py-2 px-2 font-semibold text-foreground">Hybrid</th>
+                    <th className="text-center py-2 px-2 font-semibold text-foreground">Annual</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/40">
+                  {[
+                    { perk: "Custom Design", up: true, mo: true, hy: true, an: true },
+                    { perk: "SSL + Security Integration", up: true, mo: true, hy: true, an: true },
+                    { perk: "Performance Optimization", up: true, mo: true, hy: true, an: true },
+                    { perk: "3 Total Revisions", up: true, mo: false, hy: false, an: false },
+                    { perk: "90-Day Support", up: true, mo: false, hy: false, an: false },
+                    { perk: "Advanced Security", up: false, mo: true, hy: true, an: true },
+                    { perk: "2 Revisions Per Month", up: false, mo: true, hy: true, an: true },
+                    { perk: "Priority Ongoing Support", up: false, mo: true, hy: true, an: true },
+                    { perk: "Analytics Dashboard", up: false, mo: true, hy: true, an: true },
+                    { perk: "Discounted Monthly", up: false, mo: false, hy: true, an: true },
+                    { perk: "Unlimited Revisions", up: false, mo: false, hy: false, an: true },
+                    { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
+                    { perk: "Subdomain Configuration", up: false, mo: false, hy: false, an: true },
+                    { perk: "Real-Time Analytics", up: false, mo: false, hy: false, an: true },
+                  ].map(({ perk, up, mo, hy, an }) => (
+                    <tr key={perk} className="hover:bg-muted/20 transition-colors">
+                      <td className="py-2.5 pr-4 text-muted-foreground">{perk}</td>
+                      <td className="text-center py-2.5 px-2">{up && <Check className="w-4 h-4 text-green-500 mx-auto" />}</td>
+                      <td className="text-center py-2.5 px-2">{mo && <Check className="w-4 h-4 text-green-500 mx-auto" />}</td>
+                      <td className="text-center py-2.5 px-2">{hy && <Check className="w-4 h-4 text-green-500 mx-auto" />}</td>
+                      <td className="text-center py-2.5 px-2">{an && <Check className="w-4 h-4 text-green-500 mx-auto" />}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button type="button" onClick={() => setShowComparePopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
+          </div>
+        </div>
+      )}
 
       {/* Equity/CMS popup — rendered at section level to avoid scroll glitch */}
 
