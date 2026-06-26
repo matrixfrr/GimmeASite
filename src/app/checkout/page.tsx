@@ -331,7 +331,7 @@ function CheckoutContent() {
                       }`}
                     >
                       <div className="font-semibold">Upfront</div>
-                      <div className="text-sm text-muted-foreground">Single payment</div>
+                      <div className="text-sm text-muted-foreground">One-time payment</div>
                     </button>
                     <button
                       type="button"
@@ -367,7 +367,7 @@ function CheckoutContent() {
                       }`}
                     >
                       <div className="font-semibold">Bundle</div>
-                      <div className="text-sm text-muted-foreground">Both</div>
+                      <div className="text-xs text-muted-foreground">Upfront + Discounted Monthly</div>
                     </button>
                   </div>
                 </div>
