@@ -47,7 +47,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What if I need revisions to my site?",
-    answer: "A different amount of revisions are included in each plan. You can make your revision request known to us by emailing support. Requesting extra revisions or full, large-scale redesigns may incur additional fees.",
+    answer: "A different set of revisions are included in each plan. You can make your revision requests known by contacting us at hello@gimmeasite.com. Requesting extra revisions or full, large-scale redesigns may incur additional fees depending on the conditions of your selected plan.",
   },
   {
     question: "Where do I manage my subscription?",
@@ -1174,15 +1174,15 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   <a href="mailto:hello@gimmeasite.com" className="font-semibold text-primary underline hover:opacity-80 transition-opacity">hello@gimmeasite.com</a>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
                   <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground">Hours (EST)</div>
-                  <div className="mt-1 space-y-0.5 text-sm">
+                  <div className="text-sm text-muted-foreground mb-1">Hours (EST)</div>
+                  <div className="space-y-0.5 text-sm">
                     {[
                       { day: "Sun", hours: "Closed" },
                       { day: "Mon", hours: "9AM-5PM" },
@@ -1482,13 +1482,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         >
                           Annual
                         </button>
-                        <button
-                          type="button"
-                          className="w-full px-3 py-2 text-left text-sm text-muted-foreground/50 cursor-not-allowed"
-                          disabled
-                        >
-                          Equity <span className="text-xs ml-1">(Coming soon)</span>
-                        </button>
+
                       </div>
                     )}
                   </div>
