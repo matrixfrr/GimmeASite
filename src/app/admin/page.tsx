@@ -20,7 +20,7 @@ interface ClientQuote {
   id: string;
   email: string;
   name: string;
-  plan_type: "one-time" | "monthly" | "annual" | "upfront-monthly";
+  plan_type: "one-time" | "monthly" | "annual" | "bundle";
   price_cents: number;
   notes?: string;
   created_at: string;
@@ -40,7 +40,7 @@ export default function AdminPage() {
   const [formData, setFormData] = useState({
     email: "",
     name: "",
-    plan_type: "one-time" as "one-time" | "monthly" | "annual" | "upfront-monthly",
+    plan_type: "one-time" as "one-time" | "monthly" | "annual" | "bundle",
     price: "",
     notes: "",
     upfrontPrice: "",
@@ -113,8 +113,8 @@ export default function AdminPage() {
           return;
         }
         notes = formData.notes;
-      } else if (formData.plan_type === "upfront-monthly") {
-        plan_type = "one-time";
+      } else if (formData.plan_type === "bundle") {
+        plan_type = "bundle";
         price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
         const monthlyCents = Math.round(parseFloat(formData.monthlyPrice) * 100);
         if (price_cents < 2 || monthlyCents < 2) {
@@ -368,7 +368,7 @@ export default function AdminPage() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        plan_type: e.target.value as "one-time" | "monthly" | "annual" | "upfront-monthly",
+                        plan_type: e.target.value as "one-time" | "monthly" | "annual" | "bundle",
                         price: "",
                         upfrontPrice: "",
                         monthlyPrice: "",
@@ -380,7 +380,7 @@ export default function AdminPage() {
                     <option value="one-time">Upfront</option>
                     <option value="monthly">Monthly</option>
                     <option value="annual">Annual</option>
-                    <option value="upfront-monthly">Bundle</option>
+                    <option value="bundle">Bundle</option>
                   </select>
                 </div>
 
@@ -389,7 +389,7 @@ export default function AdminPage() {
                   <label className="block text-sm font-medium mb-2">
                     Price (USD) <span className="text-red-500">*</span>
                   </label>
-                  {formData.plan_type === "upfront-monthly" ? (
+                  {formData.plan_type === "bundle" ? (
                     <div className="space-y-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
                       <div>
                         <label className="block text-xs font-medium text-muted-foreground mb-1">Upfront Cost</label>
