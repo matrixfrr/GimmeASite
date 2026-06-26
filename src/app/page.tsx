@@ -529,11 +529,10 @@ function AboutUsSection() {
 function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | "monthly", billing?: "monthly" | "annual") => void }) {
   const [showComingSoon, setShowComingSoon] = useState(false);
   const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
+  const [showUpfrontPopup, setShowUpfrontPopup] = useState(false);
+  const [showMonthlyPopup, setShowMonthlyPopup] = useState(false);
   const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
-  const [descAnimKey, setDescAnimKey] = useState(-1);
-  useEffect(() => {
-    setDescAnimKey(k => k + 1);
-  }, [monthlyBilling]);
+
 
   const plans = [
     {
@@ -576,7 +575,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <style>{`@keyframes descPop{0%{transform:scale(1)}6%{transform:scale(1.13)}14%{transform:scale(0.95)}22%{transform:scale(1.06)}30%{transform:scale(0.99)}38%{transform:scale(1)}100%{transform:scale(1)}} .desc-pop{animation:descPop 8s ease-out forwards}`}</style>
       <section id="pricing" className="py-32 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -597,7 +595,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               key={plan.name}
               className={`p-8 relative group ${
                 plan.popular
-                  ? "bg-primary/5 border-primary/30"
+                  ? "bg-primary/5 border-primary/30 animate-attention-bounce"
                   : "bg-card/50 border-border/50"
               } hover-lift`}
             >
@@ -607,33 +605,44 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 </Badge>
               )}
               {plan.name === "Monthly" ? (
-                <div className="mb-3">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-2xl font-bold">
-                      {monthlyBilling === "annual" ? "Annual" : "Monthly"}
-                    </h3>
-                  </div>
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <div className="relative flex rounded-full border border-border/50 bg-muted/30 p-1">
                     <div className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-foreground transition-all duration-300 ease-in-out ${monthlyBilling === "annual" ? "translate-x-[calc(100%+4px)]" : "translate-x-0"}`} />
                     <button
                       type="button"
                       onClick={() => setMonthlyBilling("monthly")}
-                      className={`relative z-10 flex-1 py-1.5 text-center text-sm font-semibold rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       Monthly
                     </button>
                     <button
                       type="button"
                       onClick={() => setMonthlyBilling("annual")}
-                      className={`relative z-10 flex-1 py-1.5 text-center text-sm font-semibold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       Annual <span className="text-xs font-normal text-green-500">Save 15%</span>
                     </button>
                   </div>
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors flex-shrink-0"
+                    onClick={() => setShowMonthlyPopup(true)}
+                  >
+                    ?
+                  </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <h3 className="text-2xl font-bold">{plan.name}</h3>
+                  {plan.name === "Upfront" && (
+                    <button
+                      type="button"
+                      className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                      onClick={() => setShowUpfrontPopup(true)}
+                    >
+                      ?
+                    </button>
+                  )}
                   {plan.name === "Equity" && (
                     <button
                       type="button"
@@ -656,7 +665,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <span className="text-muted-foreground"> {plan.priceLabel}</span>
               </div>
               {plan.description && (
-                <p key={descAnimKey} className={`mb-4 font-medium text-muted-foreground ${plan.name === "Monthly" && descAnimKey > 0 ? "desc-pop" : ""}`}>
+                <p className="mb-4 font-medium text-muted-foreground">
                   {plan.name === "Monthly"
                     ? <span>Everything in <strong>{monthlyBilling === "annual" ? "Monthly" : "Upfront"}</strong>, including:<span title="Conditions may apply." className="text-red-500 font-bold text-sm cursor-help ml-0.5 align-middle">*</span></span>
                     : plan.description}
@@ -752,6 +761,64 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       </div>
 
       {/* Equity/CMS popup — rendered at section level to avoid scroll glitch */}
+
+      {/* Upfront Plan Popup */}
+      {showUpfrontPopup && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowUpfrontPopup(false)}>
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-bold">Is this plan for me?</h3>
+              <button type="button" onClick={() => setShowUpfrontPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
+              <p>The <span className="font-semibold text-foreground">Upfront plan</span> is a one-time fee — no subscriptions, no recurring charges. It&apos;s best suited for:</p>
+              <ul className="space-y-1.5 list-none">
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> First-time site owners launching a simple web presence</li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Small business owners who need a clean, professional site without ongoing costs</li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Those with straightforward requirements and a clear vision</li>
+              </ul>
+              <p>You&apos;ll receive a fully custom-designed site, SSL &amp; security integration, performance optimization, 3 revisions, and a 90-day post-launch support window. After the support period, maintenance and updates are not included.</p>
+            </div>
+            <button type="button" onClick={() => setShowUpfrontPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
+          </div>
+        </div>
+      )}
+
+      {/* Monthly / Annual Plan Popup */}
+      {showMonthlyPopup && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowMonthlyPopup(false)}>
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-bold">Is this plan for me?</h3>
+              <button type="button" onClick={() => setShowMonthlyPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
+              {monthlyBilling === "monthly" ? (
+                <>
+                  <p>The <span className="font-semibold text-foreground">Monthly plan</span> is a recurring subscription — ideal for:</p>
+                  <ul className="space-y-1.5 list-none">
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Small-to-medium businesses that want continued support and ongoing updates</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Moderately complex sites that benefit from regular revisions (2/month)</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Businesses that prefer spreading costs over time rather than a large upfront sum</li>
+                  </ul>
+                  <p>Includes everything in the Upfront plan, plus advanced security, priority ongoing support, and an analytics dashboard. Cancel anytime — no lock-in.</p>
+                </>
+              ) : (
+                <>
+                  <p>The <span className="font-semibold text-foreground">Annual plan</span> is a recurring yearly subscription — best for:</p>
+                  <ul className="space-y-1.5 list-none">
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Larger businesses ready to commit for the year and save ~15% (roughly two months free)</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Complex sites requiring unlimited revisions and full redesign capability</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Businesses focused on long-term growth wanting real-time analytics and subdomain support</li>
+                  </ul>
+                  <p>Includes everything in the Monthly plan, plus unlimited revisions, full redesigns, subdomain configuration, and real-time analytics.</p>
+                </>
+              )}
+            </div>
+            <button type="button" onClick={() => setShowMonthlyPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
+          </div>
+        </div>
+      )}
       {showEquityCmsPopup && (
         <div
           className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
@@ -1319,6 +1386,54 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </div>
                 </div>
 
+                <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={ownsDomain}
+                    onChange={(e) => {
+                      setOwnsDomain(e.target.checked);
+                      if (e.target.checked) {
+                        setFormData(prev => ({ ...prev, domain: "" }));
+                        setDomainAvailability(null);
+                      } else {
+                        setExistingDomain("");
+                      }
+                      setErrors(prev => ({ ...prev, domain: "", domainSearch: "", existingDomain: "" }));
+                    }}
+                    className="w-4 h-4 rounded border-border accent-primary"
+                  />
+                  <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                    Do you own your domain already?
+                    <button
+                      type="button"
+                      className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowWhyPopup("ownsDomain"); }}
+                    >?</button>
+                  </span>
+                </label>
+
+                {ownsDomain && (
+                  <div>
+                    <label htmlFor="existingDomain" className="text-sm font-medium block mb-2">
+                      What is your domain? <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      id="existingDomain"
+                      type="text"
+                      placeholder="example.com"
+                      className={`bg-background ${errors.existingDomain ? "border-red-500" : ""}`}
+                      value={existingDomain}
+                      onChange={(e) => {
+                        setExistingDomain(e.target.value);
+                        setErrors(prev => ({ ...prev, existingDomain: "" }));
+                      }}
+                    />
+                    {errors.existingDomain && (
+                      <p className="text-red-500 text-xs mt-1">{errors.existingDomain}</p>
+                    )}
+                  </div>
+                )}
+
                 {/* Domain Field */}
                 {!ownsDomain && <div className="relative">
                   <div className="flex items-center gap-1.5 mb-2">
@@ -1384,54 +1499,6 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     </p>
                   )}
                 </div>}
-
-                <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                  <input
-                    type="checkbox"
-                    checked={ownsDomain}
-                    onChange={(e) => {
-                      setOwnsDomain(e.target.checked);
-                      if (e.target.checked) {
-                        setFormData(prev => ({ ...prev, domain: "" }));
-                        setDomainAvailability(null);
-                      } else {
-                        setExistingDomain("");
-                      }
-                      setErrors(prev => ({ ...prev, domain: "", domainSearch: "", existingDomain: "" }));
-                    }}
-                    className="w-4 h-4 rounded border-border accent-primary"
-                  />
-                  <span className="text-sm text-muted-foreground flex items-center gap-1.5">
-                    Do you own your domain already?
-                    <button
-                      type="button"
-                      className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowWhyPopup("ownsDomain"); }}
-                    >?</button>
-                  </span>
-                </label>
-
-                {ownsDomain && (
-                  <div>
-                    <label htmlFor="existingDomain" className="text-sm font-medium block mb-2">
-                      What is the domain? <span className="text-red-500">*</span>
-                    </label>
-                    <Input
-                      id="existingDomain"
-                      type="text"
-                      placeholder="example.com"
-                      className={`bg-background ${errors.existingDomain ? "border-red-500" : ""}`}
-                      value={existingDomain}
-                      onChange={(e) => {
-                        setExistingDomain(e.target.value);
-                        setErrors(prev => ({ ...prev, existingDomain: "" }));
-                      }}
-                    />
-                    {errors.existingDomain && (
-                      <p className="text-red-500 text-xs mt-1">{errors.existingDomain}</p>
-                    )}
-                  </div>
-                )}
 
                 <div className="relative">
                   <div className="flex items-center gap-1.5 mb-2">
