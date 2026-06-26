@@ -77,7 +77,7 @@ export async function POST(request: Request) {
     const dbPlanType = priceType === "upfront-monthly" ? "one-time" : priceType;
 
     // Look up the quote for this email
-    const { data: quote, error: quoteError } = await supabase
+    const { data: quoteData, error: quoteError } = await supabase
       .from("client_quotes")
       .select("*")
       .eq("email", customerEmail.toLowerCase())
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
     }
 
     // For annual, fall back to legacy rows stored as plan_type="monthly" with [annual] in notes
-    let resolvedQuote = quote;
+    let resolvedQuote = quoteData;
     if (!resolvedQuote && priceType === "annual") {
       const { data: legacyAnnual } = await supabase
         .from("client_quotes")
@@ -120,7 +120,6 @@ export async function POST(request: Request) {
       );
     }
 
-    const quote = resolvedQuote;
     console.log("Quote found:", {
       id: quote.id,
       name: quote.name,
