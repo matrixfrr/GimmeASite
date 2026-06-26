@@ -18,7 +18,7 @@ import {
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  planType: "one-time" | "monthly";
+  planType: "one-time" | "monthly" | "bundle";
   billingCycle?: "monthly" | "annual";
 }
 
@@ -71,9 +71,21 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
         "Powerful Real-Time Analytics Dashboard",
       ],
     },
+    bundle: {
+      name: "Bundle",
+      price: "Custom",
+      priceLabel: "upfront + monthly",
+      features: [
+        "Everything in Upfront",
+        "Everything in Monthly",
+        "Priority Updates & Fresh Improvements",
+        "Worry-Free Ongoing Maintenance",
+        "Powerful Real-Time Analytics Dashboard",
+      ],
+    },
   };
 
-  const plan = planDetails[planType];
+  const plan = planDetails[planType as keyof typeof planDetails];
 
   // Reset form state when modal closes
   useEffect(() => {
@@ -160,7 +172,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
           </div>
           <h3 className="text-2xl font-bold mb-1">Proceed to Checkout</h3>
           <p className="text-muted-foreground">
-            {planType === "monthly" && billingCycle === "annual" ? "Annual" : plan.name}
+            {planType === "monthly" && billingCycle === "annual" ? "Annual" : planType === "bundle" ? "Bundle" : plan.name}
           </p>
         </div>
 
