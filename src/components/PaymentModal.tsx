@@ -27,6 +27,7 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
   const [emailError, setEmailError] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState<string>("");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
 
   // Email validation helper
   const isValidEmail = (email: string): boolean => {
@@ -82,6 +83,7 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
       setAgreedToTerms(false);
       setError("");
       setIsLoading(false);
+      setBillingCycle("monthly");
     }
   }, [isOpen]);
 
@@ -128,7 +130,7 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
       }
 
       // Email verified and plan matches - proceed to checkout
-      window.location.href = `/checkout?email=${encodeURIComponent(email)}&plan=${planType}`;
+      window.location.href = `/checkout?email=${encodeURIComponent(email)}&plan=${planType}${planType === "monthly" && billingCycle === "annual" ? "&billing=annual" : ""}`;
     } catch (err) {
       setError("Something went wrong. Please try again or contact us at hello@gimmeasite.com.");
       setIsLoading(false);
@@ -161,6 +163,25 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
           <p className="text-muted-foreground">
             {plan.name}
           </p>
+          {planType === "monthly" && (
+            <div className="flex items-center justify-center gap-2 mt-3">
+              <button
+                type="button"
+                onClick={() => setBillingCycle("monthly")}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${billingCycle === "monthly" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Monthly
+              </button>
+              <button
+                type="button"
+                onClick={() => setBillingCycle("annual")}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${billingCycle === "annual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Annual
+                <span className="ml-1.5 text-xs bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full">Save 15%</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Important Notice */}
@@ -180,6 +201,18 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
           </div>
         </div>
 
+        {planType === "monthly" && (
+          <div className="text-center mb-4 -mt-2">
+            <span className="text-2xl font-bold text-primary">
+              {billingCycle === "annual"
+                ? `$${Math.round(199 * 12 * 0.85).toLocaleString()}/yr`
+                : "$199/mo"}
+            </span>
+            {billingCycle === "annual" && (
+              <p className="text-xs text-muted-foreground mt-0.5">vs. $2,388/yr billed monthly</p>
+            )}
+          </div>
+        )}
         <Separator className="mb-6" />
 
         {/* Email Input */}
@@ -240,6 +273,17 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
               >
                 Terms of Service
               </button>
+              {" "}and{" "}
+              <button
+                type="button"
+                className="text-primary hover:underline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.dispatchEvent(new Event("openPrivacyPolicy"));
+                }}
+              >
+                Privacy Policy
+              </button>
               .
             </span>
           </label>
@@ -252,19 +296,7 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
               ? "• Three (3) revisions are included (email support). Requesting extra revisions or large-scale updates may incur additional fees."
               : "• Unlimited revisions are included (email support)."}
           </p>
-          <p>
-            • By proceeding, you agree to our{" "}
-            <button
-              type="button"
-              className="text-primary hover:underline"
-              onClick={() =>
-                window.dispatchEvent(new Event("openPrivacyPolicy"))
-              }
-            >
-              Privacy Policy
-            </button>
-            .
-          </p>
+
         </div>
 
         {/* Error Message */}
