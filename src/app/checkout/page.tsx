@@ -31,7 +31,7 @@ interface Quote {
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
-  const [planType, setPlanType] = useState<"one-time" | "monthly" | "upfront-monthly">("one-time");
+  const [planType, setPlanType] = useState<"one-time" | "monthly" | "upfront-monthly" | "annual">("one-time");
   const [isVerifying, setIsVerifying] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [quote, setQuote] = useState<Quote | null>(null);
@@ -44,8 +44,8 @@ function CheckoutContent() {
     const plan = searchParams.get("plan");
     const emailParam = searchParams.get("email");
 
-    if (plan === "monthly" || plan === "one-time" || plan === "upfront-monthly") {
-      setPlanType(plan as "one-time" | "monthly" | "upfront-monthly");
+    if (plan === "monthly" || plan === "one-time" || plan === "upfront-monthly" || plan === "annual") {
+      setPlanType(plan as "one-time" | "monthly" | "upfront-monthly" | "annual");
     }
     if (emailParam) {
       setEmail(emailParam);
@@ -55,7 +55,7 @@ function CheckoutContent() {
     // Only do this once per page load
     if (
       emailParam &&
-      (plan === "monthly" || plan === "one-time" || plan === "upfront-monthly") &&
+      (plan === "monthly" || plan === "one-time" || plan === "upfront-monthly" || plan === "annual") &&
       !hasAutoVerified.current
     ) {
       hasAutoVerified.current = true;
@@ -320,7 +320,7 @@ function CheckoutContent() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Plan Type</label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setPlanType("one-time")}
@@ -344,6 +344,18 @@ function CheckoutContent() {
                     >
                       <div className="font-semibold">Monthly</div>
                       <div className="text-sm text-muted-foreground">Subscription</div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPlanType("annual")}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        planType === "annual"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-border/80"
+                      }`}
+                    >
+                      <div className="font-semibold">Annual</div>
+                      <div className="text-sm text-muted-foreground">Yearly subscription</div>
                     </button>
                     <button
                       type="button"
@@ -426,9 +438,9 @@ function CheckoutContent() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Plan</span>
-                      <span className="font-medium capitalize">{planType === "monthly" ? "Monthly" : quote.notes?.includes("[monthly_cents:") ? "Upfront + Monthly" : "Upfront"}</span>
+                      <span className="font-medium capitalize">{planType === "annual" ? "Annual" : planType === "monthly" ? "Monthly" : quote.notes?.includes("[monthly_cents:") ? "Upfront + Monthly" : "Upfront"}</span>
                     </div>
-                    {quote.notes && quote.notes.replace(/\[monthly_cents:\d+\]\s*/g, "").trim() && (
+                    {planType !== "annual" && quote.notes && quote.notes.replace(/\[monthly_cents:\d+\]\s*/g, "").trim() && (
                       <div className="pt-2">
                         <span className="text-sm text-muted-foreground">Notes</span>
                         <p className="text-sm mt-1">{quote.notes.replace(/\[monthly_cents:\d+\]\s*/g, "").trim()}</p>
@@ -459,6 +471,9 @@ function CheckoutContent() {
                             </span>
                             {planType === "monthly" && (
                               <span className="text-sm text-muted-foreground">/month</span>
+                            )}
+                            {planType === "annual" && (
+                              <span className="text-sm text-muted-foreground">/year</span>
                             )}
                           </>
                         );
