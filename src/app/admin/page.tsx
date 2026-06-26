@@ -20,7 +20,7 @@ interface ClientQuote {
   id: string;
   email: string;
   name: string;
-  plan_type: "one-time" | "monthly" | "upfront-monthly";
+  plan_type: "one-time" | "monthly" | "annual" | "upfront-monthly";
   price_cents: number;
   notes?: string;
   created_at: string;
