@@ -95,8 +95,24 @@ export async function POST(request: Request) {
       );
     }
 
+    // For annual, fall back to legacy rows stored as plan_type="monthly" with [annual] in notes
+    let resolvedQuote = quote;
+    if (!resolvedQuote && priceType === "annual") {
+      const { data: legacyAnnual } = await supabase
+        .from("client_quotes")
+        .select("*")
+        .eq("email", customerEmail.toLowerCase())
+        .eq("paid", false)
+        .eq("plan_type", "monthly")
+        .ilike("notes", "[annual]%")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      resolvedQuote = legacyAnnual;
+    }
+
     // If no quote found for this email, return error
-    if (!quote) {
+    if (!resolvedQuote) {
       console.log("No quote found for email:", customerEmail, "plan:", priceType);
       return NextResponse.json(
         { error: "EMAIL_NOT_RECOGNIZED" },
@@ -104,6 +120,7 @@ export async function POST(request: Request) {
       );
     }
 
+    const quote = resolvedQuote;
     console.log("Quote found:", {
       id: quote.id,
       name: quote.name,
@@ -139,7 +156,7 @@ export async function POST(request: Request) {
               currency: "usd",
               product_data: {
                 name: "GimmeASite Annual Plan",
-                description: `Recurring annual fee for ${quote.name}.`,
+                description: `Recurring yearly fee for ${quote.name}.`,
               },
               unit_amount: quote.price_cents,
               recurring: {
@@ -156,6 +173,7 @@ export async function POST(request: Request) {
           quoteId: quote.id,
         },
         subscription_data: {
+          description: `Recurring yearly fee for ${quote.name}. Billed yearly.`,
           metadata: {
             plan: "annual",
             customerName: customerName || quote.name,
