@@ -515,12 +515,13 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
   const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
   const [descHighlight, setDescHighlight] = useState(false);
-  const _descHLFirst = useRef(true);
+  const [_descHLInit, _setDescHLInit] = useState(false);
   useEffect(() => {
-    if (_descHLFirst.current) { _descHLFirst.current = false; return; }
+    if (!_descHLInit) { _setDescHLInit(true); return; }
     setDescHighlight(true);
     const _t = setTimeout(() => setDescHighlight(false), 700);
     return () => clearTimeout(_t);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [monthlyBilling]);
 
   const plans = [
