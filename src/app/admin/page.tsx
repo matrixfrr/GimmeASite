@@ -250,6 +250,21 @@ export default function AdminPage() {
   const unpaidQuotes = quotes.filter((q) => !q.paid);
   const paidQuotes = quotes.filter((q) => q.paid);
 
+  const handleFixAnnualQuotes = async () => {
+    setFixAnnualStatus("Running...");
+    try {
+      const res = await fetch("/api/admin/fix-annual", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ adminPassword: password }),
+      });
+      const data = await res.json();
+      setFixAnnualStatus(data.message || data.error || "Done");
+    } catch {
+      setFixAnnualStatus("Error — check console");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
@@ -606,6 +621,22 @@ export default function AdminPage() {
                   ))}
                 </div>
               </div>
+            )}
+          </div>
+
+          {/* Fix Annual Quotes */}
+          <div className="mt-8 p-4 border border-border rounded-xl bg-card">
+            <h3 className="font-semibold mb-2">Database Maintenance</h3>
+            <p className="text-sm text-muted-foreground mb-3">Migrate legacy Annual quotes (stored as Monthly + [annual] note) to <code>plan_type="annual"</code>.</p>
+            <button
+              type="button"
+              onClick={handleFixAnnualQuotes}
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm hover:bg-primary/90 transition-colors"
+            >
+              Fix Annual Quotes
+            </button>
+            {fixAnnualStatus && (
+              <p className="text-sm mt-2 text-muted-foreground">{fixAnnualStatus}</p>
             )}
           </div>
         </div>
