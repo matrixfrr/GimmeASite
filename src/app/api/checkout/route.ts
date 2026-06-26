@@ -73,9 +73,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // upfront-monthly stored as plan_type="one-time" with [monthly_cents:N] in notes
-    // annual stored as plan_type="monthly" with [annual] in notes
-    const dbPlanType = priceType === "upfront-monthly" ? "one-time" : priceType === "annual" ? "monthly" : priceType;
+    // upfront-monthly is stored as plan_type="one-time" with [monthly_cents:N] in notes
+    const dbPlanType = priceType === "upfront-monthly" ? "one-time" : priceType;
 
     // Look up the quote for this email
     const { data: quote, error: quoteError } = await supabase
@@ -128,10 +127,8 @@ export async function POST(request: Request) {
 
     // Detect upfront+monthly quotes stored as "one-time" (notes has [monthly_cents:N] prefix)
     const isUpfrontMonthly = priceType === "one-time" && /\[monthly_cents:\d+\]/.test(quote.notes || "");
-    // Detect annual quotes stored as "monthly" with [annual] in notes
-    const isAnnual = (priceType === "annual" || priceType === "monthly") && (quote.notes || "").includes("[annual]");
 
-    if (isAnnual) {
+    if (priceType === "annual") {
       console.log("Creating ANNUAL (subscription) checkout session...");
       session = await stripe.checkout.sessions.create({
         ...commonParams,
@@ -196,7 +193,7 @@ export async function POST(request: Request) {
           },
         },
       });
-    } else if (priceType === "monthly" && !isAnnual) {
+    } else if (priceType === "monthly") {
       console.log("Creating MONTHLY (subscription) checkout session...");
       session = await stripe.checkout.sessions.create({
         ...commonParams,
