@@ -525,7 +525,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "Custom Design",
         "SSL + Security Integration",
         "Performance Optimization",
-        "Free Draft Before Payment",
         "3 Total Revisions",
       ],
       popular: false,
@@ -640,7 +639,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <div className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Priority Ongoing Support", "Analytics Dashboard", "2 Revisions Per Month"].includes(f)), "Unlimited Revisions", "__sub__Full Redesigns", "Real-Time Analytics", "Subdomain Configuration"]
+                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Priority Ongoing Support", "Analytics Dashboard", "2 Revisions Per Month"].includes(f)), "Unlimited Revisions", "__sub__Full Redesigns", "Subdomain Configuration", "Real-Time Analytics"]
                     : plan.features
                   ).map((feature: string) => (
                     feature.startsWith("__sub__") ? (
@@ -1182,8 +1181,25 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </svg>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground">Hours</div>
-                  <div className="font-semibold text-white">Mon - Fri / 9AM - 5PM EST</div>
+                  <div className="text-sm text-muted-foreground">Hours (EST)</div>
+                  <div className="mt-1 space-y-0.5 text-sm">
+                    {[
+                      { day: "Sun", hours: "Closed" },
+                      { day: "Mon", hours: "9AM-5PM" },
+                      { day: "Tue", hours: "9AM-5PM" },
+                      { day: "Wed", hours: "9AM-5PM" },
+                      { day: "Thu", hours: "9AM-5PM" },
+                      { day: "Fri", hours: "9AM-5PM" },
+                      { day: "Sat", hours: "Closed" },
+                    ].map(({ day, hours }) => (
+                      <div key={day} className="flex gap-3">
+                        <span className="font-bold text-white w-8">{day}</span>
+                        {hours === "Closed"
+                          ? <span className="text-muted-foreground italic">{hours}</span>
+                          : <span className="text-white">{hours}</span>}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
