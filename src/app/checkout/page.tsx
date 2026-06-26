@@ -366,8 +366,8 @@ function CheckoutContent() {
                           : "border-border hover:border-border/80"
                       }`}
                     >
-                      <div className="font-semibold text-sm">Upfront + Monthly</div>
-                      <div className="text-xs text-muted-foreground">Both</div>
+                      <div className="font-semibold">Bundle</div>
+                      <div className="text-sm text-muted-foreground">Both</div>
                     </button>
                   </div>
                 </div>
@@ -438,7 +438,7 @@ function CheckoutContent() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Plan</span>
-                      <span className="font-medium capitalize">{planType === "annual" ? "Annual" : planType === "monthly" ? "Monthly" : quote.notes?.includes("[monthly_cents:") ? "Upfront + Monthly" : "Upfront"}</span>
+                      <span className="font-medium capitalize">{planType === "annual" ? "Annual" : planType === "monthly" ? "Monthly" : quote.notes?.includes("[monthly_cents:") ? "Bundle" : "Upfront"}</span>
                     </div>
                     {planType !== "annual" && quote.notes && quote.notes.replace(/\[monthly_cents:\d+\]\s*/g, "").trim() && (
                       <div className="pt-2">
