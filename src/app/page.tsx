@@ -1182,9 +1182,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </svg>
                 </div>
                 <div>
-                  <div className="font-semibold">Mon - Fri</div>
-                  <div className="text-sm text-muted-foreground">9AM - 5PM EST</div>
-                  <div className="text-xs text-muted-foreground italic">Closed on holidays</div>
+                  <div className="text-sm text-muted-foreground">Hours</div>
+                  <div className="font-semibold text-white">Mon - Fri / 9AM - 5PM EST</div>
                 </div>
               </div>
             </div>
