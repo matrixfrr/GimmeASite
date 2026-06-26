@@ -606,7 +606,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                       <button
                         type="button"
                         onClick={() => setMonthlyBilling("monthly")}
-                        className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                       >
                         Monthly
                       </button>
@@ -642,7 +642,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <ul className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features, "Subdomain Configuration", "Full Redesigns", "Analytics Dashboard"]
+                    ? [...plan.features, "Subdomain Configuration", "Full Redesigns"]
                     : plan.features
                   ).map((feature) => (
                     <li key={feature} className="flex items-center gap-3">
