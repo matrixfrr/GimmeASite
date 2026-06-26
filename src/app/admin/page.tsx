@@ -40,10 +40,9 @@ export default function AdminPage() {
   const [formData, setFormData] = useState({
     email: "",
     name: "",
-    plan_type: "one-time" as "one-time" | "monthly",
+    plan_type: "one-time" as "one-time" | "monthly" | "annual" | "upfront-monthly",
     price: "",
     notes: "",
-    isUpfrontMonthly: false,
     upfrontPrice: "",
     monthlyPrice: "",
   });
@@ -105,7 +104,7 @@ export default function AdminPage() {
       let price_cents: number;
       let notes: string;
 
-      if (formData.isUpfrontMonthly) {
+      if (formData.plan_type === "upfront-monthly") {
         plan_type = "one-time";
         price_cents = Math.round(parseFloat(formData.upfrontPrice) * 100);
         const monthlyCents = Math.round(parseFloat(formData.monthlyPrice) * 100);
@@ -153,7 +152,6 @@ export default function AdminPage() {
         plan_type: "one-time",
         price: "",
         notes: "",
-        isUpfrontMonthly: false,
         upfrontPrice: "",
         monthlyPrice: "",
       });
@@ -351,52 +349,38 @@ export default function AdminPage() {
                   </p>
                 </div>
 
-                {/* Plan Type — hidden when Upfront + Monthly is toggled */}
-                {!formData.isUpfrontMonthly && (
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Plan Type <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      value={formData.plan_type}
-                      onChange={(e) =>
-                        setFormData({ ...formData, plan_type: e.target.value as "one-time" | "monthly" })
-                      }
-                      className="w-full h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm"
-                      required
-                    >
-                      <option value="one-time">Upfront</option>
-                      <option value="monthly">Monthly</option>
-                    </select>
-                  </div>
-                )}
-
-                {/* Price field with Upfront + Monthly toggle */}
+                {/* Plan Type */}
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium">
-                      Price (USD) <span className="text-red-500">*</span>
-                    </label>
-                    <label className="flex items-center gap-1.5 cursor-pointer select-none">
-                      <input
-                        type="checkbox"
-                        checked={formData.isUpfrontMonthly}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            isUpfrontMonthly: e.target.checked,
-                            price: "",
-                            upfrontPrice: "",
-                            monthlyPrice: "",
-                          })
-                        }
-                        className="w-4 h-4 rounded border-border accent-primary"
-                      />
-                      <span className="text-xs text-muted-foreground font-medium">Upfront + Monthly?</span>
-                    </label>
-                  </div>
+                  <label className="block text-sm font-medium mb-2">
+                    Plan Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={formData.plan_type}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        plan_type: e.target.value as "one-time" | "monthly" | "annual" | "upfront-monthly",
+                        price: "",
+                        upfrontPrice: "",
+                        monthlyPrice: "",
+                      })
+                    }
+                    className="w-full h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm"
+                    required
+                  >
+                    <option value="one-time">Upfront</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="annual">Annual</option>
+                    <option value="upfront-monthly">Upfront + Monthly</option>
+                  </select>
+                </div>
 
-                  {formData.isUpfrontMonthly ? (
+                {/* Price field */}
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Price (USD) <span className="text-red-500">*</span>
+                  </label>
+                  {formData.plan_type === "upfront-monthly" ? (
                     <div className="space-y-3 p-3 bg-primary/5 border border-primary/20 rounded-lg">
                       <div>
                         <label className="block text-xs font-medium text-muted-foreground mb-1">Upfront Cost</label>
@@ -441,7 +425,7 @@ export default function AdminPage() {
                         type="number"
                         step="0.01"
                         min="1"
-                        placeholder="1499.00"
+                        placeholder={formData.plan_type === "annual" ? "2030.00" : "1499.00"}
                         value={formData.price}
                         onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                         className="bg-background pl-7"
@@ -450,6 +434,11 @@ export default function AdminPage() {
                       {formData.plan_type === "monthly" && (
                         <p className="text-xs text-muted-foreground mt-1">
                           This will be the recurring monthly charge
+                        </p>
+                      )}
+                      {formData.plan_type === "annual" && (
+                        <p className="text-xs text-muted-foreground mt-1">
+                          This will be the yearly charge
                         </p>
                       )}
                     </div>
