@@ -36,6 +36,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [fixAnnualStatus, setFixAnnualStatus] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
