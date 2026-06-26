@@ -377,13 +377,7 @@ function CheckoutContent() {
                     <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
                     <div className="text-sm space-y-1">
                       <p>{error}</p>
-                      <p className="text-red-400 text-xs">
-                        Need a hand? Email{" "}
-                        <a href="mailto:hello@gimmeasite.com" className="underline hover:text-red-300">
-                          hello@gimmeasite.com
-                        </a>{" "}
-                        and we&apos;ll send you a custom payment link.
-                      </p>
+
                     </div>
                   </div>
                 )}
@@ -487,13 +481,7 @@ function CheckoutContent() {
                     <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
                     <div className="text-sm space-y-1">
                       <p>{error}</p>
-                      <p className="text-red-400 text-xs">
-                        Need a hand? Email{" "}
-                        <a href="mailto:hello@gimmeasite.com" className="underline hover:text-red-300">
-                          hello@gimmeasite.com
-                        </a>{" "}
-                        and we&apos;ll send you a custom payment link.
-                      </p>
+
                     </div>
                   </div>
                 )}
