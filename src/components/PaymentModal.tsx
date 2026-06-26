@@ -16,7 +16,7 @@ import {
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  planType: "one-time" | "monthly" | "bundle";
+  planType: "one-time" | "monthly" | "hybrid";
   billingCycle?: "monthly" | "annual";
 }
 
@@ -43,7 +43,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
     }
   };
 
-  const planName = isAnnual ? "Annual" : planType === "one-time" ? "Upfront" : planType === "bundle" ? "Bundle" : "Monthly";
+  const planName = isAnnual ? "Annual" : planType === "one-time" ? "Upfront" : planType === "hybrid" ? "Hybrid" : "Monthly";
 
   useEffect(() => {
     if (!isOpen) {
