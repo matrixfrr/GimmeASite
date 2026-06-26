@@ -192,15 +192,6 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
           </label>
         </div>
 
-        {/* Fine Print */}
-        <div className="text-xs text-muted-foreground mb-6 space-y-1">
-          <p>
-            {planType === "one-time"
-              ? "Three (3) revisions are included (email support). Requesting extra revisions or large-scale updates may incur additional fees."
-              : "Unlimited revisions are included (email support)."}
-          </p>
-        </div>
-
         {/* Error Message */}
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-4">
