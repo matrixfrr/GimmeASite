@@ -7,7 +7,6 @@ import { Separator } from "@/components/ui/separator";
 import {
   X,
   CreditCard,
-  Shield,
   Check,
   Loader2,
   AlertTriangle,
@@ -29,17 +28,15 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState<string>("");
 
-  // Email validation helper
+  const isAnnual = planType === "monthly" && billingCycle === "annual";
+
   const isValidEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const validateEmail = (emailValue: string) => {
-    if (!emailValue.trim()) {
-      setEmailError("");
-      return;
-    }
+    if (!emailValue.trim()) { setEmailError(""); return; }
     if (!isValidEmail(emailValue)) {
       setEmailError("Please enter a valid email address");
     } else {
@@ -47,47 +44,56 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
     }
   };
 
-  const planDetails = {
-    "one-time": {
-      name: "Upfront",
-      price: "$499",
-      priceLabel: "upfront payment",
-      features: [
-        "Custom Design",
-        "SSL + Security Integration",
-        "Performance Optimization",
-        "Free Draft Before Payment",
-        "3 Rounds of Revisions",
-      ],
-    },
-    monthly: {
-      name: "Monthly",
-      price: "$199",
-      priceLabel: "per month",
-      features: [
-        "Everything in Upfront",
-        "Priority Updates & Fresh Improvements",
-        "Worry-Free Ongoing Maintenance",
-        "Powerful Real-Time Analytics Dashboard",
-      ],
-    },
-    bundle: {
-      name: "Bundle",
-      price: "Custom",
-      priceLabel: "upfront + monthly",
-      features: [
-        "Everything in Upfront",
-        "Everything in Monthly",
-        "Priority Updates & Fresh Improvements",
-        "Worry-Free Ongoing Maintenance",
-        "Powerful Real-Time Analytics Dashboard",
-      ],
-    },
-  };
+  const upfrontFeatures = [
+    "Custom Design",
+    "SSL + Security Integration",
+    "Performance Optimization",
+    "Free Draft Before Payment",
+    "3 Revisions",
+  ];
 
-  const plan = planDetails[planType as keyof typeof planDetails];
+  const monthlyAdditionalFeatures = [
+    "Priority Updates & Fresh Improvements",
+    "Worry-Free Ongoing Maintenance",
+    "Analytics Dashboard",
+    "Priority Ongoing Support",
+    "Advanced Security",
+    "2 Revisions Per Month",
+  ];
 
-  // Reset form state when modal closes
+  const annualExcluded = new Set(["Analytics Dashboard", "Priority Ongoing Support", "Advanced Security"]);
+  const annualAdditionalFeatures = [
+    ...monthlyAdditionalFeatures.filter(f => !annualExcluded.has(f)),
+    "Subdomain Configuration",
+    "Full Redesigns",
+  ];
+
+  let featuresHeader: React.ReactNode = null;
+  let displayFeatures: string[] = [];
+
+  if (planType === "one-time") {
+    displayFeatures = upfrontFeatures;
+  } else if (isAnnual) {
+    featuresHeader = <>Everything in <strong>Monthly</strong>, including:</>;
+    displayFeatures = annualAdditionalFeatures;
+  } else if (planType === "monthly") {
+    featuresHeader = <>Everything in <strong>Upfront</strong>, including:</>;
+    displayFeatures = monthlyAdditionalFeatures;
+  } else if (planType === "bundle") {
+    featuresHeader = <>Everything in <strong>Upfront</strong> and <strong>Monthly</strong>, including:</>;
+    displayFeatures = [
+      "Priority Updates & Fresh Improvements",
+      "Worry-Free Ongoing Maintenance",
+      "Analytics Dashboard",
+      "Priority Ongoing Support",
+      "Advanced Security",
+      "Subdomain Configuration",
+      "2 Revisions Per Month",
+    ];
+  }
+
+  const planName = isAnnual ? "Annual" : planType === "one-time" ? "Upfront" : planType === "bundle" ? "Bundle" : "Monthly";
+
   useEffect(() => {
     if (!isOpen) {
       setEmail("");
@@ -99,29 +105,22 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
   }, [isOpen]);
 
   const handleProceedToCheckout = async () => {
-    if (!email.trim()) {
-      setError("Please enter your email address");
-      return;
-    }
+    if (!email.trim()) { setError("Please enter your email address"); return; }
     if (!isValidEmail(email)) {
       setEmailError("Please enter a valid email address");
       setError("Please fix the email address above");
       return;
     }
-    if (!agreedToTerms) {
-      setError("Please agree to the terms and conditions");
-      return;
-    }
+    if (!agreedToTerms) { setError("Please agree to the terms and conditions"); return; }
 
     setIsLoading(true);
     setError("");
 
     try {
-      // Verify email and plan type against the database
       const response = await fetch("/api/quotes/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.toLowerCase(), planType: billingCycle === "annual" ? "annual" : planType }),
+        body: JSON.stringify({ email: email.toLowerCase(), planType: isAnnual ? "annual" : planType }),
       });
 
       const data = await response.json();
@@ -132,16 +131,13 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
         return;
       }
 
-      // Check if quote was found
       if (!data.found) {
-        // Show the appropriate error message
         setError(data.message || "This email address is not recognized.");
         setIsLoading(false);
         return;
       }
 
-      // Email verified and plan matches - proceed to checkout
-      window.location.href = `/checkout?email=${encodeURIComponent(email)}&plan=${billingCycle === "annual" ? "annual" : planType}`;
+      window.location.href = `/checkout?email=${encodeURIComponent(email)}&plan=${isAnnual ? "annual" : planType}`;
     } catch (err) {
       setError("Something went wrong. Please try again or contact us at hello@gimmeasite.com.");
       setIsLoading(false);
@@ -171,9 +167,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
             <CreditCard className="w-8 h-8 text-primary" />
           </div>
           <h3 className="text-2xl font-bold mb-1">Proceed to Checkout</h3>
-          <p className="text-muted-foreground">
-            {planType === "monthly" && billingCycle === "annual" ? "Annual" : planType === "bundle" ? "Bundle" : plan.name}
-          </p>
+          <p className="text-muted-foreground">{planName}</p>
         </div>
 
         {/* Important Notice */}
@@ -195,6 +189,21 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
 
         <Separator className="mb-6" />
 
+        {/* Features */}
+        <div className="mb-6 space-y-2">
+          {featuresHeader && (
+            <p className="text-sm font-semibold mb-3">{featuresHeader}</p>
+          )}
+          {displayFeatures.map((feature, i) => (
+            <div key={i} className="flex items-center gap-2 text-sm">
+              <Check className="w-4 h-4 text-primary flex-shrink-0" />
+              <span>{feature}</span>
+            </div>
+          ))}
+        </div>
+
+        <Separator className="mb-6" />
+
         {/* Email Input */}
         <div className="space-y-4 mb-6">
           <div>
@@ -212,9 +221,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
               onChange={(e) => {
                 setEmail(e.target.value);
                 setError("");
-                if (emailError && isValidEmail(e.target.value)) {
-                  setEmailError("");
-                }
+                if (emailError && isValidEmail(e.target.value)) setEmailError("");
               }}
               onBlur={(e) => validateEmail(e.target.value)}
               className={`bg-background ${emailError ? "border-red-500 focus-visible:ring-red-500" : ""}`}
@@ -273,10 +280,11 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
         <div className="text-xs text-muted-foreground mb-6 space-y-1">
           <p>
             {planType === "one-time"
-              ? "• Three (3) revisions are included (email support). Requesting extra revisions or large-scale updates may incur additional fees."
-              : "• Unlimited revisions are included (email support)."}
+              ? "3 revisions are included (email support). Requesting extra revisions or large-scale updates may incur additional fees."
+              : isAnnual || planType === "bundle"
+              ? "Revisions are included (email support). Large-scale updates may incur additional fees."
+              : "2 revisions per month are included (email support)."}
           </p>
-
         </div>
 
         {/* Error Message */}
