@@ -19,15 +19,15 @@ interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
   planType: "one-time" | "monthly";
+  billingCycle?: "monthly" | "annual";
 }
 
-export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
+export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthly" }: PaymentModalProps) {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState<string>("");
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
 
   // Email validation helper
   const isValidEmail = (email: string): boolean => {
@@ -83,7 +83,6 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
       setAgreedToTerms(false);
       setError("");
       setIsLoading(false);
-      setBillingCycle("monthly");
     }
   }, [isOpen]);
 
@@ -163,24 +162,8 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
           <p className="text-muted-foreground">
             {plan.name}
           </p>
-          {planType === "monthly" && (
-            <div className="flex items-center justify-center gap-2 mt-3">
-              <button
-                type="button"
-                onClick={() => setBillingCycle("monthly")}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${billingCycle === "monthly" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                Monthly
-              </button>
-              <button
-                type="button"
-                onClick={() => setBillingCycle("annual")}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${billingCycle === "annual" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-              >
-                Annual
-                <span className="ml-1.5 text-xs bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded-full">Save 15%</span>
-              </button>
-            </div>
+          {planType === "monthly" && billingCycle === "annual" && (
+            <p className="text-xs text-green-400 mt-1">Annual billing — Save 15%</p>
           )}
         </div>
 
@@ -201,18 +184,6 @@ export function PaymentModal({ isOpen, onClose, planType }: PaymentModalProps) {
           </div>
         </div>
 
-        {planType === "monthly" && (
-          <div className="text-center mb-4 -mt-2">
-            <span className="text-2xl font-bold text-primary">
-              {billingCycle === "annual"
-                ? `$${Math.round(199 * 12 * 0.85).toLocaleString()}/yr`
-                : "$199/mo"}
-            </span>
-            {billingCycle === "annual" && (
-              <p className="text-xs text-muted-foreground mt-0.5">vs. $2,388/yr billed monthly</p>
-            )}
-          </div>
-        )}
         <Separator className="mb-6" />
 
         {/* Email Input */}
