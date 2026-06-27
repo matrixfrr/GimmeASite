@@ -576,7 +576,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <section id="pricing" className="pt-32 pb-20 relative noise-bg">
+      <section id="pricing" className="pt-32 pb-32 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
@@ -821,7 +821,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <button type="button" onClick={() => setShowUpfrontPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
             </div>
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
-              <p>The <span className="font-semibold text-foreground">Upfront Plan</span> is a one-time fee — <strong className="text-foreground">no</strong> subscription, <strong className="text-foreground">no</strong> recurring charges. It&apos;s best suited for:</p>
+              <p>The <span className="font-semibold text-foreground">Upfront Plan</span> is a one-time fee — <strong className="text-foreground">no</strong> subscription, <strong className="text-foreground">no</strong> recurring charges. It’s best suited for:</p>
               <ul className="space-y-1.5 list-none">
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> <strong className="text-foreground">First-time</strong> site owners looking for a quick, <strong className="text-foreground">simple</strong> site</li>
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Young businesses interested in <strong className="text-foreground">limited</strong> support</li>
@@ -845,7 +845,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
               {monthlyBilling === "monthly" ? (
                 <>
-                  <p>The <span className="font-semibold text-foreground">Monthly Plan</span> is a recurring <strong className="text-foreground">subscription</strong> — It&apos;s ideal for:</p>
+                  <p>The <span className="font-semibold text-foreground">Monthly Plan</span> is a recurring monthly <strong className="text-foreground">subscription</strong> — It’s ideal for:</p>
                   <ul className="space-y-1.5 list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Growing businesses that want <strong className="text-foreground">continued</strong> support and <strong className="text-foreground">ongoing</strong> updates</li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> <strong className="text-foreground">Mildly</strong> involved sites that benefit from <strong className="text-foreground">regular</strong> revisions (2/month)</li>
@@ -855,7 +855,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 </>
               ) : (
                 <>
-                  <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring <strong className="text-foreground">yearly</strong> subscription — It&apos;s beneficial for:</p>
+                  <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring <strong className="text-foreground">yearly</strong> subscription — It’s beneficial for:</p>
                   <ul className="space-y-1.5 list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Established businesses willing to <strong className="text-foreground">commit</strong> for the year</li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> <strong className="text-foreground">Complex</strong> sites requiring <strong className="text-foreground">premium</strong> amenities, including <strong className="text-foreground">unlimited</strong> revisions and VIP <strong className="text-foreground">priority</strong> support</li>
