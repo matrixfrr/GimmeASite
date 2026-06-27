@@ -549,6 +549,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       description: "",
       features: [
         "Custom Design",
+        "Domain",
         "SSL + Security",
         "Performance Optimization",
         "3 Total Revisions",
@@ -685,6 +686,11 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                         <Check className="w-4 h-4 text-primary flex-shrink-0" />
                         <span className="text-sm">{feature.replace("__sub__", "")}</span>
                       </div>
+                    ) : feature === "Domain" ? (
+                      <div key={feature} className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                        <span>Domain<span title="Conditions may apply." className="text-red-500 font-bold text-sm cursor-help ml-0.5 align-middle">*</span></span>
+                      </div>
                     ) : (
                       <div key={feature} className="flex items-center gap-3">
                         <Check className="w-5 h-5 text-primary flex-shrink-0" />
@@ -785,22 +791,23 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <tbody className="divide-y divide-border/40">
                   {([
                     { perk: "Custom Design", up: true, mo: true, hy: true, an: true },
+                    { perk: "Domain", up: true, mo: true, hy: true, an: true },
                     { perk: "SSL Certified", up: true, mo: true, hy: true, an: true },
                     { perk: "Performance", up: true, mo: true, hy: true, an: true },
                     { perk: "Security", up: true, mo: true, hy: true, an: true },
                     { perk: "Revisions", up: "3", mo: "2/month", hy: "4/month", an: "∞" },
                     { perk: "Support", up: "6 Months", mo: "∞", hy: "∞", an: "∞⚡" },
                     { perk: "Analytics", up: false, mo: true, hy: true, an: true },
-                    { perk: "Monthly Discount", up: false, mo: false, hy: true, an: true },
+                    { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "20%" },
                     { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
                     { perk: "Subdomains", up: false, mo: false, hy: false, an: true },
                   ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
                     const cell = (v: boolean | string) => typeof v === "string"
-                      ? <span className="text-xs font-semibold text-foreground">{v}</span>
+                      ? <span className={`text-xs font-semibold ${typeof v === "string" && v.endsWith("%") ? "text-green-500" : "text-foreground"}`}>{v}</span>
                       : v ? <Check className="w-4 h-4 text-green-500 mx-auto" /> : null;
                     return (
                       <tr key={perk} className="hover:bg-muted/20 transition-colors">
-                        <td className="py-2.5 pr-4 text-muted-foreground">{perk}</td>
+                        <td className={`py-2.5 pr-4 ${perk === "Monthly Discount" ? "text-green-500 font-semibold" : "text-muted-foreground"}`}>{perk}</td>
                         <td className="text-center py-2.5 px-2">{cell(up)}</td>
                         <td className="text-center py-2.5 px-2">{cell(mo)}</td>
                         <td className="text-center py-2.5 px-2">{cell(hy)}</td>
