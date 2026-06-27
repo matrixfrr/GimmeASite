@@ -164,20 +164,25 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
             {dropdownOpen && (
               <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 bg-card border border-border rounded-lg shadow-lg z-10 overflow-hidden min-w-[140px]">
                 {PLANS.map(plan => (
-                  <div key={plan.key} className="flex items-center">
-                    <button
-                      type="button"
-                      className={`flex-1 px-4 py-2 text-sm text-left hover:bg-primary/10 transition-colors flex items-center gap-1.5 ${selectedPlan === plan.key ? "text-primary font-medium" : "text-foreground"}`}
-                      onClick={() => { setSelectedPlan(plan.key); setDropdownOpen(false); setError(""); }}
-                    >
-                      {plan.label}
-                      {plan.key === "hybrid" && <span className="text-green-500 text-xs font-normal">Save 10%</span>}
-                      {plan.key === "annual" && <span className="text-green-500 text-xs font-normal">Save 20%</span>}
-                    </button>
+                  <button
+                    key={plan.key}
+                    type="button"
+                    className={`w-full px-4 py-2 text-sm text-left hover:bg-primary/10 transition-colors flex items-center gap-1.5 ${selectedPlan === plan.key ? "text-primary font-medium" : "text-foreground"}`}
+                    onClick={() => { setSelectedPlan(plan.key); setDropdownOpen(false); setError(""); }}
+                  >
+                    {plan.label}
+                    {plan.key === "hybrid" && <span className="text-green-500 font-normal" style={{fontSize:"0.6rem"}}>Save 10%</span>}
+                    {plan.key === "annual" && <span className="text-green-500 font-normal" style={{fontSize:"0.6rem"}}>Save 20%</span>}
                     {plan.key === "hybrid" && (
-                      <button type="button" className="px-2 py-2 text-xs text-muted-foreground hover:text-primary transition-colors" onClick={() => { setDropdownOpen(false); onClose(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }}>?</button>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        onClick={(e) => { e.stopPropagation(); setDropdownOpen(false); onClose(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); setDropdownOpen(false); onClose(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); } }}
+                        className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-current text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.5rem] leading-none flex-shrink-0"
+                      >?</span>
                     )}
-                  </div>
+                  </button>
                 ))}
               </div>
             )}
