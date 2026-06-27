@@ -724,7 +724,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           ))}
         </div>
 
-        <div className="flex justify-center mt-6 mb-2">
+        <div className="flex justify-center mt-12 mb-2">
           <button
             type="button"
             onClick={() => setShowComparePopup(true)}
@@ -802,7 +802,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     { perk: "Analytics", up: false, mo: true, hy: true, an: true },
                     { perk: "Monthly Discount", up: false, mo: false, hy: true, an: true },
                     { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
-                    { perk: "Subdomain Configuration", up: false, mo: false, hy: false, an: true },
+                    { perk: "Subdomains", up: false, mo: false, hy: false, an: true },
                   ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
                     const cell = (v: boolean | string) => typeof v === "string"
                       ? <span className="text-xs font-semibold text-foreground">{v}</span>
