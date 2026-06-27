@@ -253,8 +253,25 @@ export default function AdminPage() {
     );
   }
 
-  const unpaidQuotes = quotes.filter((q) => !q.paid);
-  const paidQuotes = quotes.filter((q) => q.paid);
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "paid" | null>(null);
+  const [planFilter, setPlanFilter] = useState<"upfront" | "monthly" | "hybrid" | "annual" | null>(null);
+
+  const allUnpaid = quotes.filter((q) => !q.paid);
+  const allPaid = quotes.filter((q) => q.paid);
+
+  const getPlanKey = (q: ClientQuote) => {
+    const hasMonthlyCents = q.notes ? /Monthly price: \$[\d.]+/.test(q.notes) : false;
+    if (q.plan_type === "annual") return "annual";
+    if (q.plan_type === "monthly") return "monthly";
+    if (hasMonthlyCents || q.plan_type === "hybrid") return "hybrid";
+    return "upfront";
+  };
+
+  // Apply filters
+  const baseUnpaid = statusFilter === "paid" ? [] : statusFilter === "pending" || statusFilter === null ? allUnpaid : allUnpaid;
+  const basePaid   = statusFilter === "pending" ? [] : statusFilter === "paid" || statusFilter === null ? allPaid : allPaid;
+  const unpaidQuotes = planFilter ? baseUnpaid.filter(q => getPlanKey(q) === planFilter) : baseUnpaid;
+  const paidQuotes   = basePaid;
 
   return (
     <div className="min-h-screen bg-background">
@@ -288,8 +305,9 @@ export default function AdminPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-card border border-border rounded-xl p-6">
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <button type="button" onClick={() => { setStatusFilter(f => f === "all" ? null : "all"); setPlanFilter(null); }} className={`bg-card border rounded-xl p-6 text-left transition-colors hover:border-blue-500/50 ${statusFilter === "all" ? "border-blue-500" : "border-border"}`}>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
                 <Users className="w-6 h-6 text-blue-500" />
@@ -299,29 +317,44 @@ export default function AdminPage() {
                 <p className="text-sm text-muted-foreground">Total Quotes</p>
               </div>
             </div>
-          </div>
-          <div className="bg-card border border-border rounded-xl p-6">
+          </button>
+          <button type="button" onClick={() => { setStatusFilter(f => f === "pending" ? null : "pending"); setPlanFilter(null); }} className={`bg-card border rounded-xl p-6 text-left transition-colors hover:border-amber-500/50 ${statusFilter === "pending" ? "border-amber-500" : "border-border"}`}>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-amber-500/10 rounded-lg flex items-center justify-center">
                 <Clock className="w-6 h-6 text-amber-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{unpaidQuotes.length}</p>
+                <p className="text-2xl font-bold">{allUnpaid.length}</p>
                 <p className="text-sm text-muted-foreground">Pending Payment</p>
               </div>
             </div>
-          </div>
-          <div className="bg-card border border-border rounded-xl p-6">
+          </button>
+          <button type="button" onClick={() => { setStatusFilter(f => f === "paid" ? null : "paid"); setPlanFilter(null); }} className={`bg-card border rounded-xl p-6 text-left transition-colors hover:border-green-500/50 ${statusFilter === "paid" ? "border-green-500" : "border-border"}`}>
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
                 <CheckCircle className="w-6 h-6 text-green-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{paidQuotes.length}</p>
+                <p className="text-2xl font-bold">{allPaid.length}</p>
                 <p className="text-sm text-muted-foreground">Paid</p>
               </div>
             </div>
-          </div>
+          </button>
+        </div>
+
+        {/* Plan filters */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {([["upfront","Upfront","bg-red-500/10 text-red-500 border-red-500/30 hover:border-red-500","border-red-500"],["monthly","Monthly","bg-blue-500/10 text-blue-500 border-blue-500/30 hover:border-blue-500","border-blue-500"],["hybrid","Hybrid","bg-pink-500/10 text-pink-500 border-pink-500/30 hover:border-pink-500","border-pink-500"],["annual","Annual","bg-cyan-500/10 text-cyan-400 border-cyan-500/30 hover:border-cyan-500","border-cyan-500"]] as const).map(([key, label, baseClass, activeClass]) => (
+            <button
+              key={key}
+              type="button"
+              disabled={statusFilter === "paid"}
+              onClick={() => { setPlanFilter(f => f === key ? null : key); setStatusFilter(null); }}
+              className={`px-4 py-1.5 rounded-full border text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${baseClass} ${planFilter === key ? activeClass : ""}`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">
