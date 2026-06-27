@@ -539,7 +539,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
   const [showUpfrontPopup, setShowUpfrontPopup] = useState(false);
   const [showMonthlyPopup, setShowMonthlyPopup] = useState(false);
-  const [showComparePopup, setShowComparePopup] = useState(false);
   const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
 
 
@@ -596,11 +595,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Choose the perfect Plan for your business. All Plans include our quality and satisfaction guaranteed.
-          </p>
-          <p className="text-lg md:text-xl max-w-2xl mx-auto mt-2">
-            <button type="button" onClick={() => setShowComparePopup(true)} className="text-orange-500 hover:underline transition-colors">
-              View the Plan Comparison Table.
-            </button>
           </p>
         </div>
 
@@ -771,59 +765,53 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         )}
       </div>
 
-      {/* Plan Comparison Popup */}
-      {showComparePopup && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowComparePopup(false)}>
-          <div className="bg-card border border-border rounded-2xl p-6 max-w-2xl w-full shadow-xl animate-slideIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="flex items-start justify-between mb-5">
-              <h3 className="text-lg font-bold">Plan Comparison</h3>
-              <button type="button" onClick={() => setShowComparePopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr>
-                    <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/2">Amenities</th>
-                    <th className="text-center py-2 px-2 font-semibold text-foreground">Upfront</th>
-                    <th className="text-center py-2 px-2 font-semibold text-foreground">Monthly</th>
-                    <th className="text-center py-2 px-2 font-semibold text-foreground"><span className="inline-flex items-center justify-center gap-0.5">Hybrid<span role="button" tabIndex={0} onClick={() => window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 }))} onKeyDown={(e) => { if (e.key === "Enter") window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }} className="inline-flex items-center justify-center w-3 h-3 rounded-full border border-muted-foreground text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.45rem] leading-none cursor-pointer ml-0.5">?</span></span></th>
-                    <th className="text-center py-2 px-2 font-semibold text-foreground">Annual</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40">
-                  {([
-                    { perk: "Custom Design", up: true, mo: true, hy: true, an: true },
-                    { perk: "Domain", up: true, mo: true, hy: true, an: true },
-                    { perk: "SSL Certified", up: true, mo: true, hy: true, an: true },
-                    { perk: "Performance", up: true, mo: true, hy: true, an: true },
-                    { perk: "Security", up: true, mo: true, hy: true, an: true },
-                    { perk: "Revisions", up: "3", mo: "2/month", hy: "4/month", an: "∞" },
-                    { perk: "Support", up: "6 Months", mo: "∞", hy: "∞", an: "∞⚡" },
-                    { perk: "Analytics", up: false, mo: true, hy: true, an: true },
-                    { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "20%" },
-                    { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
-                    { perk: "Subdomains", up: false, mo: false, hy: false, an: true },
-                  ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
-                    const cell = (v: boolean | string) => typeof v === "string"
-                      ? <span className={`text-xs font-semibold ${typeof v === "string" && v.endsWith("%") ? "text-green-500" : "text-foreground"}`}>{v}</span>
-                      : v ? <Check className="w-4 h-4 text-green-500 mx-auto" /> : null;
-                    return (
-                      <tr key={perk} className={`transition-colors ${"hover:bg-muted/20"}`}>
-                        <td className={`py-2.5 pr-4 ${perk === "Monthly Discount" ? "text-green-500" : "text-muted-foreground"}`}>{perk}{(perk === "Domain" || perk === "Revisions") && <span className="text-red-500 font-bold text-xs cursor-help ml-0.5 align-middle" title="Conditions may apply.">*</span>}</td>
-                        <td className="text-center py-2.5 px-2">{cell(up)}</td>
-                        <td className="text-center py-2.5 px-2">{cell(mo)}</td>
-                        <td className="text-center py-2.5 px-2">{cell(hy)}</td>
-                        <td className="text-center py-2.5 px-2">{cell(an)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <button type="button" onClick={() => setShowComparePopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
+      {/* Plan Comparison Table — inline between pricing cards and contact form */}
+      <div className="max-w-7xl mx-auto px-6 mt-16">
+        <div className="bg-card/50 border border-border/50 rounded-2xl p-6">
+          <h3 className="text-lg font-bold mb-5">Plan Comparison</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr>
+                  <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/3">Amenities</th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground">Upfront</th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground">Monthly</th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground"><span className="inline-flex items-center justify-center gap-0.5">Hybrid<span role="button" tabIndex={0} onClick={() => window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 }))} onKeyDown={(e) => { if (e.key === "Enter") window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }} className="inline-flex items-center justify-center w-3 h-3 rounded-full border border-muted-foreground text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.45rem] leading-none cursor-pointer ml-0.5">?</span></span></th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground">Annual</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border/40">
+                {([
+                  { perk: "Custom Design", up: true, mo: true, hy: true, an: true },
+                  { perk: "Domain", up: true, mo: true, hy: true, an: true },
+                  { perk: "SSL Certified", up: true, mo: true, hy: true, an: true },
+                  { perk: "Performance", up: true, mo: true, hy: true, an: true },
+                  { perk: "Security", up: true, mo: true, hy: true, an: true },
+                  { perk: "Revisions", up: "3", mo: "2/month", hy: "4/month", an: "∞" },
+                  { perk: "Support", up: "6 Months", mo: "∞", hy: "∞", an: "∞⚡" },
+                  { perk: "Analytics", up: false, mo: true, hy: true, an: true },
+                  { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "20%" },
+                  { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
+                  { perk: "Subdomains", up: false, mo: false, hy: false, an: true },
+                ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
+                  const cell = (v: boolean | string) => typeof v === "string"
+                    ? <span className={`text-xs font-semibold ${typeof v === "string" && v.endsWith("%") ? "text-green-500" : "text-foreground"}`}>{v}</span>
+                    : v ? <Check className="w-4 h-4 text-green-500 mx-auto" /> : null;
+                  return (
+                    <tr key={perk} className="transition-colors hover:bg-muted/20">
+                      <td className={`py-3 pr-4 ${perk === "Monthly Discount" ? "text-green-500" : "text-muted-foreground"}`}>{perk}{(perk === "Domain" || perk === "Revisions") && <span className="text-red-500 font-bold text-xs cursor-help ml-0.5 align-middle" title="Conditions may apply.">*</span>}</td>
+                      <td className="text-center py-3 px-4">{cell(up)}</td>
+                      <td className="text-center py-3 px-4">{cell(mo)}</td>
+                      <td className="text-center py-3 px-4">{cell(hy)}</td>
+                      <td className="text-center py-3 px-4">{cell(an)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Equity/CMS popup — rendered at section level to avoid scroll glitch */}
 
