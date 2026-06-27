@@ -651,7 +651,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     <button
                       type="button"
                       className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                      onClick={() => { setShowMonthlyPopup(true); monthlyBilling === "monthly" ? setShowMonthlyBubble(false) : setShowAnnualBubble(false); }}
+                      onClick={() => { setShowMonthlyPopup(true); if (monthlyBilling === "monthly") { setShowMonthlyBubble(false); } else { setShowAnnualBubble(false); } }}
                     >
                       ?
                     </button>
