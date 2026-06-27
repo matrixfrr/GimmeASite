@@ -590,17 +590,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </p>
         </div>
 
-        <div className="flex justify-center my-8">
-          <button
-            type="button"
-            onClick={() => setShowComparePopup(true)}
-            className="inline-flex items-center gap-2.5 bg-orange-500/10 border border-orange-500/30 rounded-xl px-5 py-3 hover:bg-orange-500/15 transition-colors"
-          >
-            <span className="text-orange-500 text-base flex-shrink-0">💡</span>
-            <span className="text-sm font-medium text-orange-500 underline text-center">Still confused about our plans?</span>
-          </button>
-        </div>
-
         <div className="grid md:grid-cols-3 gap-8 items-start">
           {plans.map((plan) => (
             <Card
@@ -623,14 +612,14 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     <button
                       type="button"
                       onClick={() => setMonthlyBilling("monthly")}
-                      className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold leading-none tracking-tight rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       Monthly
                     </button>
                     <button
                       type="button"
                       onClick={() => setMonthlyBilling("annual")}
-                      className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
+                      className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold leading-none tracking-tight rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
                       Annual <span className="text-xs font-normal text-green-500">Save 15%</span>
                     </button>
@@ -735,6 +724,17 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           ))}
         </div>
 
+        <div className="flex justify-center mt-6 mb-2">
+          <button
+            type="button"
+            onClick={() => setShowComparePopup(true)}
+            className="inline-flex items-center gap-2.5 bg-orange-500/10 border border-orange-500/30 rounded-xl px-5 py-3 hover:bg-orange-500/15 transition-colors"
+          >
+            <span className="text-orange-500 text-base flex-shrink-0">💡</span>
+            <span className="text-sm font-medium text-orange-500 underline text-center">Still confused about our plans?</span>
+          </button>
+        </div>
+
         {showComingSoon && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div
@@ -797,7 +797,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     { perk: "SSL Certified", up: true, mo: true, hy: true, an: true },
                     { perk: "Performance", up: true, mo: true, hy: true, an: true },
                     { perk: "Security", up: true, mo: true, hy: true, an: true },
-                    { perk: "Revisions", up: "3", mo: "2/month", hy: "2/month", an: "∞" },
+                    { perk: "Revisions", up: "3", mo: "2/month", hy: "4/month", an: "∞" },
                     { perk: "Support", up: "90 Days", mo: "∞", hy: "∞", an: "∞⚡" },
                     { perk: "Analytics", up: false, mo: true, hy: true, an: true },
                     { perk: "Monthly Discount", up: false, mo: false, hy: true, an: true },
