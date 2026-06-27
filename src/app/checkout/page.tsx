@@ -347,6 +347,18 @@ function CheckoutContent() {
                     </button>
                     <button
                       type="button"
+                      onClick={() => setPlanType("hybrid")}
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        planType === "hybrid"
+                          ? "border-primary bg-primary/10"
+                          : "border-border hover:border-border/80"
+                      }`}
+                    >
+                      <div className="font-semibold">Hybrid</div>
+                      <div className="text-xs text-muted-foreground">Upfront + Monthly Discount</div>
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => setPlanType("annual")}
                       className={`p-4 rounded-xl border-2 transition-all ${
                         planType === "annual"
@@ -356,18 +368,6 @@ function CheckoutContent() {
                     >
                       <div className="font-semibold">Annual</div>
                       <div className="text-sm text-muted-foreground">Yearly subscription</div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPlanType("hybrid")}
-                      className={`p-4 rounded-xl border-2 transition-all ${
-                        planType === "hybrid"
-                          ? "border-primary bg-primary/10"
-                          : "border-border hover:border-border/80"
-                      }`}
-                    >
-                      <div className="font-semibold">Hybrid</div>
-                      <div className="text-xs text-muted-foreground">Upfront + Discounted Monthly</div>
                     </button>
                   </div>
                 </div>
