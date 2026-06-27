@@ -584,7 +584,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <section id="pricing" className="pt-32 pb-32 relative noise-bg">
+      <section id="pricing" className="pt-32 pb-32 relative">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
@@ -1279,7 +1279,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
   };
 
   return (
-    <section id="contact" className="py-32 relative noise-bg">
+    <section id="contact" className="py-32 relative">
       {/* Toast Notification */}
       {showSubmitToast && (
         <div className="fixed top-24 right-4 z-50 animate-slideIn">
