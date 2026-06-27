@@ -51,7 +51,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What if I need revisions to my site?",
-    answer: "A different set of revisions are included in each Plan. You can make your revision requests known by contacting support. Requesting extra revisions or full, large-scale redesigns may incur additional fees depending on the conditions of your selected Plan.",
+    answer: "A different allowance of revisions are included in each Plan. You can request revisions by contacting support. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.",
   },
   {
     question: "Where do I manage my subscription?",
@@ -560,7 +560,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "Domain",
         "SSL + Security",
         "Performance Optimization",
-        "3 Total Revisions",
+        "3 Revisions Total",
         "Temporary Support",
       ],
       popular: false,
@@ -636,7 +636,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                       onClick={() => setMonthlyBilling("annual")}
                       className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold leading-none tracking-tight rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
-                      Annual <span className="text-xs font-normal text-green-500">Save 20%</span>
+                      Annual <span className="text-xs font-normal text-green-500">Save 15%</span>
                     </button>
                   </div>
                   <div className="relative flex-shrink-0">
@@ -701,7 +701,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <div className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Continued Support", "Analytics Reports", "2 Revisions / Month"].includes(f)), "Subdomain Configuration", "Unlimited Revisions", "__sub__Full Redesigns", "VIP, Priority Support"]
+                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Continued Support", "Analytics Reports", "2 Revisions / Month"].includes(f)), "Subdomain Configuration", "Full Redesigns", "Unlimited Revisions", "VIP, Priority Support"]
                     : plan.features
                   ).map((feature: string) => (
                     feature.startsWith("__sub__") ? (
@@ -817,7 +817,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   { perk: "Revisions", up: "3", mo: "2/month", hy: "4/month", an: "∞" },
                   { perk: "Support", up: "6 Months", mo: "∞", hy: "∞", an: "∞⚡" },
                   { perk: "Analytics", up: false, mo: true, hy: true, an: true },
-                  { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "20%" },
+                  { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "15%" },
                   { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
                   { perk: "Subdomains", up: false, mo: false, hy: false, an: true },
                 ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
@@ -853,11 +853,11 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
               <p>The <span className="font-semibold text-foreground">Upfront Plan</span> is a one-time fee — <strong className="text-foreground">no</strong> subscription, <strong className="text-foreground">no</strong> recurring charges. It’s best suited for:</p>
               <ul className="space-y-1.5 list-none">
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>First-time site owners looking for a quick, <strong className="text-foreground">simple</strong> site</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>New businesses interested in <strong className="text-foreground">temporary</strong> support</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Individuals who prefer a <strong className="text-foreground">short-term</strong> investment</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>First-time site owners looking for a quick, <strong className="text-foreground">simple</strong> site with minimal changes</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Those interested in temporary support and <strong className="text-foreground">short-term</strong> benefits</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Businesses that aim to <strong className="text-foreground">limit</strong> recurring costs</span></li>
               </ul>
-              <p>Once the 6-month support period and 3 revision credits are up, maintenance and updates will <strong className="text-foreground">no longer</strong> be delivered.</p>
+              <p>Once our 6-month support period concludes, troubleshooting and revisions will <strong className="text-foreground">no longer</strong> be delivered. However, your site will <strong className="text-foreground">not</strong> go offline.</p>
             </div>
             <button type="button" onClick={() => setShowUpfrontPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
           </div>
@@ -879,19 +879,17 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   <ul className="space-y-1.5 list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Growing businesses that want <strong className="text-foreground">continued</strong> support and ongoing updates</span></li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Moderately</strong> involved sites that benefit from regular revisions (2/month)</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>People that prefer spreading their costs <strong className="text-foreground">over time</strong> rather than dropping a large upfront sum</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>People who prefer to spread their costs <strong className="text-foreground">over time</strong> rather than submitting an upfront sum</span></li>
                   </ul>
-                  <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
                 </>
               ) : (
                 <>
                   <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring yearly subscription — It’s beneficial for:</p>
                   <ul className="space-y-1.5 list-none">
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses willing to <strong className="text-foreground">commit</strong> for the year</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses looking to <strong className="text-foreground">commit</strong> for the year</span></li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites with <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">20% savings</span> (over 2 months free)</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% savings</span> (approx. 2 months free)</span></li>
                   </ul>
-                  <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
                 </>
               )}
             </div>
@@ -1665,7 +1663,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                           }`}
                           onClick={() => handlePlanSelect("Annual")}
                         >
-                          Annual <span className="text-green-500" style={{fontSize:"0.6rem"}}>Save 20%</span>
+                          Annual <span className="text-green-500" style={{fontSize:"0.6rem"}}>Save 15%</span>
                         </button>
 
                       </div>
