@@ -51,11 +51,11 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What if I need revisions to my site?",
-    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions by contacting support. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support which is already included?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
+    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions by contacting support. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
   },
   {
     question: "Where do I manage my subscription?",
-    answer: <>You can manage your subscription, update payment methods, and view invoices at <a href="https://gimmeasite.com/billing" className="text-primary hover:underline font-medium">gimmeasite.com/billing</a>.</>,
+    answer: <>You can manage your subscription, update payment methods, and view invoices at <a href="https://gimmeasite.com/billing" className="text-primary hover:underline font-medium">https://gimmeasite.com/billing</a>.</>,
   },
 ];
 
@@ -803,7 +803,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/3">Amenities</th>
                   <th className="text-center py-2 px-4 font-semibold text-foreground">Upfront</th>
                   <th className="text-center py-2 px-4 font-semibold text-foreground">Monthly</th>
-                  <th className="text-center py-2 px-4 font-semibold text-foreground"><span className="inline-flex items-center justify-center gap-0.5">Hybrid<span role="button" tabIndex={0} onClick={() => window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 }))} onKeyDown={(e) => { if (e.key === "Enter") window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }} className="inline-flex items-center justify-center w-3 h-3 rounded-full border border-muted-foreground text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.45rem] leading-none cursor-pointer ml-0.5">?</span></span></th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground"><span className="inline-flex items-center justify-center gap-0.5">Hybrid<span role="button" tabIndex={0} onClick={() => window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 1 }))} onKeyDown={(e) => { if (e.key === "Enter") window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 1 })); }} className="inline-flex items-center justify-center w-3 h-3 rounded-full border border-muted-foreground text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.45rem] leading-none cursor-pointer ml-0.5">?</span></span></th>
                   <th className="text-center py-2 px-4 font-semibold text-foreground">Annual</th>
                 </tr>
               </thead>
@@ -854,7 +854,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <p>The <span className="font-semibold text-foreground">Upfront Plan</span> is a one-time fee — <strong className="text-foreground">no</strong> subscription, <strong className="text-foreground">no</strong> recurring charges. It’s best suited for:</p>
               <ul className="space-y-1.5 list-none">
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>First-time site owners looking for a quick, <strong className="text-foreground">simple</strong> site with minimal changes</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Those interested in <button type="button" onClick={() => { setShowUpfrontPopup(false); window.dispatchEvent(new CustomEvent('openFaqAt', { detail: 3 })); }} className="text-orange-500 hover:underline font-medium">temporary support</button> and <strong className="text-foreground">short-term</strong> benefits</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Those interested in <button type="button" onClick={() => { setShowUpfrontPopup(false); window.dispatchEvent(new CustomEvent('openFaqAt', { detail: 2 })); }} className="text-orange-500 hover:underline font-medium">temporary support</button> and <strong className="text-foreground">short-term</strong> benefits</span></li>
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Businesses that aim to <strong className="text-foreground">limit</strong> recurring costs</span></li>
               </ul>
             </div>
@@ -1650,8 +1650,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                           <span
                             role="button"
                             tabIndex={0}
-                            onClick={(e) => { e.stopPropagation(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }}
-                            onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); } }}
+                            onClick={(e) => { e.stopPropagation(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 1 })); }}
+                            onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 1 })); } }}
                             className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-current text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.5rem] leading-none flex-shrink-0"
                           >?</span>
                         </button>
