@@ -306,7 +306,7 @@ function CheckoutContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium">Email Address</label>
+                  <label htmlFor="email" className="text-sm font-medium">Email Address <span className="text-red-500 cursor-help" title="Required field">*</span></label>
                   <Input
                     id="email"
                     type="email"
@@ -319,7 +319,7 @@ function CheckoutContent() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Plan Type</label>
+                  <label className="text-sm font-medium">Plan Type <span className="text-red-500 cursor-help" title="Required field">*</span></label>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
