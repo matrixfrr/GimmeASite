@@ -557,9 +557,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       description: "Everything in __Upfront__, including:",
       features: [
         "Advanced Security",
+        "Analytics Reports",
         "2 Revisions / Month",
         "Continued Support",
-        "Analytics Dashboard",
       ],
       popular: true,
     },
