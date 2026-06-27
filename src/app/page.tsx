@@ -42,12 +42,12 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
     answer: "We value expedited services at GimmeASite. All sites are completed in up to five business days depending on complexity. However, some sites can even be delivered same-day!",
   },
   {
-    question: "What's included in the plans?",
-    answer: "All plans include custom design, hosting, revisions, specified support periods, etc.",
+    question: "What's included in the Plans?",
+    answer: "All Plans include custom design, hosting, revisions, specified support periods, etc.",
   },
   {
     question: "What if I need revisions to my site?",
-    answer: "A different set of revisions are included in each plan. You can make your revision requests known by contacting support. Requesting extra revisions or full, large-scale redesigns may incur additional fees depending on the conditions of your selected plan.",
+    answer: "A different set of revisions are included in each Plan. You can make your revision requests known by contacting support. Requesting extra revisions or full, large-scale redesigns may incur additional fees depending on the conditions of your selected Plan.",
   },
   {
     question: "Where do I manage my subscription?",
@@ -248,7 +248,7 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
       {/* Account popup */}
       {showAccountPopup && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowAccountPopup(false)}
         >
           <div
@@ -586,7 +586,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             <span className="gradient-text">No Surprises</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-            Choose the perfect plan for your business. All plans include our quality and satisfaction guaranteed.
+            Choose the perfect Plan for your business. All Plans include our quality and satisfaction guaranteed.
           </p>
         </div>
 
@@ -655,16 +655,17 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   )}
                 </div>
               )}
-              <div className="mb-4">
-                <button
-                  type="button"
-                  className="text-3xl font-extrabold text-primary hover:underline"
-                  onClick={() => scrollToSection("contact")}
-                >
-                  {plan.price}
-                </button>
-                <span className="text-muted-foreground"> {plan.priceLabel}</span>
-              </div>
+              {plan.name !== "Equity" && (
+                <div className="mb-4">
+                  <button
+                    type="button"
+                    className="text-sm text-orange-500 hover:underline transition-colors"
+                    onClick={() => scrollToSection("contact")}
+                  >
+                    Contact us for more information
+                  </button>
+                </div>
+              )}
               {plan.description && (
                 <p className="mb-4 font-medium text-muted-foreground">
                   {plan.name === "Monthly"
@@ -731,7 +732,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             className="inline-flex items-center gap-2.5 bg-orange-500/10 border border-orange-500/30 rounded-xl px-5 py-3 hover:bg-orange-500/15 transition-colors"
           >
             <span className="text-orange-500 text-base flex-shrink-0">💡</span>
-            <span className="text-sm font-medium text-orange-500 underline text-center">Still confused about our plans?</span>
+            <span className="text-sm font-bold text-orange-500 underline text-center">Still confused about our Plans?</span>
           </button>
         </div>
 
@@ -755,10 +756,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 </div>
                 <h3 className="text-2xl font-bold mb-2">Coming Soon</h3>
                 <p className="text-muted-foreground mb-6">
-                  The Equity plan is currently in development. We're working hard to bring you an exciting new way to partner with us!
+                  The Equity Plan is currently in development. We're working hard to bring you an exciting new way to partner with us!
                 </p>
                 <p className="text-sm text-muted-foreground mb-6">
-                  In the meantime, check out our <button type="button" onClick={() => { setShowComingSoon(false); setTimeout(() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-primary font-semibold underline">available</button> plans.
+                  In the meantime, check out our <button type="button" onClick={() => { setShowComingSoon(false); setTimeout(() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-primary font-semibold underline">available</button> Plans.
                 </p>
                 <Button
                   onClick={() => setShowComingSoon(false)}
@@ -774,7 +775,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
       {/* Plan Comparison Popup */}
       {showComparePopup && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowComparePopup(false)}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowComparePopup(false)}>
           <div className="bg-card border border-border rounded-2xl p-6 max-w-2xl w-full shadow-xl animate-slideIn max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-5">
               <h3 className="text-lg font-bold">Plan Comparison</h3>
@@ -784,7 +785,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr>
-                    <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/2">Perks</th>
+                    <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/2">Amenities</th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Upfront</th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Monthly</th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Hybrid</th>
@@ -829,7 +830,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
       {/* Upfront Plan Popup */}
       {showUpfrontPopup && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowUpfrontPopup(false)}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowUpfrontPopup(false)}>
           <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-4">
               <h3 className="text-lg font-bold">Is this plan for me?</h3>
@@ -851,7 +852,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
       {/* Monthly / Annual Plan Popup */}
       {showMonthlyPopup && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={() => setShowMonthlyPopup(false)}>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowMonthlyPopup(false)}>
           <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-4">
               <h3 className="text-lg font-bold">Is this plan for me?</h3>
@@ -886,7 +887,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       )}
       {showEquityCmsPopup && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowEquityCmsPopup(false)}
         >
           <div
@@ -1387,7 +1388,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <Input
                       id="name"
                       type="text"
-                      placeholder="John Doe"
+                      placeholder="First Last"
                       className={`bg-background ${errors.name ? "border-red-500" : ""}`}
                       value={formData.name}
                       onChange={handleChange}
@@ -1401,7 +1402,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="john@example.com"
+                      placeholder="first@example.com"
                       className={`bg-background ${errors.email ? "border-red-500" : ""}`}
                       value={formData.email}
                       onChange={handleChange}
@@ -1443,7 +1444,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <Input
                       id="company"
                       type="text"
-                      placeholder="Your Company"
+                      placeholder="Example, Inc."
                       className="bg-background"
                       value={formData.company}
                       onChange={handleChange}
@@ -1586,7 +1587,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       onClick={() => setShowPlanDropdown(!showPlanDropdown)}
                     >
                       <span className={formData.paymentPlan ? "text-foreground" : "text-muted-foreground"}>
-                        {formData.paymentPlan || "Select a plan"}
+                        {formData.paymentPlan || "Select a Plan"}
                       </span>
                       <svg
                         className={`w-4 h-4 text-muted-foreground transition-transform ${showPlanDropdown ? "rotate-180" : ""}`}
@@ -1850,15 +1851,18 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         <Check className="w-3 h-3 text-green-500" />
                       )}
                     </div>
-                    <Input
-                      id="googleBusiness"
-                      type="text"
-                      placeholder="Paste your Google Business or Maps link"
-                      className={`bg-background ${errors.googleBusiness ? "border-red-500" : ""}`}
-                      value={formData.googleBusiness}
-                      onChange={handleChange}
-                      onBlur={e => handleSocialBlur("googleBusiness", e.target.value)}
-                    />
+                    <div className="flex">
+                      <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-input bg-muted text-muted-foreground text-xs">share.google/</span>
+                      <Input
+                        id="googleBusiness"
+                        type="text"
+                        placeholder="ID"
+                        className={`bg-background rounded-l-none ${errors.googleBusiness ? "border-red-500" : ""}`}
+                        value={formData.googleBusiness}
+                        onChange={handleChange}
+                        onBlur={e => handleSocialBlur("googleBusiness", e.target.value)}
+                      />
+                    </div>
                     {errors.googleBusiness && <p className="text-red-500 text-xs mt-1">{errors.googleBusiness}</p>}
                   </div>
                 </div>
@@ -1895,7 +1899,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       {/* Unified Why? popup */}
       {showWhyPopup && (
         <div
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
           onClick={() => setShowWhyPopup(null)}
         >
           <div
@@ -1960,7 +1964,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   <li>Search for your business name on Google</li>
                   <li>Locate your Business Profile in the Knowledge Panel</li>
                   <li>Click the Share button beneath your business name</li>
-                  <li>Copy and paste the link here</li>
+                  <li>Copy and paste the ID here (delete &quot;https://share.google/&quot;)</li>
                 </ol>
               )}
             </div>
@@ -2182,7 +2186,7 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
             </button>
             <h3 className="text-2xl font-bold mb-6">Terms of Service</h3>
             <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
-              <p><strong className="text-foreground">Last Updated:</strong> April 2026</p>
+              <p><strong className="text-foreground">Last Updated:</strong> June 2026</p>
 
               <p>Welcome to GimmeASite. By using our services, you agree to be bound by these Terms of Service.</p>
 
@@ -2197,10 +2201,10 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
               </ul>
 
               <h4 className="text-foreground font-semibold mt-6">Intellectual Property</h4>
-              <p>GimmeASite retains all intellectual property rights to websites, designs, and code produced under our services. Upon receipt of full payment, clients are granted a limited, non-exclusive license to use and display the delivered website for its intended commercial purpose. Full transfer of ownership rights is not included as part of any standard service plan and remains the property of GimmeASite unless separately arranged in writing. We reserve the right to display delivered work in our portfolio unless a written opt-out is agreed upon.</p>
+              <p>GimmeASite retains all intellectual property rights to websites, designs, and code produced under our services. Upon receipt of full payment, clients are granted a limited, non-exclusive license to use and display the delivered website for its intended commercial purpose. Full transfer of ownership rights is not included as part of any standard service Plan and remains the property of GimmeASite unless separately arranged in writing. We reserve the right to display delivered work in our portfolio unless a written opt-out is agreed upon.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Revisions and Support</h4>
-              <p>Each project includes a reasonable number of revisions as specified in your plan, as well as a designated support period. Additional revisions and continued support outside of your plan may incur extra charges.</p>
+              <p>Each project includes a reasonable number of revisions as specified in your Plan, as well as a designated support period. Additional revisions and continued support outside of your Plan may incur extra charges.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Limitation of Liability</h4>
               <p>GimmeASite's liability is limited to the amount paid for services. We are not liable for indirect, incidental, or consequential damages.</p>
@@ -2209,7 +2213,7 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
               <p>GimmeASite makes no warranties regarding the uninterrupted availability, error-free operation, or absolute security of any website we deliver. We are not responsible for losses arising from security incidents caused by third parties, technical issues resulting from browser or platform updates outside our control, hosting or DNS outages, or reliance on content displayed on a delivered website. Our total liability shall not exceed the fees paid for the specific service giving rise to the claim.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Refund Policy</h4>
-              <p>All sales are final. GimmeASite does not offer refunds once payment has been processed. For monthly subscribers, you may cancel your subscription at any time to prevent future charges, but no refunds will be issued for the current or any prior billing periods. If you are dissatisfied with your site prior to payment, we will work with you to make it right before any transaction takes place.</p>
+              <p>All sales are final. GimmeASite does not offer refunds once payment has been processed. For subscribers, you may cancel your subscription at any time to prevent future charges, but no refunds will be issued for the current or any prior billing periods. If you are dissatisfied with your site prior to payment, we will work with you to make it right before any transaction takes place.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Automated Processes</h4>
               <p>Client acknowledges that certain services may be delivered in whole or in part through automated, algorithmic, or machine-driven processes. The use of such processes does not diminish the quality, ownership rights, or agreed scope of the work delivered.</p>
@@ -2243,348 +2247,4 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
             </button>
             <h3 className="text-2xl font-bold mb-6">Cookie Policy</h3>
             <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
-              <p><strong className="text-foreground">Last Updated:</strong> April 2026</p>
-
-              <p>This Cookie Policy explains how GimmeASite uses cookies and similar technologies on our website.</p>
-
-              <h4 className="text-foreground font-semibold mt-6">What Are Cookies?</h4>
-              <p>Cookies are small text files stored on your device when you visit a website. They help websites remember your preferences and improve your browsing experience.</p>
-
-              <h4 className="text-foreground font-semibold mt-6">How We Use Cookies</h4>
-              <p>We use cookies for:</p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li><strong className="text-foreground">Essential Cookies:</strong> Required for basic website functionality</li>
-                <li><strong className="text-foreground">Analytics Cookies:</strong> Help us understand how visitors interact with our site</li>
-                <li><strong className="text-foreground">Preference Cookies:</strong> Remember your settings and preferences</li>
-              </ul>
-
-              <h4 className="text-foreground font-semibold mt-6">Third-Party Cookies</h4>
-              <p>We may use third-party services (such as analytics providers) that set their own cookies. These are governed by their respective privacy policies.</p>
-
-              <h4 className="text-foreground font-semibold mt-6">Managing Cookies</h4>
-              <p>You can control cookies through your browser settings. Note that disabling certain cookies may affect website functionality.</p>
-
-              <h4 className="text-foreground font-semibold mt-6">Updates to This Policy</h4>
-              <p>We may update this Cookie Policy periodically. Please check back for any changes.</p>
-
-              <h4 className="text-foreground font-semibold mt-6">Contact</h4>
-              <p>For questions about our use of cookies, contact us at <a href="mailto:hello@gimmeasite.com" className="text-primary hover:underline">hello@gimmeasite.com</a>.</p>
-            </div>
-            <div className="mt-6 text-center">
-              <Button onClick={() => setShowCookiePolicy(false)} className="bg-primary hover:bg-primary/90">
-                Close
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-// Promotional Pop-up Component
-function PromoPopup() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Check if the pop-up has already been dismissed in this session
-    const isDismissed = sessionStorage.getItem('promoPopupDismissed');
-    if (isDismissed) return;
-
-    // Show pop-up after 10 seconds
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 10000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleClose = () => {
-    setIsVisible(false);
-    sessionStorage.setItem('promoPopupDismissed', 'true');
-  };
-
-  const handleGetQuote = () => {
-    handleClose();
-    scrollToSection('contact');
-  };
-
-  if (!isVisible) return null;
-
-  return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={handleClose}
-      />
-      <div className="relative bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl animate-slideIn">
-        <button
-          type="button"
-          onClick={handleClose}
-          className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors p-1"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
-        <div className="text-center">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Zap className="w-8 h-8 text-primary" />
-          </div>
-          <h3 className="text-2xl font-bold mb-2">Get Your Free Draft!</h3>
-          <p className="text-muted-foreground mb-6">
-            Ready to transform your online presence? We'll create a personalized draft tailored to your business needs — completely free, no strings attached.
-          </p>
-          <div className="space-y-3">
-            <Button
-              onClick={handleGetQuote}
-              className="w-full bg-primary hover:bg-primary/90 text-lg py-6"
-            >
-              Yes, please!
-              <ArrowRight className="w-5 h-5 ml-2" />
-            </Button>
-            <button
-              type="button"
-              onClick={handleClose}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              No, I don't want an awesome site
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Payment Success/Cancelled Toast
-function PaymentStatusToast({ status, onClose }: { status: "success" | "cancelled" | null; onClose: () => void }) {
-  useEffect(() => {
-    if (status) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, 8000);
-      return () => clearTimeout(timer);
-    }
-  }, [status, onClose]);
-
-  if (!status) return null;
-
-  return (
-    <div className="fixed top-24 right-4 z-50 animate-slideIn">
-      <div className={`${
-        status === "success"
-          ? "bg-green-500/90"
-          : "bg-amber-500/90"
-      } backdrop-blur-sm text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 max-w-sm`}>
-        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-          {status === "success" ? (
-            <Check className="w-5 h-5" />
-          ) : (
-            <X className="w-5 h-5" />
-          )}
-        </div>
-        <div>
-          {status === "success" ? (
-            <>
-              <p className="font-semibold">Payment Successful!</p>
-              <p className="text-sm text-white/90">Thank you! We'll be in touch within 24 hours.</p>
-            </>
-          ) : (
-            <>
-              <p className="font-semibold">Payment Cancelled</p>
-              <p className="text-sm text-white/90">No worries! Feel free to try again when ready.</p>
-            </>
-          )}
-        </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="ml-2 text-white/70 hover:text-white transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// Main Page Component
-// Thanks Popup Component
-function ThanksPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-      <div className="relative bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl animate-slideIn">
-        <div className="text-center">
-          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Check className="w-10 h-10 text-primary" />
-          </div>
-          <h2 className="text-2xl font-bold mb-4">Thank You!</h2>
-          <p className="text-muted-foreground mb-6">
-            We've received your message and will get back to you within 24 business hours. We're excited to help bring your vision to life!
-          </p>
-          <Button
-            asChild
-            className="bg-primary hover:bg-primary/90 w-full px-8"
-          >
-            <a
-              href="https://calendar.app.google/wQdwGP7Trr5ThAKn6"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={onClose}
-            >
-              Book a Call to Review Your Draft
-            </a>
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function Home() {
-  const [showFaqPopup, setShowFaqPopup] = useState(false);
-  const [showThanksPopup, setShowThanksPopup] = useState(false);
-  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [paymentPlanType, setPaymentPlanType] = useState<"one-time" | "monthly" | "hybrid">("one-time");
-  const [paymentBillingCycle, setPaymentBillingCycle] = useState<"monthly" | "annual">("monthly");
-  const [paymentStatus, setPaymentStatus] = useState<"success" | "cancelled" | null>(null);
-
-  // Handle URL parameters for payment status and modals
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const payment = urlParams.get("payment");
-    const modal = urlParams.get("modal");
-
-    if (payment === "success") {
-      setPaymentStatus("success");
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (payment === "cancelled") {
-      setPaymentStatus("cancelled");
-      // Clean up URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    // Handle modal triggers from URL
-    if (modal === "privacy-policy") {
-      window.dispatchEvent(new Event("openPrivacyPolicy"));
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (modal === "terms-of-service") {
-      window.dispatchEvent(new Event("openTermsOfService"));
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (modal === "faq") {
-      setShowFaqPopup(true);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (modal === "payment-upfront" || modal === "payment-one-time") {
-      // Scroll to pricing section first, then open modal
-      setTimeout(() => {
-        scrollToSection("pricing");
-        setTimeout(() => {
-          setPaymentPlanType("one-time");
-          setPaymentModalOpen(true);
-        }, 300);
-      }, 100);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (modal === "payment-monthly") {
-      setTimeout(() => {
-        scrollToSection("pricing");
-        setTimeout(() => {
-          setPaymentPlanType("monthly");
-          setPaymentBillingCycle("monthly");
-          setPaymentModalOpen(true);
-        }, 300);
-      }, 100);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (modal === "payment-annual") {
-      setTimeout(() => {
-        scrollToSection("pricing");
-        setTimeout(() => {
-          setPaymentPlanType("monthly");
-          setPaymentBillingCycle("annual");
-          setPaymentModalOpen(true);
-        }, 300);
-      }, 100);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (modal === "payment-hybrid") {
-      setTimeout(() => {
-        scrollToSection("pricing");
-        setTimeout(() => {
-          setPaymentPlanType("hybrid");
-          setPaymentModalOpen(true);
-        }, 300);
-      }, 100);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    // Handle contact modal — keeps URL as gimmeasite.com
-    if (modal === "contact") {
-      window.history.replaceState({}, document.title, "/");
-      setTimeout(() => scrollToSection("contact"), 100);
-    }
-
-    // Handle hash for contact section scroll
-    if (window.location.hash === "#contact") {
-      setTimeout(() => {
-        scrollToSection("contact");
-      }, 100);
-    }
-
-    // Handle ?thanks=1 (from /thank-you route) and legacy #thanks hash
-    if (urlParams.get("thanks") === "1" || window.location.hash === "#thanks") {
-      setShowThanksPopup(true);
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
-
-    // Handle ?scroll= param (from /about and /pricing routes)
-    const scroll = urlParams.get("scroll");
-    if (scroll === "about" || scroll === "pricing") {
-      window.history.replaceState({}, document.title, window.location.pathname);
-      setTimeout(() => scrollToSection(scroll), 100);
-    }
-  }, []);
-
-  const handleOpenFaq = () => setShowFaqPopup(true);
-  const handleCloseFaq = () => setShowFaqPopup(false);
-  const handleOpenPrivacyPolicy = () => {
-    window.dispatchEvent(new Event('openPrivacyPolicy'));
-  };
-
-  const handleOpenPayment = (plan: "one-time" | "monthly" | "hybrid", billing: "monthly" | "annual" = "monthly") => {
-    setPaymentPlanType(plan);
-    setPaymentBillingCycle(billing);
-    setPaymentModalOpen(true);
-  };
-
-  const handleClosePayment = () => {
-    setPaymentModalOpen(false);
-  };
-
-  return (
-    <main className="min-h-screen">
-      <Navigation onOpenFaq={handleOpenFaq} />
-      <HeroSection />
-      <ServicesSection />
-      <ProcessSection />
-      <AboutUsSection />
-      <PricingSection onOpenPayment={handleOpenPayment} />
-      <ContactSection onSuccess={() => setShowThanksPopup(true)} />
-      <Footer onOpenFaq={handleOpenFaq} onOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
-      <FaqPopup isOpen={showFaqPopup} onClose={handleCloseFaq} />
-      <ThanksPopup isOpen={showThanksPopup} onClose={() => setShowThanksPopup(false)} />
-      <PromoPopup />
-      <PaymentModal
-        isOpen={paymentModalOpen}
-        onClose={handleClosePayment}
-        planType={paymentPlanType}
-        billingCycle={paymentBillingCycle}
-      />
-      <PaymentStatusToast
-        status={paymentStatus}
-        onClose={() => setPaymentStatus(null)}
-      />
-    </main>
-  );
-}
+              <p><strong className="text-foreground">
