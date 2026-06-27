@@ -47,7 +47,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What's the Hybrid Plan?",
-    answer: (<>The Hybrid Plan is a bundle-offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month, with 2 extra monthly revisions included.</>),
+    answer: (<><span>The Hybrid Plan is a bundle-offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month, with 2 extra monthly revisions included.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">There's no payment box. How do I pay?</span><span className="text-sm">Go to the <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('faqNavigate', { detail: 'pricing' }))} className="text-primary hover:underline font-medium">Pricing section</button>, click “Buy Now” on whichever payment box (except for Equity), and under “Proceed to Checkout”, switch the plan type to “Hybrid” from the drop-down. Alternatively, you can visit <a href="https://gimmeasite.com/hybrid" className="text-primary hover:underline font-medium">https://gimmeasite.com/hybrid</a>.</span></span></>),
   },
   {
     question: "What if I need revisions to my site?",
@@ -131,7 +131,7 @@ function FaqPopup({ isOpen, onClose, openToIndex }: { isOpen: boolean; onClose: 
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="text-sm text-muted-foreground px-4 pb-4">{item.answer}</p>
+                    <div className="text-sm text-muted-foreground px-4 pb-4">{item.answer}</div>
                   </div>
                 </div>
               </div>
@@ -542,8 +542,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
   const [showUpfrontBubble, setShowUpfrontBubble] = useState(false);
   const [showMonthlyBubble, setShowMonthlyBubble] = useState(false);
+  const [showAnnualBubble, setShowAnnualBubble] = useState(false);
   useEffect(() => {
-    const t = setTimeout(() => { setShowUpfrontBubble(true); setShowMonthlyBubble(true); }, 10000);
+    const t = setTimeout(() => { setShowUpfrontBubble(true); setShowMonthlyBubble(true); setShowAnnualBubble(true); }, 10000);
     return () => clearTimeout(t);
   }, []);
 
@@ -639,7 +640,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     </button>
                   </div>
                   <div className="relative flex-shrink-0">
-                    {showMonthlyBubble && (
+                    {(monthlyBilling === "monthly" ? showMonthlyBubble : showAnnualBubble) && (
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
                         <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
                           Is this Plan for me?
@@ -650,7 +651,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     <button
                       type="button"
                       className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                      onClick={() => { setShowMonthlyPopup(true); setShowMonthlyBubble(false); }}
+                      onClick={() => { setShowMonthlyPopup(true); monthlyBilling === "monthly" ? setShowMonthlyBubble(false) : setShowAnnualBubble(false); }}
                     >
                       ?
                     </button>
@@ -663,8 +664,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     <div className="relative">
                       {showUpfrontBubble && (
                         <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
-                          <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg">
-                            Is this plan for me?
+                          <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
+                            Is this Plan for me?
                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
                           </div>
                         </div>
@@ -746,7 +747,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   }
                 }}
               >
-                Go Live
+                Buy Now
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Card>
@@ -2566,7 +2567,8 @@ export default function Home() {
       setFaqTargetIndex(idx);
       setShowFaqPopup(true);
     };
-    window.addEventListener('openFaqAt', handleOpenFaqAt);
+    window.addEventListener('faqNavigate', (ev: Event) => { const e = ev as CustomEvent; if (e.detail === 'pricing') { handleCloseFaq(); setTimeout(() => scrollToSection('pricing'), 100); } });
+      window.addEventListener('openFaqAt', handleOpenFaqAt);
 
     // Handle ?thanks=1 (from /thank-you route) and legacy #thanks hash
     if (urlParams.get("thanks") === "1" || window.location.hash === "#thanks") {
