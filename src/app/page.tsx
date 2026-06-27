@@ -361,13 +361,13 @@ function ServicesSection() {
       icon: Globe,
       title: "Website Design",
       description: "Fully custom-designed websites tailored to your brand identity and business goals.",
-      features: ["Responsive Design", "Creative Layout", "Fast Loading"],
+      features: ["Responsive Design", "Creative Layout", "Custom Features"],
     },
     {
       icon: Server,
       title: "Hosting",
       description: "Fast, reliable hosting that keeps your website online and loading quickly around the clock.",
-      features: ["99.9% Uptime", "SSL", "Domain"],
+      features: ["Fast Loading", "SSL", "Domain"],
     },
     {
       icon: Zap,
@@ -393,14 +393,14 @@ function ServicesSection() {
       <section id="services" className="py-20 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <Badge variant="secondary" className="mb-4">Our Services</Badge>
+          <Badge variant="secondary" className="mb-4">Services</Badge>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             Everything You Need to
             <br />
             <span className="gradient-text">Succeed Online</span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            From concept to deploy and beyond, we provide comprehensive web solutions for businesses of all sizes.
+            From discovery to deployment and beyond, we provide comprehensive web solutions for businesses of all sizes.
           </p>
         </div>
 
@@ -437,7 +437,7 @@ function ProcessSection() {
     {
       number: "01",
       title: "Discovery",
-      description: "Either we discover you or you discover us, followed by us researching your background to create a foundation.",
+      description: "Either through inbound or outbound discovery, we receive your contact form submission.",
     },
     {
       number: "02",
@@ -447,12 +447,12 @@ function ProcessSection() {
     {
       number: "03",
       title: "Development",
-      description: "Once you approve of your free draft, we make any last-minute changes necessary before testing functionality.",
+      description: "Once you approve your free draft over our meeting, we finish developing your site with care.",
     },
     {
       number: "04",
-      title: "Deploy",
-      description: "After thorough testing, we deploy your site to the world and provide ongoing support. Conditions may apply.",
+      title: "Deployment",
+      description: "After thorough testing, we connect your domain and deploy your site to the world.",
     },
   ];
 
@@ -460,7 +460,7 @@ function ProcessSection() {
     <section id="process" className="py-32 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <Badge variant="secondary" className="mb-4">Our Process</Badge>
+          <Badge variant="secondary" className="mb-4">Process</Badge>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             Simple Steps to Your
             <br />
@@ -494,7 +494,7 @@ function AboutUsSection() {
     <section id="about" className="py-20 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <Badge variant="secondary" className="mb-4">About Us</Badge>
+          <Badge variant="secondary" className="mb-4">About</Badge>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             You Spoke to
             <br />
@@ -655,17 +655,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   )}
                 </div>
               )}
-              {plan.name !== "Equity" && (
-                <div className="mb-4">
-                  <button
-                    type="button"
-                    className="text-sm text-orange-500 hover:underline transition-colors"
-                    onClick={() => scrollToSection("contact")}
-                  >
-                    Contact us for more information
-                  </button>
-                </div>
-              )}
               {plan.description && (
                 <p className="mb-4 font-medium text-muted-foreground">
                   {plan.name === "Monthly"
@@ -697,7 +686,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <div className="mb-8 rounded-xl border border-dashed border-primary/30 bg-primary/5 px-4 py-8 text-center">
                   <Zap className="w-7 h-7 text-primary mx-auto mb-3 animate-pulse" />
                   <p className="text-sm font-semibold text-foreground mb-1">Something special is brewing</p>
-                  <p className="text-xs text-muted-foreground">Exciting perks are on the way — stay tuned.</p>
+                  <p className="text-xs text-muted-foreground">Exciting amenities are on the way — stay tuned.</p>
                 </div>
               )}
               <Button
@@ -732,7 +721,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             className="inline-flex items-center gap-2.5 bg-orange-500/10 border border-orange-500/30 rounded-xl px-5 py-3 hover:bg-orange-500/15 transition-colors"
           >
             <span className="text-orange-500 text-base flex-shrink-0">💡</span>
-            <span className="text-sm font-bold text-orange-500 underline text-center">Still confused about our Plans?</span>
+            <span className="text-2xl font-bold text-orange-500 underline text-center">Still unsure about our Plans?</span>
           </button>
         </div>
 
@@ -895,7 +884,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-bold">What is this plan?</h3>
+              <h3 className="text-lg font-bold">What is this Plan?</h3>
               <button type="button" onClick={() => setShowEquityCmsPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
             </div>
             <div className="mb-3">
@@ -1318,7 +1307,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16">
           <div>
-            <Badge variant="secondary" className="mb-4">Get In Touch</Badge>
+            <Badge variant="secondary" className="mb-4">Contact</Badge>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               Ready to Start
               <br />
@@ -1836,7 +1825,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       {errors.linkedin && <p className="text-red-500 text-xs mt-1">{errors.linkedin}</p>}
                     </div>
                   </div>
-                  <div className="mt-4 relative">
+                  <div className="mt-4 relative md:w-[calc(50%-0.5rem)]">
                     <div className="flex items-center gap-1 mb-1">
                       <span className="text-xs text-muted-foreground">Google Business</span>
                       <button
@@ -1944,6 +1933,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <li><span className="text-primary font-medium">.shop</span> — Online stores</li>
                     <li><span className="text-primary font-medium">.io</span> — Tech startups &amp; SaaS</li>
                     <li><span className="text-primary font-medium">.co</span> — Modern alternative to .com</li>
+                    <li><span className="text-primary font-medium">.edu</span> — Educational institutions</li>
+                    <li><span className="text-primary font-medium">.gov</span> — Government entities</li>
                   </ul>
                   <p className="text-xs border-t border-border/50 pt-2">GimmeASite uses Instant Domain Search to check availability. Please note that the availability check is not 100% accurate — your chosen domain may need to be adjusted later in the process.</p>
                 </div>
