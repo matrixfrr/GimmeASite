@@ -371,7 +371,7 @@ function CheckoutContent() {
                     >
                       <div className="flex items-center justify-center gap-1.5">
                         <span className="font-semibold">Annual</span>
-                        <span className="text-green-500 text-xs font-normal">Saving 20%</span>
+                        <span className="text-green-500 text-xs font-normal">Saving 15%</span>
                       </div>
                       <div className="text-sm text-muted-foreground">Yearly subscription</div>
                     </button>
