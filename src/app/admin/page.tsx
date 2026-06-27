@@ -14,6 +14,10 @@ import {
   Clock,
   LogOut,
   RefreshCw,
+  Zap,
+  Calendar,
+  Layers,
+  Star,
 } from "lucide-react";
 
 interface ClientQuote {
@@ -273,7 +277,7 @@ export default function AdminPage() {
   };
 
   const isFiltered = statusFilter !== null || planFilter !== null;
-  const filteredTitle = statusFilter === "all" ? "All Quotes" : statusFilter === "pending" ? "Pending Payment" : statusFilter === "paid" ? "Paid" : planFilter === "upfront" ? "Upfront Quotes" : planFilter === "monthly" ? "Monthly Quotes" : planFilter === "hybrid" ? "Hybrid Quotes" : planFilter === "annual" ? "Annual Quotes" : "";
+  const filteredTitle = statusFilter === "all" ? "Total" : statusFilter === "pending" ? "Pending Payment" : statusFilter === "paid" ? "Paid" : planFilter === "upfront" ? "Upfront" : planFilter === "monthly" ? "Monthly" : planFilter === "hybrid" ? "Hybrid" : planFilter === "annual" ? "Annual" : "";
   const filteredQuotes = statusFilter === "all" ? quotes : statusFilter === "pending" ? allUnpaid : statusFilter === "paid" ? allPaid : planFilter ? allUnpaid.filter(q => getPlanKey(q) === planFilter) : [];
   const unpaidQuotes = allUnpaid;
   const paidQuotes = allPaid;
@@ -516,7 +520,7 @@ export default function AdminPage() {
                   </div>
                 )}
                 {success && (
-                  <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+                  <div className={`border rounded-lg p-3 ${success === "Quote deleted!" ? "bg-red-500/10 border-red-500/30" : "bg-green-500/10 border-green-500/30"}`}>
                     <p className={`text-sm ${success === "Quote deleted!" ? "text-red-500" : "text-green-500"}`}>{success}</p>
                   </div>
                 )}
@@ -533,7 +537,7 @@ export default function AdminPage() {
             {isFiltered ? (
               <div>
                 <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                  {statusFilter === "paid" ? <CheckCircle className="w-5 h-5 text-green-500" /> : statusFilter === "all" ? <Users className="w-5 h-5 text-blue-500" /> : <Clock className="w-5 h-5 text-amber-500" />}
+                  {statusFilter === "paid" ? <CheckCircle className="w-5 h-5 text-green-500" /> : statusFilter === "all" ? <Users className="w-5 h-5 text-blue-500" /> : planFilter === "upfront" ? <Zap className="w-5 h-5 text-red-400" /> : planFilter === "monthly" ? <Calendar className="w-5 h-5 text-violet-400" /> : planFilter === "hybrid" ? <Layers className="w-5 h-5 text-pink-400" /> : planFilter === "annual" ? <Star className="w-5 h-5 text-cyan-400" /> : <Clock className="w-5 h-5 text-amber-500" />}
                   {filteredTitle} ({filteredQuotes.length})
                 </h2>
                 {filteredQuotes.length === 0 ? (
@@ -551,7 +555,7 @@ export default function AdminPage() {
                       );
                       return (
                         <div key={quote.id} className="bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors">
-                          <div className="flex items-start justify-between gap-4"><div className="flex-1 min-w-0"><div className="flex items-center gap-2 mb-1"><h3 className="font-semibold truncate">{quote.name}</h3><span className={`text-xs px-2 py-0.5 rounded-full ${isAnnual ? "bg-cyan-500/10 text-cyan-400" : quote.plan_type === "monthly" ? "bg-blue-500/10 text-blue-500" : monthlyCents ? "bg-yellow-500/10 text-yellow-500" : "bg-purple-500/10 text-purple-500"}`}>{isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Hybrid" : "Upfront"}</span></div><p className="text-sm text-muted-foreground truncate">{quote.email}</p>{displayNotes && <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{displayNotes}</p>}<p className="text-xs text-muted-foreground mt-2">Created: {formatDate(quote.created_at)}</p></div><div className="text-right flex-shrink-0">{monthlyCents ? (<div><p className="text-base font-bold text-primary">{formatPrice(quote.price_cents)}</p><p className="text-xs text-muted-foreground">upfront</p><p className="text-base font-bold text-primary">+ {formatPrice(monthlyCents)}</p><p className="text-xs text-muted-foreground">/month</p></div>) : (<div><p className="text-xl font-bold text-primary">{formatPrice(quote.price_cents)}</p>{isAnnual ? <p className="text-xs text-muted-foreground">/year</p> : quote.plan_type === "monthly" ? <p className="text-xs text-muted-foreground">/month</p> : null}</div>)}<Button variant="ghost" size="sm" className="mt-2 text-red-500 hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDelete(quote.id)}><Trash2 className="w-4 h-4" /></Button></div></div>
+                          <div className="flex items-start justify-between gap-4"><div className="flex-1 min-w-0"><div className="flex items-center gap-2 mb-1"><h3 className="font-semibold truncate">{quote.name}</h3><span className={`text-xs px-2 py-0.5 rounded-full ${isAnnual ? "bg-cyan-500/10 text-cyan-400" : quote.plan_type === "monthly" ? "bg-violet-500/10 text-violet-400" : monthlyCents ? "bg-pink-400/10 text-pink-400" : "bg-red-400/10 text-red-400"}`}>{isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Hybrid" : "Upfront"}</span></div><p className="text-sm text-muted-foreground truncate">{quote.email}</p>{displayNotes && <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{displayNotes}</p>}<p className="text-xs text-muted-foreground mt-2">Created: {formatDate(quote.created_at)}</p></div><div className="text-right flex-shrink-0">{monthlyCents ? (<div><p className="text-base font-bold text-primary">{formatPrice(quote.price_cents)}</p><p className="text-xs text-muted-foreground">upfront</p><p className="text-base font-bold text-primary">+ {formatPrice(monthlyCents)}</p><p className="text-xs text-muted-foreground">/month</p></div>) : (<div><p className="text-xl font-bold text-primary">{formatPrice(quote.price_cents)}</p>{isAnnual ? <p className="text-xs text-muted-foreground">/year</p> : quote.plan_type === "monthly" ? <p className="text-xs text-muted-foreground">/month</p> : null}</div>)}<Button variant="ghost" size="sm" className="mt-2 text-red-500 hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDelete(quote.id)}><Trash2 className="w-4 h-4" /></Button></div></div>
                         </div>
                       );
                     })}
@@ -590,10 +594,10 @@ export default function AdminPage() {
                                 isAnnual
                                   ? "bg-cyan-500/10 text-cyan-400"
                                   : quote.plan_type === "monthly"
-                                  ? "bg-blue-500/10 text-blue-500"
+                                  ? "bg-violet-500/10 text-violet-400"
                                   : monthlyCents
-                                  ? "bg-yellow-500/10 text-yellow-500"
-                                  : "bg-purple-500/10 text-purple-500"
+                                  ? "bg-pink-400/10 text-pink-400"
+                                  : "bg-red-400/10 text-red-400"
                               }`}>
                                 {isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Hybrid" : "Upfront"}
                               </span>
