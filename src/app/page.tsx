@@ -2247,4 +2247,348 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
             </button>
             <h3 className="text-2xl font-bold mb-6">Cookie Policy</h3>
             <div className="space-y-4 text-muted-foreground text-sm leading-relaxed">
-              <p><strong className="text-foreground">
+              <p><strong className="text-foreground">Last Updated:</strong> April 2026</p>
+
+              <p>This Cookie Policy explains how GimmeASite uses cookies and similar technologies on our website.</p>
+
+              <h4 className="text-foreground font-semibold mt-6">What Are Cookies?</h4>
+              <p>Cookies are small text files stored on your device when you visit a website. They help websites remember your preferences and improve your browsing experience.</p>
+
+              <h4 className="text-foreground font-semibold mt-6">How We Use Cookies</h4>
+              <p>We use cookies for:</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li><strong className="text-foreground">Essential Cookies:</strong> Required for basic website functionality</li>
+                <li><strong className="text-foreground">Analytics Cookies:</strong> Help us understand how visitors interact with our site</li>
+                <li><strong className="text-foreground">Preference Cookies:</strong> Remember your settings and preferences</li>
+              </ul>
+
+              <h4 className="text-foreground font-semibold mt-6">Third-Party Cookies</h4>
+              <p>We may use third-party services (such as analytics providers) that set their own cookies. These are governed by their respective privacy policies.</p>
+
+              <h4 className="text-foreground font-semibold mt-6">Managing Cookies</h4>
+              <p>You can control cookies through your browser settings. Note that disabling certain cookies may affect website functionality.</p>
+
+              <h4 className="text-foreground font-semibold mt-6">Updates to This Policy</h4>
+              <p>We may update this Cookie Policy periodically. Please check back for any changes.</p>
+
+              <h4 className="text-foreground font-semibold mt-6">Contact</h4>
+              <p>For questions about our use of cookies, contact us at <a href="mailto:hello@gimmeasite.com" className="text-primary hover:underline">hello@gimmeasite.com</a>.</p>
+            </div>
+            <div className="mt-6 text-center">
+              <Button onClick={() => setShowCookiePolicy(false)} className="bg-primary hover:bg-primary/90">
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// Promotional Pop-up Component
+function PromoPopup() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    // Check if the pop-up has already been dismissed in this session
+    const isDismissed = sessionStorage.getItem('promoPopupDismissed');
+    if (isDismissed) return;
+
+    // Show pop-up after 10 seconds
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    sessionStorage.setItem('promoPopupDismissed', 'true');
+  };
+
+  const handleGetQuote = () => {
+    handleClose();
+    scrollToSection('contact');
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={handleClose}
+      />
+      <div className="relative bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl animate-slideIn">
+        <button
+          type="button"
+          onClick={handleClose}
+          className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors p-1"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        <div className="text-center">
+          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Zap className="w-8 h-8 text-primary" />
+          </div>
+          <h3 className="text-2xl font-bold mb-2">Get Your Free Draft!</h3>
+          <p className="text-muted-foreground mb-6">
+            Ready to transform your online presence? We'll create a personalized draft tailored to your business needs — completely free, no strings attached.
+          </p>
+          <div className="space-y-3">
+            <Button
+              onClick={handleGetQuote}
+              className="w-full bg-primary hover:bg-primary/90 text-lg py-6"
+            >
+              Yes, please!
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              No, I don't want an awesome site
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Payment Success/Cancelled Toast
+function PaymentStatusToast({ status, onClose }: { status: "success" | "cancelled" | null; onClose: () => void }) {
+  useEffect(() => {
+    if (status) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [status, onClose]);
+
+  if (!status) return null;
+
+  return (
+    <div className="fixed top-24 right-4 z-50 animate-slideIn">
+      <div className={`${
+        status === "success"
+          ? "bg-green-500/90"
+          : "bg-amber-500/90"
+      } backdrop-blur-sm text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 max-w-sm`}>
+        <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+          {status === "success" ? (
+            <Check className="w-5 h-5" />
+          ) : (
+            <X className="w-5 h-5" />
+          )}
+        </div>
+        <div>
+          {status === "success" ? (
+            <>
+              <p className="font-semibold">Payment Successful!</p>
+              <p className="text-sm text-white/90">Thank you! We'll be in touch within 24 hours.</p>
+            </>
+          ) : (
+            <>
+              <p className="font-semibold">Payment Cancelled</p>
+              <p className="text-sm text-white/90">No worries! Feel free to try again when ready.</p>
+            </>
+          )}
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="ml-2 text-white/70 hover:text-white transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Main Page Component
+// Thanks Popup Component
+function ThanksPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="relative bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl animate-slideIn">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Check className="w-10 h-10 text-primary" />
+          </div>
+          <h2 className="text-2xl font-bold mb-4">Thank You!</h2>
+          <p className="text-muted-foreground mb-6">
+            We've received your message and will get back to you within 24 business hours. We're excited to help bring your vision to life!
+          </p>
+          <Button
+            asChild
+            className="bg-primary hover:bg-primary/90 w-full px-8"
+          >
+            <a
+              href="https://calendar.app.google/wQdwGP7Trr5ThAKn6"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={onClose}
+            >
+              Book a Call to Review Your Draft
+            </a>
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Home() {
+  const [showFaqPopup, setShowFaqPopup] = useState(false);
+  const [showThanksPopup, setShowThanksPopup] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+  const [paymentPlanType, setPaymentPlanType] = useState<"one-time" | "monthly" | "hybrid">("one-time");
+  const [paymentBillingCycle, setPaymentBillingCycle] = useState<"monthly" | "annual">("monthly");
+  const [paymentStatus, setPaymentStatus] = useState<"success" | "cancelled" | null>(null);
+
+  // Handle URL parameters for payment status and modals
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const payment = urlParams.get("payment");
+    const modal = urlParams.get("modal");
+
+    if (payment === "success") {
+      setPaymentStatus("success");
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (payment === "cancelled") {
+      setPaymentStatus("cancelled");
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Handle modal triggers from URL
+    if (modal === "privacy-policy") {
+      window.dispatchEvent(new Event("openPrivacyPolicy"));
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (modal === "terms-of-service") {
+      window.dispatchEvent(new Event("openTermsOfService"));
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (modal === "faq") {
+      setShowFaqPopup(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (modal === "payment-upfront" || modal === "payment-one-time") {
+      // Scroll to pricing section first, then open modal
+      setTimeout(() => {
+        scrollToSection("pricing");
+        setTimeout(() => {
+          setPaymentPlanType("one-time");
+          setPaymentModalOpen(true);
+        }, 300);
+      }, 100);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (modal === "payment-monthly") {
+      setTimeout(() => {
+        scrollToSection("pricing");
+        setTimeout(() => {
+          setPaymentPlanType("monthly");
+          setPaymentBillingCycle("monthly");
+          setPaymentModalOpen(true);
+        }, 300);
+      }, 100);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (modal === "payment-annual") {
+      setTimeout(() => {
+        scrollToSection("pricing");
+        setTimeout(() => {
+          setPaymentPlanType("monthly");
+          setPaymentBillingCycle("annual");
+          setPaymentModalOpen(true);
+        }, 300);
+      }, 100);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (modal === "payment-hybrid") {
+      setTimeout(() => {
+        scrollToSection("pricing");
+        setTimeout(() => {
+          setPaymentPlanType("hybrid");
+          setPaymentModalOpen(true);
+        }, 300);
+      }, 100);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Handle contact modal — keeps URL as gimmeasite.com
+    if (modal === "contact") {
+      window.history.replaceState({}, document.title, "/");
+      setTimeout(() => scrollToSection("contact"), 100);
+    }
+
+    // Handle hash for contact section scroll
+    if (window.location.hash === "#contact") {
+      setTimeout(() => {
+        scrollToSection("contact");
+      }, 100);
+    }
+
+    // Handle ?thanks=1 (from /thank-you route) and legacy #thanks hash
+    if (urlParams.get("thanks") === "1" || window.location.hash === "#thanks") {
+      setShowThanksPopup(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    // Handle ?scroll= param (from /about and /pricing routes)
+    const scroll = urlParams.get("scroll");
+    if (scroll === "about" || scroll === "pricing") {
+      window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => scrollToSection(scroll), 100);
+    }
+  }, []);
+
+  const handleOpenFaq = () => setShowFaqPopup(true);
+  const handleCloseFaq = () => setShowFaqPopup(false);
+  const handleOpenPrivacyPolicy = () => {
+    window.dispatchEvent(new Event('openPrivacyPolicy'));
+  };
+
+  const handleOpenPayment = (plan: "one-time" | "monthly" | "hybrid", billing: "monthly" | "annual" = "monthly") => {
+    setPaymentPlanType(plan);
+    setPaymentBillingCycle(billing);
+    setPaymentModalOpen(true);
+  };
+
+  const handleClosePayment = () => {
+    setPaymentModalOpen(false);
+  };
+
+  return (
+    <main className="min-h-screen">
+      <Navigation onOpenFaq={handleOpenFaq} />
+      <HeroSection />
+      <ServicesSection />
+      <ProcessSection />
+      <AboutUsSection />
+      <PricingSection onOpenPayment={handleOpenPayment} />
+      <ContactSection onSuccess={() => setShowThanksPopup(true)} />
+      <Footer onOpenFaq={handleOpenFaq} onOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
+      <FaqPopup isOpen={showFaqPopup} onClose={handleCloseFaq} />
+      <ThanksPopup isOpen={showThanksPopup} onClose={() => setShowThanksPopup(false)} />
+      <PromoPopup />
+      <PaymentModal
+        isOpen={paymentModalOpen}
+        onClose={handleClosePayment}
+        planType={paymentPlanType}
+        billingCycle={paymentBillingCycle}
+      />
+      <PaymentStatusToast
+        status={paymentStatus}
+        onClose={() => setPaymentStatus(null)}
+      />
+    </main>
+  );
+}
