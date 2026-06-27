@@ -210,7 +210,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
         <div className="space-y-4 mb-6">
           <div>
             <label htmlFor="payment-email" className="block text-sm font-medium mb-2">
-              Email Address <span className="text-red-500">*</span>
+              Email Address <span className="text-red-500 cursor-help" title="Required field">*</span>
             </label>
             <Input
               id="payment-email"
