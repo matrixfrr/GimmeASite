@@ -720,19 +720,17 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 Go Live
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
-              {plan.name === "Monthly" && (
-                <div className="text-center mt-3">
-                  <button
-                    type="button"
-                    onClick={() => setShowComparePopup(true)}
-                    className="text-xs text-orange-500 underline hover:text-orange-400 transition-colors"
-                  >
-                    Still confused?
-                  </button>
-                </div>
-              )}
             </Card>
           ))}
+        </div>
+        <div className="flex justify-end mt-3">
+          <button
+            type="button"
+            onClick={() => setShowComparePopup(true)}
+            className="text-sm text-orange-500 underline hover:text-orange-400 transition-colors"
+          >
+            Still confused about our plans?
+          </button>
         </div>
 
         {showComingSoon && (
@@ -784,7 +782,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr>
-                    <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/2">Perk</th>
+                    <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/2">Perks</th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Upfront</th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Monthly</th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Hybrid</th>
@@ -792,30 +790,32 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/40">
-                  {[
+                  {([
                     { perk: "Custom Design", up: true, mo: true, hy: true, an: true },
                     { perk: "SSL + Security Integration", up: true, mo: true, hy: true, an: true },
                     { perk: "Performance Optimization", up: true, mo: true, hy: true, an: true },
-                    { perk: "3 Total Revisions", up: true, mo: false, hy: false, an: false },
-                    { perk: "90-Day Support", up: true, mo: false, hy: false, an: false },
+                    { perk: "Revisions", up: "3", mo: "2/month", hy: "2/month", an: "∞" },
+                    { perk: "Support", up: "90 Days", mo: "∞", hy: "∞", an: "∞⚡" },
                     { perk: "Advanced Security", up: false, mo: true, hy: true, an: true },
-                    { perk: "2 Revisions Per Month", up: false, mo: true, hy: true, an: true },
-                    { perk: "Priority Ongoing Support", up: false, mo: true, hy: true, an: true },
                     { perk: "Analytics Dashboard", up: false, mo: true, hy: true, an: true },
                     { perk: "Discounted Monthly", up: false, mo: false, hy: true, an: true },
-                    { perk: "Unlimited Revisions", up: false, mo: false, hy: false, an: true },
                     { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
                     { perk: "Subdomain Configuration", up: false, mo: false, hy: false, an: true },
                     { perk: "Real-Time Analytics", up: false, mo: false, hy: false, an: true },
-                  ].map(({ perk, up, mo, hy, an }) => (
-                    <tr key={perk} className="hover:bg-muted/20 transition-colors">
-                      <td className="py-2.5 pr-4 text-muted-foreground">{perk}</td>
-                      <td className="text-center py-2.5 px-2">{up && <Check className="w-4 h-4 text-green-500 mx-auto" />}</td>
-                      <td className="text-center py-2.5 px-2">{mo && <Check className="w-4 h-4 text-green-500 mx-auto" />}</td>
-                      <td className="text-center py-2.5 px-2">{hy && <Check className="w-4 h-4 text-green-500 mx-auto" />}</td>
-                      <td className="text-center py-2.5 px-2">{an && <Check className="w-4 h-4 text-green-500 mx-auto" />}</td>
-                    </tr>
-                  ))}
+                  ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
+                    const cell = (v: boolean | string) => typeof v === "string"
+                      ? <span className="text-xs font-semibold text-foreground">{v}</span>
+                      : v ? <Check className="w-4 h-4 text-green-500 mx-auto" /> : null;
+                    return (
+                      <tr key={perk} className="hover:bg-muted/20 transition-colors">
+                        <td className="py-2.5 pr-4 text-muted-foreground">{perk}</td>
+                        <td className="text-center py-2.5 px-2">{cell(up)}</td>
+                        <td className="text-center py-2.5 px-2">{cell(mo)}</td>
+                        <td className="text-center py-2.5 px-2">{cell(hy)}</td>
+                        <td className="text-center py-2.5 px-2">{cell(an)}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
