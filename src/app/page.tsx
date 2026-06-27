@@ -45,7 +45,6 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
     question: "What's included in the Plans?",
     answer: "All Plans include custom design, hosting, revisions, specified support periods, etc.",
   },
-  },
   {
     question: "What's the Hybrid Plan?",
     answer: (<>The Hybrid Plan is a bundle offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month with 2 extra monthly revisions included.</>),
