@@ -45,6 +45,11 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
     question: "What's included in the Plans?",
     answer: "All Plans include custom design, hosting, revisions, specified support periods, etc.",
   },
+  },
+  {
+    question: "What's the Hybrid Plan?",
+    answer: (<>The Hybrid Plan is a bundle offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month with 2 extra monthly revisions included.</>),
+  },
   {
     question: "What if I need revisions to my site?",
     answer: "A different set of revisions are included in each Plan. You can make your revision requests known by contacting support. Requesting extra revisions or full, large-scale redesigns may incur additional fees depending on the conditions of your selected Plan.",
@@ -56,15 +61,17 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
 ];
 
 // FAQ Popup Component
-function FaqPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+function FaqPopup({ isOpen, onClose, openToIndex }: { isOpen: boolean; onClose: () => void; openToIndex?: number }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  // Reset the open question whenever the popup is closed
+  // Reset or pre-open when popup opens/closes
   useEffect(() => {
     if (!isOpen) {
       setOpenIndex(null);
+    } else if (openToIndex !== undefined) {
+      setOpenIndex(openToIndex);
     }
-  }, [isOpen]);
+  }, [isOpen, openToIndex]);
 
   if (!isOpen) return null;
 
@@ -626,7 +633,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                       onClick={() => setMonthlyBilling("annual")}
                       className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold leading-none tracking-tight rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
                     >
-                      Annual <span className="text-xs font-normal text-green-500">Save 15%</span>
+                      Annual <span className="text-xs font-normal text-green-500">Save 20%</span>
                     </button>
                   </div>
                   <button
@@ -859,7 +866,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   <ul className="space-y-1.5 list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses willing to <strong className="text-foreground">commit</strong> for the year</span></li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites requiring <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% savings</span> (approx. 2 months <strong className="text-foreground">free</strong>)</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">20% savings</span> (over 2 months <strong className="text-foreground">free</strong>)</span></li>
                   </ul>
                   <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
                 </>
@@ -1570,8 +1577,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       }`}
                       onClick={() => setShowPlanDropdown(!showPlanDropdown)}
                     >
-                      <span className={formData.paymentPlan ? "text-foreground" : "text-muted-foreground"}>
-                        {formData.paymentPlan || "Select a Plan"}
+                      <span className={`flex items-center gap-1.5 ${formData.paymentPlan ? "text-foreground" : "text-muted-foreground"}`}>
+                        {formData.paymentPlan === "Hybrid" ? (<>Hybrid <span className="text-green-500 text-xs">Save 10%</span></>) : formData.paymentPlan === "Annual" ? (<>Annual <span className="text-green-500 text-xs">Save 20%</span></>) : (formData.paymentPlan || "Select a Plan")}
                       </span>
                       <svg
                         className={`w-4 h-4 text-muted-foreground transition-transform ${showPlanDropdown ? "rotate-180" : ""}`}
@@ -1612,23 +1619,26 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         >
                           Monthly
                         </button>
+                        <div className="flex items-center">
+                          <button
+                            type="button"
+                            className={`flex-1 px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center gap-1.5 ${
+                              formData.paymentPlan === "Hybrid" ? "bg-primary/10 text-primary" : ""
+                            }`}
+                            onClick={() => handlePlanSelect("Hybrid")}
+                          >
+                            Hybrid <span className="text-green-500 text-xs">Save 10%</span>
+                          </button>
+                          <button type="button" className="px-2 py-2 text-xs text-muted-foreground hover:text-primary transition-colors" onClick={(e) => { e.stopPropagation(); setShowPlanDropdown(false); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }}>?</button>
+                        </div>
                         <button
                           type="button"
-                          className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors ${
-                            formData.paymentPlan === "Hybrid" ? "bg-primary/10 text-primary" : ""
-                          }`}
-                          onClick={() => handlePlanSelect("Hybrid")}
-                        >
-                          Hybrid
-                        </button>
-                        <button
-                          type="button"
-                          className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors ${
+                          className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center gap-1.5 ${
                             formData.paymentPlan === "Annual" ? "bg-primary/10 text-primary" : ""
                           }`}
                           onClick={() => handlePlanSelect("Annual")}
                         >
-                          Annual
+                          Annual <span className="text-green-500 text-xs">Save 20%</span>
                         </button>
 
                       </div>
@@ -2436,6 +2446,7 @@ function ThanksPopup({ isOpen, onClose }: { isOpen: boolean; onClose: () => void
 
 export default function Home() {
   const [showFaqPopup, setShowFaqPopup] = useState(false);
+  const [faqTargetIndex, setFaqTargetIndex] = useState<number | undefined>(undefined);
   const [showThanksPopup, setShowThanksPopup] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [paymentPlanType, setPaymentPlanType] = useState<"one-time" | "monthly" | "hybrid">("one-time");
@@ -2522,6 +2533,14 @@ export default function Home() {
       }, 100);
     }
 
+    // Listen for openFaqAt events (from dropdowns with ? buttons)
+    const handleOpenFaqAt = (e: Event) => {
+      const idx = (e as CustomEvent).detail;
+      setFaqTargetIndex(idx);
+      setShowFaqPopup(true);
+    };
+    window.addEventListener('openFaqAt', handleOpenFaqAt);
+
     // Handle ?thanks=1 (from /thank-you route) and legacy #thanks hash
     if (urlParams.get("thanks") === "1" || window.location.hash === "#thanks") {
       setShowThanksPopup(true);
@@ -2562,7 +2581,7 @@ export default function Home() {
       <PricingSection onOpenPayment={handleOpenPayment} />
       <ContactSection onSuccess={() => setShowThanksPopup(true)} />
       <Footer onOpenFaq={handleOpenFaq} onOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
-      <FaqPopup isOpen={showFaqPopup} onClose={handleCloseFaq} />
+      <FaqPopup isOpen={showFaqPopup} onClose={handleCloseFaq} openToIndex={faqTargetIndex} />
       <ThanksPopup isOpen={showThanksPopup} onClose={() => setShowThanksPopup(false)} />
       <PromoPopup />
       <PaymentModal
