@@ -79,7 +79,7 @@ function FaqPopup({ isOpen, onClose, openToIndex }: { isOpen: boolean; onClose: 
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
@@ -1629,8 +1629,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                           <span
                             role="button"
                             tabIndex={0}
-                            onClick={(e) => { e.stopPropagation(); setShowPlanDropdown(false); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }}
-                            onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); setShowPlanDropdown(false); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); } }}
+                            onClick={(e) => { e.stopPropagation(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }}
+                            onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); } }}
                             className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-current text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.5rem] leading-none flex-shrink-0"
                           >?</span>
                         </button>
@@ -1693,7 +1693,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         <Input
                           id="instagram"
                           type="text"
-                          placeholder="company"
+                          placeholder="username"
                           className={`bg-background rounded-l-none ${errors.instagram ? "border-red-500" : ""}`}
                           value={formData.instagram}
                           onChange={handleChange}
@@ -1823,7 +1823,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         <Input
                           id="linkedin"
                           type="text"
-                          placeholder="username"
+                          placeholder="company"
                           className={`bg-background rounded-l-none ${errors.linkedin ? "border-red-500" : ""}`}
                           value={formData.linkedin}
                           onChange={handleChange}
