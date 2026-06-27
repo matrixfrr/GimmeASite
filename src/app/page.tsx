@@ -557,7 +557,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       description: "Everything in __Upfront__, including:",
       features: [
         "Advanced Security",
-        "2 Revisions Per Month",
+        "2 Revisions / Month",
         "Continued Support",
         "Analytics Dashboard",
       ],
@@ -576,7 +576,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <section id="pricing" className="pt-32 pb-16 relative noise-bg">
+      <section id="pricing" className="pt-32 pb-20 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
@@ -671,7 +671,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <div className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Continued Support", "Analytics Dashboard", "2 Revisions Per Month"].includes(f)), "Unlimited Revisions", "__sub__Full Redesigns", "VIP Priority Support", "Subdomain Configuration"]
+                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Continued Support", "Analytics Dashboard", "2 Revisions / Month"].includes(f)), "Unlimited Revisions", "__sub__Full Redesigns", "VIP Priority Support", "Subdomain Configuration"]
                     : plan.features
                   ).map((feature: string) => (
                     feature.startsWith("__sub__") ? (
@@ -688,7 +688,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   ))}
                 </div>
               ) : (
-                <div className="mb-8 rounded-xl border border-dashed border-primary/30 bg-primary/5 px-4 py-8 text-center">
+                <div className="flex-1 mb-8 rounded-xl border border-dashed border-primary/30 bg-primary/5 px-4 flex flex-col items-center justify-center text-center">
                   <Zap className="w-7 h-7 text-primary mx-auto mb-3 animate-pulse" />
                   <p className="text-sm font-semibold text-foreground mb-1">Something special is brewing</p>
                   <p className="text-xs text-muted-foreground">Exciting amenities are on the way — stay tuned.</p>
@@ -817,17 +817,17 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowUpfrontPopup(false)}>
           <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-bold">Is this plan for me?</h3>
+              <h3 className="text-lg font-bold">Is this Plan for me?</h3>
               <button type="button" onClick={() => setShowUpfrontPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
             </div>
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
-              <p>The <span className="font-semibold text-foreground">Upfront plan</span> is a one-time fee — no subscriptions, no recurring charges. It&apos;s best suited for:</p>
+              <p>The <span className="font-semibold text-foreground">Upfront Plan</span> is a one-time fee — <strong className="text-foreground">no</strong> subscription, <strong className="text-foreground">no</strong> recurring charges. It&apos;s best suited for:</p>
               <ul className="space-y-1.5 list-none">
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> First-time site owners launching a simple web presence</li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Small business owners who need a clean, professional site without ongoing costs</li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Those with straightforward requirements and a clear vision</li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> <strong className="text-foreground">First-time</strong> site owners looking for a quick, <strong className="text-foreground">simple</strong> site</li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Young businesses interested in <strong className="text-foreground">limited</strong> support</li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Individuals who prefer a <strong className="text-foreground">short-term</strong> investment</li>
               </ul>
-              <p>You&apos;ll receive a fully custom-designed site, SSL &amp; security integration, performance optimization, 3 revisions, and a 90-day post-launch support window. After the support period, maintenance and updates are not included.</p>
+              <p>Once the 90-day support period ends and the three revision credits are used, maintenance and updates will <strong className="text-foreground">no longer</strong> be delivered.</p>
             </div>
             <button type="button" onClick={() => setShowUpfrontPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
           </div>
@@ -839,29 +839,29 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowMonthlyPopup(false)}>
           <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-bold">Is this plan for me?</h3>
+              <h3 className="text-lg font-bold">Is this Plan for me?</h3>
               <button type="button" onClick={() => setShowMonthlyPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
             </div>
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
               {monthlyBilling === "monthly" ? (
                 <>
-                  <p>The <span className="font-semibold text-foreground">Monthly plan</span> is a recurring subscription — ideal for:</p>
+                  <p>The <span className="font-semibold text-foreground">Monthly Plan</span> is a recurring <strong className="text-foreground">subscription</strong> — It&apos;s ideal for:</p>
                   <ul className="space-y-1.5 list-none">
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Small-to-medium businesses that want continued support and ongoing updates</li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Moderately complex sites that benefit from regular revisions (2/month)</li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Businesses that prefer spreading costs over time rather than a large upfront sum</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Growing businesses that want <strong className="text-foreground">continued</strong> support and <strong className="text-foreground">ongoing</strong> updates</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> <strong className="text-foreground">Mildly</strong> involved sites that benefit from <strong className="text-foreground">regular</strong> revisions (2/month)</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> People that prefer spreading their costs <strong className="text-foreground">over time</strong> rather than dropping a large upfront sum</li>
                   </ul>
-                  <p>Includes everything in the Upfront plan, plus advanced security, priority ongoing support, and an analytics dashboard. Cancel anytime — no lock-in.</p>
+                  <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
                 </>
               ) : (
                 <>
-                  <p>The <span className="font-semibold text-foreground">Annual plan</span> is a recurring yearly subscription — best for:</p>
+                  <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring <strong className="text-foreground">yearly</strong> subscription — It&apos;s beneficial for:</p>
                   <ul className="space-y-1.5 list-none">
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Larger businesses ready to commit for the year and save ~15% (roughly two months free)</li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Complex sites requiring unlimited revisions and full redesign capability</li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Businesses focused on long-term growth wanting real-time analytics and subdomain support</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Established businesses willing to <strong className="text-foreground">commit</strong> for the year</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> <strong className="text-foreground">Complex</strong> sites requiring <strong className="text-foreground">premium</strong> amenities, including <strong className="text-foreground">unlimited</strong> revisions and VIP <strong className="text-foreground">priority</strong> support</li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span> Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% savings</span> (approx. two months <strong className="text-foreground">free</strong>)</li>
                   </ul>
-                  <p>Includes everything in the Monthly plan, plus unlimited revisions, full redesigns, subdomain configuration, and real-time analytics.</p>
+                  <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
                 </>
               )}
             </div>
