@@ -778,7 +778,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/2">Amenities</th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Upfront</th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Monthly</th>
-                    <th className="text-center py-2 px-2 font-semibold text-foreground">Hybrid</th>
+                    <th className="text-center py-2 px-2 font-semibold text-foreground"><span className="inline-flex items-center justify-center gap-0.5">Hybrid<span role="button" tabIndex={0} onClick={() => window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 }))} onKeyDown={(e) => { if (e.key === "Enter") window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }} className="inline-flex items-center justify-center w-3 h-3 rounded-full border border-muted-foreground text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.45rem] leading-none cursor-pointer ml-0.5">?</span></span></th>
                     <th className="text-center py-2 px-2 font-semibold text-foreground">Annual</th>
                   </tr>
                 </thead>
