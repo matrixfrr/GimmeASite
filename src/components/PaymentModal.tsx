@@ -215,7 +215,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
             <Input
               id="payment-email"
               type="email"
-              placeholder="john@example.com"
+              placeholder="first@example.com"
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value);
