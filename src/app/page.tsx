@@ -47,7 +47,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What's the Hybrid Plan?",
-    answer: (<>The Hybrid Plan is a bundle offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month, with 2 extra monthly revisions included.</>),
+    answer: (<>The Hybrid Plan is a bundle-offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month, with 2 extra monthly revisions included.</>),
   },
   {
     question: "What if I need revisions to my site?",
@@ -540,6 +540,12 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showUpfrontPopup, setShowUpfrontPopup] = useState(false);
   const [showMonthlyPopup, setShowMonthlyPopup] = useState(false);
   const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
+  const [showUpfrontBubble, setShowUpfrontBubble] = useState(false);
+  const [showMonthlyBubble, setShowMonthlyBubble] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => { setShowUpfrontBubble(true); setShowMonthlyBubble(true); }, 10000);
+    return () => clearTimeout(t);
+  }, []);
 
 
   const plans = [
@@ -632,25 +638,45 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                       Annual <span className="text-xs font-normal text-green-500">Save 20%</span>
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors flex-shrink-0"
-                    onClick={() => setShowMonthlyPopup(true)}
-                  >
-                    ?
-                  </button>
+                  <div className="relative flex-shrink-0">
+                    {showMonthlyBubble && (
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                        <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg">
+                          Is this plan for me?
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                      onClick={() => { setShowMonthlyPopup(true); setShowMonthlyBubble(false); }}
+                    >
+                      ?
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
                   <h3 className="text-2xl font-bold">{plan.name}</h3>
                   {plan.name === "Upfront" && (
-                    <button
-                      type="button"
-                      className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                      onClick={() => setShowUpfrontPopup(true)}
-                    >
-                      ?
-                    </button>
+                    <div className="relative">
+                      {showUpfrontBubble && (
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                          <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg">
+                            Is this plan for me?
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
+                          </div>
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                        onClick={() => { setShowUpfrontPopup(true); setShowUpfrontBubble(false); }}
+                      >
+                        ?
+                      </button>
+                    </div>
                   )}
                   {plan.name === "Equity" && (
                     <button
@@ -888,7 +914,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             <div className="mb-3">
               <span className="font-semibold text-primary block mb-1">Equity Plan</span>
               <span className="text-sm text-muted-foreground block">
-                Partner with us through a small equity share or revenue percentage. Perfect for startups and small businesses looking to minimize upfront and/or recurring costs while investing in their online presence.
+                Partner with us through an equity share or revenue percentage. Perfect for startups and small businesses looking to minimize upfront and/or recurring costs.
               </span>
             </div>
             <button
