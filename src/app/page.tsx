@@ -321,7 +321,7 @@ function HeroSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slideIn opacity-0 stagger-4">
-            <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 animate-glow" onClick={() => scrollToSection("contact")}>
+            <Button size="lg" className="bg-primary hover:bg-primary/90 text-lg px-8 py-6 animate-glow animate-attention-bounce" onClick={() => scrollToSection("contact")}>
               Get Your Free Draft
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
@@ -806,7 +806,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                       ? <span className={`text-xs font-semibold ${typeof v === "string" && v.endsWith("%") ? "text-green-500" : "text-foreground"}`}>{v}</span>
                       : v ? <Check className="w-4 h-4 text-green-500 mx-auto" /> : null;
                     return (
-                      <tr key={perk} className={`transition-colors ${perk === "Monthly Discount" ? "bg-green-500/5 hover:bg-green-500/10 shadow-[0_0_0_1px_rgba(34,197,94,0.15)_inset]" : "hover:bg-muted/20"}`}>
+                      <tr key={perk} className={`transition-colors ${perk === "Monthly Discount" ? "shadow-[0_0_8px_2px_rgba(34,197,94,0.18)_inset,0_0_0_1.5px_rgba(34,197,94,0.35)_inset] hover:shadow-[0_0_12px_4px_rgba(34,197,94,0.22)_inset,0_0_0_1.5px_rgba(34,197,94,0.5)_inset]" : "hover:bg-muted/20"}`}>
                         <td className={`py-2.5 pr-4 ${perk === "Monthly Discount" ? "text-green-500" : "text-muted-foreground"}`}>{perk}{(perk === "Domain" || perk === "Revisions") && <span className="text-red-500 font-bold text-xs cursor-help ml-0.5 align-middle" title="Conditions may apply.">*</span>}</td>
                         <td className="text-center py-2.5 px-2">{cell(up)}</td>
                         <td className="text-center py-2.5 px-2">{cell(mo)}</td>
