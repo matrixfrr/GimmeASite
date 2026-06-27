@@ -47,7 +47,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What's the Hybrid Plan?",
-    answer: (<>The Hybrid Plan is a bundle offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month with 2 extra monthly revisions included.</>),
+    answer: (<>The Hybrid Plan is a bundle offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month, with 2 extra monthly revisions included.</>),
   },
   {
     question: "What if I need revisions to my site?",
@@ -1618,18 +1618,22 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         >
                           Monthly
                         </button>
-                        <div className="flex items-center">
-                          <button
-                            type="button"
-                            className={`flex-1 px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center gap-1.5 ${
-                              formData.paymentPlan === "Hybrid" ? "bg-primary/10 text-primary" : ""
-                            }`}
-                            onClick={() => handlePlanSelect("Hybrid")}
-                          >
-                            Hybrid <span className="text-green-500 text-xs">Save 10%</span>
-                          </button>
-                          <button type="button" className="px-2 py-2 text-xs text-muted-foreground hover:text-primary transition-colors" onClick={(e) => { e.stopPropagation(); setShowPlanDropdown(false); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }}>?</button>
-                        </div>
+                        <button
+                          type="button"
+                          className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center gap-1.5 ${
+                            formData.paymentPlan === "Hybrid" ? "bg-primary/10 text-primary" : ""
+                          }`}
+                          onClick={() => handlePlanSelect("Hybrid")}
+                        >
+                          Hybrid <span className="text-green-500" style={{fontSize:"0.6rem"}}>Save 10%</span>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => { e.stopPropagation(); setShowPlanDropdown(false); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); }}
+                            onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); setShowPlanDropdown(false); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 2 })); } }}
+                            className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-current text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.5rem] leading-none flex-shrink-0"
+                          >?</span>
+                        </button>
                         <button
                           type="button"
                           className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors flex items-center gap-1.5 ${
@@ -1637,7 +1641,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                           }`}
                           onClick={() => handlePlanSelect("Annual")}
                         >
-                          Annual <span className="text-green-500 text-xs">Save 20%</span>
+                          Annual <span className="text-green-500" style={{fontSize:"0.6rem"}}>Save 20%</span>
                         </button>
 
                       </div>
