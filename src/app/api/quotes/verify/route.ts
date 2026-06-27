@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     const effectivePlanType = isBundle ? "hybrid" : isAnnualLegacy ? "annual" : anyQuote.plan_type;
     const planMatches = !planType || effectivePlanType === planType;
     if (!planMatches) {
-      const expectedPlan = effectivePlanType === "monthly" ? "Monthly Plan" : effectivePlanType === "hybrid" ? "Hybrid Plan" : effectivePlanType === "annual" ? "Annual Plan" : "Upfront Fee";
+      const expectedPlan = effectivePlanType === "monthly" ? "Monthly Plan" : effectivePlanType === "hybrid" ? "Hybrid Plan" : effectivePlanType === "annual" ? "Annual Plan" : "Upfront Plan";
       return NextResponse.json(
         {
           found: false,
