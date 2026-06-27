@@ -874,7 +874,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   <ul className="space-y-1.5 list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses willing to <strong className="text-foreground">commit</strong> for the year</span></li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites with <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">20% savings</span> (over 2 months <strong className="text-foreground">free</strong>)</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">20% savings</span> (over 2 months free)</span></li>
                   </ul>
                   <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
                 </>
