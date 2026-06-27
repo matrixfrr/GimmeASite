@@ -544,7 +544,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       features: [
         "Custom Design",
         "SSL + Security",
-        "Performance",
+        "Performance Optimization",
         "3 Total Revisions",
         "90-Day Support",
       ],
@@ -590,14 +590,16 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setShowComparePopup(true)}
-          className="w-full flex items-center gap-3 bg-orange-500/10 border border-orange-500/30 rounded-xl px-5 py-3 mb-8 hover:bg-orange-500/15 transition-colors text-left"
-        >
-          <span className="text-orange-500 text-base flex-shrink-0">💡</span>
-          <span className="text-sm font-medium text-orange-500">Still confused about our plans? <span className="underline">Compare them side by side →</span></span>
-        </button>
+        <div className="flex justify-center my-8">
+          <button
+            type="button"
+            onClick={() => setShowComparePopup(true)}
+            className="inline-flex items-center gap-2.5 bg-orange-500/10 border border-orange-500/30 rounded-xl px-5 py-3 hover:bg-orange-500/15 transition-colors"
+          >
+            <span className="text-orange-500 text-base flex-shrink-0">💡</span>
+            <span className="text-sm font-medium text-orange-500 underline text-center">Still confused about our plans?</span>
+          </button>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-8 items-start">
           {plans.map((plan) => (
@@ -797,10 +799,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     { perk: "Security", up: true, mo: true, hy: true, an: true },
                     { perk: "Revisions", up: "3", mo: "2/month", hy: "2/month", an: "∞" },
                     { perk: "Support", up: "90 Days", mo: "∞", hy: "∞", an: "∞⚡" },
-                    { perk: "Analytics Dashboard", up: false, mo: true, hy: true, an: true },
+                    { perk: "Analytics", up: false, mo: true, hy: true, an: true },
                     { perk: "Monthly Discount", up: false, mo: false, hy: true, an: true },
                     { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
-                    { perk: "VIP Priority Support", up: false, mo: false, hy: false, an: true },
                     { perk: "Subdomain Configuration", up: false, mo: false, hy: false, an: true },
                   ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
                     const cell = (v: boolean | string) => typeof v === "string"
