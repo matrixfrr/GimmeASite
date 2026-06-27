@@ -354,7 +354,7 @@ function CheckoutContent() {
                           : "border-border hover:border-border/80"
                       }`}
                     >
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center justify-center gap-1.5">
                         <span className="font-semibold">Hybrid</span>
                         <span className="text-green-500 text-xs font-normal">Saving 10%</span>
                       </div>
@@ -369,7 +369,7 @@ function CheckoutContent() {
                           : "border-border hover:border-border/80"
                       }`}
                     >
-                      <div className="flex items-center gap-1.5">
+                      <div className="flex items-center justify-center gap-1.5">
                         <span className="font-semibold">Annual</span>
                         <span className="text-green-500 text-xs font-normal">Saving 20%</span>
                       </div>
