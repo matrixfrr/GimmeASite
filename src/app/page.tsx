@@ -1380,7 +1380,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium mb-2">
-                      Name <span className="text-red-500">*</span>
+                      Name <span className="text-red-500 cursor-help" title="Required field">*</span>
                     </label>
                     <Input
                       id="name"
@@ -1394,7 +1394,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium mb-2">
-                      Email <span className="text-red-500">*</span>
+                      Email <span className="text-red-500 cursor-help" title="Required field">*</span>
                     </label>
                     <Input
                       id="email"
@@ -1410,7 +1410,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="relative">
                     <div className="flex items-center gap-1.5 mb-2">
-                      <label htmlFor="phone" className="text-sm font-medium">Phone Number <span className="text-red-500">*</span></label>
+                      <label htmlFor="phone" className="text-sm font-medium">Phone Number <span className="text-red-500 cursor-help" title="Required field">*</span></label>
                       <button
                         type="button"
                         className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
@@ -1478,7 +1478,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 {ownsDomain && (
                   <div>
                     <label htmlFor="existingDomain" className="text-sm font-medium block mb-2">
-                      What is your domain? <span className="text-red-500">*</span>
+                      What is your domain? <span className="text-red-500 cursor-help" title="Required field">*</span>
                     </label>
                     <Input
                       id="existingDomain"
@@ -1500,7 +1500,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 {/* Domain Field */}
                 {!ownsDomain && <div className="relative">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <label htmlFor="domain" className="text-sm font-medium">Desired Domain <span className="text-red-500">*</span></label>
+                    <label htmlFor="domain" className="text-sm font-medium">Desired Domain <span className="text-red-500 cursor-help" title="Required field">*</span></label>
                     <button
                       type="button"
                       className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
@@ -1565,7 +1565,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
 
                 <div className="relative">
                   <div className="flex items-center gap-1.5 mb-2">
-                    <label className="text-sm font-medium">Payment Plan <span className="text-red-500">*</span></label>
+                    <label className="text-sm font-medium">Payment Plan <span className="text-red-500 cursor-help" title="Required field">*</span></label>
                     <button
                       type="button"
                       className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors"
@@ -1658,7 +1658,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-2">
-                    Tell us about your project <span className="text-red-500">*</span>
+                    Tell us about your project <span className="text-red-500 cursor-help" title="Required field">*</span>
                   </label>
                   <Textarea
                     id="message"
