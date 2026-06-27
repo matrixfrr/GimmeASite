@@ -36,6 +36,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "paid" | null>(null);
+  const [planFilter, setPlanFilter] = useState<"upfront" | "monthly" | "hybrid" | "annual" | null>(null);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -252,9 +254,6 @@ export default function AdminPage() {
       </div>
     );
   }
-
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "paid" | null>(null);
-  const [planFilter, setPlanFilter] = useState<"upfront" | "monthly" | "hybrid" | "annual" | null>(null);
 
   const allUnpaid = quotes.filter((q) => !q.paid);
   const allPaid = quotes.filter((q) => q.paid);
