@@ -273,13 +273,8 @@ export default function AdminPage() {
   };
 
   const isFiltered = statusFilter !== null || planFilter !== null;
-  const planLabels: Record<string, string> = { upfront: "Upfront", monthly: "Monthly", hybrid: "Hybrid", annual: "Annual" };
-  let filteredTitle = "All Quotes";
-  let filteredQuotes: ClientQuote[] = [];
-  if (statusFilter === "all") { filteredTitle = "All Quotes"; filteredQuotes = quotes; }
-  else if (statusFilter === "pending") { filteredTitle = "Pending Payment"; filteredQuotes = allUnpaid; }
-  else if (statusFilter === "paid") { filteredTitle = "Paid"; filteredQuotes = allPaid; }
-  else if (planFilter) { filteredTitle = planLabels[planFilter] + " Quotes"; filteredQuotes = allUnpaid.filter(q => getPlanKey(q) === planFilter); }
+  const filteredTitle = statusFilter === "all" ? "All Quotes" : statusFilter === "pending" ? "Pending Payment" : statusFilter === "paid" ? "Paid" : planFilter === "upfront" ? "Upfront Quotes" : planFilter === "monthly" ? "Monthly Quotes" : planFilter === "hybrid" ? "Hybrid Quotes" : planFilter === "annual" ? "Annual Quotes" : "";
+  const filteredQuotes = statusFilter === "all" ? quotes : statusFilter === "pending" ? allUnpaid : statusFilter === "paid" ? allPaid : planFilter ? allUnpaid.filter(q => getPlanKey(q) === planFilter) : [];
   const unpaidQuotes = allUnpaid;
   const paidQuotes = allPaid;
 
