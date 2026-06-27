@@ -807,7 +807,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                       : v ? <Check className="w-4 h-4 text-green-500 mx-auto" /> : null;
                     return (
                       <tr key={perk} className="hover:bg-muted/20 transition-colors">
-                        <td className={`py-2.5 pr-4 ${perk === "Monthly Discount" ? "text-green-500 font-semibold" : "text-muted-foreground"}`}>{perk}</td>
+                        <td className={`py-2.5 pr-4 ${perk === "Monthly Discount" ? "text-green-500" : "text-muted-foreground"}`}>{perk}{(perk === "Domain" || perk === "Revisions") && <span className="text-red-500 font-bold text-xs cursor-help ml-0.5 align-middle" title="Conditions may apply.">*</span>}</td>
                         <td className="text-center py-2.5 px-2">{cell(up)}</td>
                         <td className="text-center py-2.5 px-2">{cell(mo)}</td>
                         <td className="text-center py-2.5 px-2">{cell(hy)}</td>
@@ -861,7 +861,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   <p>The <span className="font-semibold text-foreground">Monthly Plan</span> is a recurring monthly subscription — It’s ideal for:</p>
                   <ul className="space-y-1.5 list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Growing businesses that want <strong className="text-foreground">continued</strong> support and ongoing updates</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Mildly</strong> involved sites that benefit from regular revisions (2/month)</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Moderately</strong> involved sites that benefit from regular revisions (2/month)</span></li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>People that prefer spreading their costs <strong className="text-foreground">over time</strong> rather than dropping a large upfront sum</span></li>
                   </ul>
                   <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
@@ -871,7 +871,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring yearly subscription — It’s beneficial for:</p>
                   <ul className="space-y-1.5 list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses willing to <strong className="text-foreground">commit</strong> for the year</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites requiring <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites with <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">20% savings</span> (over 2 months <strong className="text-foreground">free</strong>)</span></li>
                   </ul>
                   <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
@@ -1957,7 +1957,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
               {showWhyPopup === "ownsDomain" && (
                 <div className="space-y-3">
                   <p>Check this box if we&apos;re redesigning your existing site and you want to keep your current domain.</p>
-                  <p>Already owning your domain will result in <span className="font-semibold text-foreground">savings</span> for you — since we won&apos;t need to acquire it on your behalf, it won&apos;t be factored into our price.</p>
+                  <p>Already owning your domain will result in <span className="text-green-500 font-semibold">savings</span> for you, as a reduced price will apply since we won&apos;t need to acquire it on your behalf.</p>
                   <p>Do <span className="font-semibold text-foreground">not</span> check this box if:</p>
                   <ul className="space-y-1.5 text-xs list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">a.</span> We&apos;re redesigning your site and you want a brand new domain instead.</li>
