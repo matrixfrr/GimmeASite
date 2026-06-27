@@ -1576,8 +1576,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       }`}
                       onClick={() => setShowPlanDropdown(!showPlanDropdown)}
                     >
-                      <span className={`flex items-center gap-1.5 ${formData.paymentPlan ? "text-foreground" : "text-muted-foreground"}`}>
-                        {formData.paymentPlan === "Hybrid" ? (<>Hybrid <span className="text-green-500 text-xs">Save 10%</span></>) : formData.paymentPlan === "Annual" ? (<>Annual <span className="text-green-500 text-xs">Save 20%</span></>) : (formData.paymentPlan || "Select a Plan")}
+                      <span className={formData.paymentPlan ? "text-foreground" : "text-muted-foreground"}>
+                        {formData.paymentPlan || "Select a Plan"}
                       </span>
                       <svg
                         className={`w-4 h-4 text-muted-foreground transition-transform ${showPlanDropdown ? "rotate-180" : ""}`}
@@ -1693,7 +1693,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         <Input
                           id="instagram"
                           type="text"
-                          placeholder="username"
+                          placeholder="company"
                           className={`bg-background rounded-l-none ${errors.instagram ? "border-red-500" : ""}`}
                           value={formData.instagram}
                           onChange={handleChange}
