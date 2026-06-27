@@ -2480,6 +2480,7 @@ export default function Home() {
       window.dispatchEvent(new Event("openTermsOfService"));
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (modal === "faq") {
+      setFaqTargetIndex(undefined);
       setShowFaqPopup(true);
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (modal === "payment-upfront" || modal === "payment-one-time") {
@@ -2558,8 +2559,8 @@ export default function Home() {
     }
   }, []);
 
-  const handleOpenFaq = () => setShowFaqPopup(true);
-  const handleCloseFaq = () => setShowFaqPopup(false);
+  const handleOpenFaq = () => { setFaqTargetIndex(undefined); setShowFaqPopup(true); };
+  const handleCloseFaq = () => { setShowFaqPopup(false); setFaqTargetIndex(undefined); };
   const handleOpenPrivacyPolicy = () => {
     window.dispatchEvent(new Event('openPrivacyPolicy'));
   };
