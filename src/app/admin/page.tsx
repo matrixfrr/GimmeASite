@@ -343,7 +343,7 @@ export default function AdminPage() {
 
         {/* Plan filters */}
         <div className="flex flex-wrap gap-2 mb-8">
-          {([["upfront","Upfront","bg-red-500/10 text-red-500 border-red-500/30 hover:border-red-500","border-red-500"],["monthly","Monthly","bg-blue-500/10 text-blue-500 border-blue-500/30 hover:border-blue-500","border-blue-500"],["hybrid","Hybrid","bg-pink-500/10 text-pink-500 border-pink-500/30 hover:border-pink-500","border-pink-500"],["annual","Annual","bg-cyan-500/10 text-cyan-400 border-cyan-500/30 hover:border-cyan-500","border-cyan-500"]] as const).map(([key, label, baseClass, activeClass]) => (
+          {([["upfront","Upfront","bg-red-400/10 text-red-400 border-red-400/30 hover:border-red-400","border-red-400"],["monthly","Monthly","bg-violet-500/10 text-violet-400 border-violet-400/30 hover:border-violet-400","border-violet-400"],["hybrid","Hybrid","bg-pink-400/10 text-pink-400 border-pink-400/30 hover:border-pink-400","border-pink-400"],["annual","Annual","bg-cyan-500/10 text-cyan-400 border-cyan-500/30 hover:border-cyan-500","border-cyan-500"]] as const).map(([key, label, baseClass, activeClass]) => (
             <button
               key={key}
               type="button"
@@ -511,7 +511,7 @@ export default function AdminPage() {
                 )}
                 {success && (
                   <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
-                    <p className="text-sm text-green-500">{success}</p>
+                    <p className={`text-sm ${success === "Quote deleted!" ? "text-red-500" : "text-green-500"}`}>{success}</p>
                   </div>
                 )}
 
