@@ -354,7 +354,10 @@ function CheckoutContent() {
                           : "border-border hover:border-border/80"
                       }`}
                     >
-                      <div className="font-semibold">Hybrid</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold">Hybrid</span>
+                        <span className="text-green-500 text-xs font-normal">Saving 10%</span>
+                      </div>
                       <div className="text-xs text-muted-foreground">Upfront + Monthly Discount</div>
                     </button>
                     <button
@@ -366,7 +369,10 @@ function CheckoutContent() {
                           : "border-border hover:border-border/80"
                       }`}
                     >
-                      <div className="font-semibold">Annual</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold">Annual</span>
+                        <span className="text-green-500 text-xs font-normal">Saving 20%</span>
+                      </div>
                       <div className="text-sm text-muted-foreground">Yearly subscription</div>
                     </button>
                   </div>
