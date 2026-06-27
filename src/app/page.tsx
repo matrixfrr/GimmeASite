@@ -50,8 +50,12 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
     answer: (<><span>The Hybrid Plan is a bundle-offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month, with 2 extra monthly revisions included.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">There's no payment box. How do I pay?</span><span className="text-sm">Go to the <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('faqNavigate', { detail: 'pricing' }))} className="text-primary hover:underline font-medium">Pricing section</button>, click “Buy Now” on whichever payment box (except for Equity), and under “Proceed to Checkout”, switch the plan type to “Hybrid” from the drop-down. Alternatively, you can visit <a href="https://gimmeasite.com/hybrid" className="text-primary hover:underline font-medium">https://gimmeasite.com/hybrid</a>.</span></span></>),
   },
   {
+    question: "How does the Upfront Plan's Temporary Support work?",
+    answer: "In the Upfront Plan, there is a temporary support period included that lasts 6 months beginning from the billing date. Within that timeframe, you have access to accelerated response time for support questions, 3 revision credits, reports from regular security scans and performance monitoring, and more. Following the conclusion of this period, your site will remain online, but we will no longer maintain its full-stack unless you renew your support period. However, you can still reach out to us via email with questions or concerns, as we are always available.",
+  },
+  {
     question: "What if I need revisions to my site?",
-    answer: "A different allowance of revisions are included in each Plan. You can request revisions by contacting support. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.",
+    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions by contacting support. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
   },
   {
     question: "Where do I manage my subscription?",
@@ -854,10 +858,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <p>The <span className="font-semibold text-foreground">Upfront Plan</span> is a one-time fee — <strong className="text-foreground">no</strong> subscription, <strong className="text-foreground">no</strong> recurring charges. It’s best suited for:</p>
               <ul className="space-y-1.5 list-none">
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>First-time site owners looking for a quick, <strong className="text-foreground">simple</strong> site with minimal changes</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Those interested in temporary support and <strong className="text-foreground">short-term</strong> benefits</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Those interested in <button type="button" onClick={() => { setShowUpfrontPopup(false); window.dispatchEvent(new CustomEvent('openFaqAt', { detail: 3 })); }} className="text-orange-500 hover:underline font-medium">temporary support</button> and <strong className="text-foreground">short-term</strong> benefits</span></li>
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Businesses that aim to <strong className="text-foreground">limit</strong> recurring costs</span></li>
               </ul>
-              <p>Once our 6-month support period concludes, troubleshooting and revisions will <strong className="text-foreground">no longer</strong> be delivered. However, your site will <strong className="text-foreground">not</strong> go offline.</p>
             </div>
             <button type="button" onClick={() => setShowUpfrontPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
           </div>
