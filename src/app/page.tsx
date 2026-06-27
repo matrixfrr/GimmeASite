@@ -400,7 +400,7 @@ function ServicesSection() {
             <span className="gradient-text">Succeed Online</span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            From discovery to deployment and beyond, we provide comprehensive web solutions for businesses of all sizes.
+            From discovery to deployment and beyond, we provide comprehensive sites for businesses of all types and sizes.
           </p>
         </div>
 
@@ -516,7 +516,7 @@ function AboutUsSection() {
         <div className="max-w-3xl mx-auto">
           <Card className="p-8 bg-card/50 border-border/50">
             <p className="text-lg text-muted-foreground leading-relaxed text-center">
-              Matthew and Christopher became friends in high school, but later began this project in 2025 as college students to deliver websites in an unusually expedited fashion to businesses of all types and sizes. They continue to focus on improving the online presence and customer outreach of their clients, as their drive for web design inspired them to create professional websites while slowly expanding into broader marketing endeavors.
+              Matthew and Christopher became friends in high school, but later began this project in 2025 as college students to deliver superb websites in an expedited fashion to businesses of all types and sizes. They continue to focus on improving the online presence and customer outreach of their clients through websites, as their drive for success inspired them to create an agency that is slowly expanding into the marketing industry as a whole.
             </p>
           </Card>
         </div>
@@ -576,7 +576,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <section id="pricing" className="py-32 relative noise-bg">
+      <section id="pricing" className="pt-32 pb-16 relative noise-bg">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
@@ -588,13 +588,18 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Choose the perfect Plan for your business. All Plans include our quality and satisfaction guaranteed.
           </p>
+          <p className="text-lg md:text-xl max-w-2xl mx-auto mt-2">
+            <button type="button" onClick={() => setShowComparePopup(true)} className="text-orange-500 hover:underline transition-colors">
+              View the Plan Comparison Table.
+            </button>
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 items-start">
+        <div className="grid md:grid-cols-3 gap-8 items-stretch">
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={`p-8 relative group ${
+              className={`p-8 relative group h-full flex flex-col ${
                 plan.popular
                   ? "bg-primary/5 border-primary/30 animate-attention-bounce"
                   : "bg-card/50 border-border/50"
@@ -690,7 +695,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 </div>
               )}
               <Button
-                className={`w-full ${
+                className={`w-full mt-auto ${
                   plan.popular
                     ? "bg-primary hover:bg-primary/90"
                     : plan.name === "Equity"
@@ -714,16 +719,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           ))}
         </div>
 
-        <div className="flex justify-center mt-12 mb-2">
-          <button
-            type="button"
-            onClick={() => setShowComparePopup(true)}
-            className="inline-flex items-center gap-2.5 bg-orange-500/10 border border-orange-500/30 rounded-xl px-5 py-3 hover:bg-orange-500/15 transition-colors"
-          >
-            <span className="text-orange-500 text-base flex-shrink-0">💡</span>
-            <span className="text-2xl font-bold text-orange-500 underline text-center">Still unsure about our Plans?</span>
-          </button>
-        </div>
 
         {showComingSoon && (
           <div className="fixed inset-0 z-50 flex items-center justify-center">
