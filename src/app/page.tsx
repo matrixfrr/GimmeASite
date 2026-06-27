@@ -543,8 +543,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       description: "",
       features: [
         "Custom Design",
-        "SSL + Security Integration",
-        "Performance Optimization",
+        "SSL + Security",
+        "Performance",
         "3 Total Revisions",
         "90-Day Support",
       ],
@@ -558,7 +558,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       features: [
         "Advanced Security",
         "2 Revisions Per Month",
-        "Priority Ongoing Support",
+        "Continued Support",
         "Analytics Dashboard",
       ],
       popular: true,
@@ -589,6 +589,15 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             Choose the perfect plan for your business. All plans include our quality and satisfaction guaranteed.
           </p>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setShowComparePopup(true)}
+          className="w-full flex items-center gap-3 bg-orange-500/10 border border-orange-500/30 rounded-xl px-5 py-3 mb-8 hover:bg-orange-500/15 transition-colors text-left"
+        >
+          <span className="text-orange-500 text-base flex-shrink-0">💡</span>
+          <span className="text-sm font-medium text-orange-500">Still confused about our plans? <span className="underline">Compare them side by side →</span></span>
+        </button>
 
         <div className="grid md:grid-cols-3 gap-8 items-start">
           {plans.map((plan) => (
@@ -676,7 +685,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <div className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Priority Ongoing Support", "Analytics Dashboard", "2 Revisions Per Month"].includes(f)), "Unlimited Revisions", "__sub__Full Redesigns", "Subdomain Configuration", "Real-Time Analytics"]
+                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Continued Support", "Analytics Dashboard", "2 Revisions Per Month"].includes(f)), "Unlimited Revisions", "__sub__Full Redesigns", "VIP Priority Support", "Subdomain Configuration"]
                     : plan.features
                   ).map((feature: string) => (
                     feature.startsWith("__sub__") ? (
@@ -722,15 +731,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               </Button>
             </Card>
           ))}
-        </div>
-        <div className="flex justify-end mt-3">
-          <button
-            type="button"
-            onClick={() => setShowComparePopup(true)}
-            className="text-sm text-orange-500 underline hover:text-orange-400 transition-colors"
-          >
-            Still confused about our plans?
-          </button>
         </div>
 
         {showComingSoon && (
@@ -792,16 +792,16 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <tbody className="divide-y divide-border/40">
                   {([
                     { perk: "Custom Design", up: true, mo: true, hy: true, an: true },
-                    { perk: "SSL + Security Integration", up: true, mo: true, hy: true, an: true },
-                    { perk: "Performance Optimization", up: true, mo: true, hy: true, an: true },
+                    { perk: "SSL Certified", up: true, mo: true, hy: true, an: true },
+                    { perk: "Performance", up: true, mo: true, hy: true, an: true },
+                    { perk: "Security", up: true, mo: true, hy: true, an: true },
                     { perk: "Revisions", up: "3", mo: "2/month", hy: "2/month", an: "∞" },
                     { perk: "Support", up: "90 Days", mo: "∞", hy: "∞", an: "∞⚡" },
-                    { perk: "Advanced Security", up: false, mo: true, hy: true, an: true },
                     { perk: "Analytics Dashboard", up: false, mo: true, hy: true, an: true },
-                    { perk: "Discounted Monthly", up: false, mo: false, hy: true, an: true },
+                    { perk: "Monthly Discount", up: false, mo: false, hy: true, an: true },
                     { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
+                    { perk: "VIP Priority Support", up: false, mo: false, hy: false, an: true },
                     { perk: "Subdomain Configuration", up: false, mo: false, hy: false, an: true },
-                    { perk: "Real-Time Analytics", up: false, mo: false, hy: false, an: true },
                   ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
                     const cell = (v: boolean | string) => typeof v === "string"
                       ? <span className="text-xs font-semibold text-foreground">{v}</span>
