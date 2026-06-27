@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,6 +38,12 @@ export default function AdminPage() {
   const [success, setSuccess] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "paid" | null>(null);
   const [planFilter, setPlanFilter] = useState<"upfront" | "monthly" | "hybrid" | "annual" | null>(null);
+
+  useEffect(() => {
+    if (!success) return;
+    const t = setTimeout(() => setSuccess(""), 5000);
+    return () => clearTimeout(t);
+  }, [success]);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -266,11 +272,16 @@ export default function AdminPage() {
     return "upfront";
   };
 
-  // Apply filters
-  const baseUnpaid = statusFilter === "paid" ? [] : statusFilter === "pending" || statusFilter === null ? allUnpaid : allUnpaid;
-  const basePaid   = statusFilter === "pending" ? [] : statusFilter === "paid" || statusFilter === null ? allPaid : allPaid;
-  const unpaidQuotes = planFilter ? baseUnpaid.filter(q => getPlanKey(q) === planFilter) : baseUnpaid;
-  const paidQuotes   = basePaid;
+  const isFiltered = statusFilter !== null || planFilter !== null;
+  const planLabels: Record<string, string> = { upfront: "Upfront", monthly: "Monthly", hybrid: "Hybrid", annual: "Annual" };
+  let filteredTitle = "All Quotes";
+  let filteredQuotes: ClientQuote[] = [];
+  if (statusFilter === "all") { filteredTitle = "All Quotes"; filteredQuotes = quotes; }
+  else if (statusFilter === "pending") { filteredTitle = "Pending Payment"; filteredQuotes = allUnpaid; }
+  else if (statusFilter === "paid") { filteredTitle = "Paid"; filteredQuotes = allPaid; }
+  else if (planFilter) { filteredTitle = planLabels[planFilter] + " Quotes"; filteredQuotes = allUnpaid.filter(q => getPlanKey(q) === planFilter); }
+  const unpaidQuotes = allUnpaid;
+  const paidQuotes = allPaid;
 
   return (
     <div className="min-h-screen bg-background">
@@ -524,6 +535,36 @@ export default function AdminPage() {
 
           {/* Quotes List */}
           <div className="lg:col-span-2 space-y-6">
+            {isFiltered ? (
+              <div>
+                <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                  {statusFilter === "paid" ? <CheckCircle className="w-5 h-5 text-green-500" /> : statusFilter === "all" ? <Users className="w-5 h-5 text-blue-500" /> : <Clock className="w-5 h-5 text-amber-500" />}
+                  {filteredTitle} ({filteredQuotes.length})
+                </h2>
+                {filteredQuotes.length === 0 ? (
+                  <div className="bg-card border border-border rounded-xl p-8 text-center"><p className="text-muted-foreground">No quotes found</p></div>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredQuotes.map((quote) => {
+                      const monthlyCents = getMonthlyFromNotes(quote.notes);
+                      const isAnnual = quote.plan_type === "annual";
+                      const displayNotes = cleanNotes(quote.notes);
+                      if (quote.paid) return (
+                        <div key={quote.id} className="bg-card border border-green-500/20 rounded-xl p-4 opacity-75">
+                          <div className="flex items-start justify-between gap-4"><div className="flex-1 min-w-0"><div className="flex items-center gap-2 mb-1"><h3 className="font-semibold truncate">{quote.name}</h3><span className="text-xs px-2 py-0.5 rounded-full bg-green-500/10 text-green-500">Paid</span></div><p className="text-sm text-muted-foreground truncate">{quote.email}</p>{quote.paid_at && <p className="text-xs text-muted-foreground mt-2">Paid: {formatDate(quote.paid_at)}</p>}</div><div className="text-right flex-shrink-0"><p className="text-xl font-bold text-green-500">{formatPrice(quote.price_cents)}</p><Button variant="ghost" size="sm" className="mt-2 text-red-500 hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDelete(quote.id)}><Trash2 className="w-4 h-4" /></Button></div></div>
+                        </div>
+                      );
+                      return (
+                        <div key={quote.id} className="bg-card border border-border rounded-xl p-4 hover:border-primary/30 transition-colors">
+                          <div className="flex items-start justify-between gap-4"><div className="flex-1 min-w-0"><div className="flex items-center gap-2 mb-1"><h3 className="font-semibold truncate">{quote.name}</h3><span className={`text-xs px-2 py-0.5 rounded-full ${isAnnual ? "bg-cyan-500/10 text-cyan-400" : quote.plan_type === "monthly" ? "bg-blue-500/10 text-blue-500" : monthlyCents ? "bg-yellow-500/10 text-yellow-500" : "bg-purple-500/10 text-purple-500"}`}>{isAnnual ? "Annual" : quote.plan_type === "monthly" ? "Monthly" : monthlyCents ? "Hybrid" : "Upfront"}</span></div><p className="text-sm text-muted-foreground truncate">{quote.email}</p>{displayNotes && <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{displayNotes}</p>}<p className="text-xs text-muted-foreground mt-2">Created: {formatDate(quote.created_at)}</p></div><div className="text-right flex-shrink-0">{monthlyCents ? (<div><p className="text-base font-bold text-primary">{formatPrice(quote.price_cents)}</p><p className="text-xs text-muted-foreground">upfront</p><p className="text-base font-bold text-primary">+ {formatPrice(monthlyCents)}</p><p className="text-xs text-muted-foreground">/month</p></div>) : (<div><p className="text-xl font-bold text-primary">{formatPrice(quote.price_cents)}</p>{isAnnual ? <p className="text-xs text-muted-foreground">/year</p> : quote.plan_type === "monthly" ? <p className="text-xs text-muted-foreground">/month</p> : null}</div>)}<Button variant="ghost" size="sm" className="mt-2 text-red-500 hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDelete(quote.id)}><Trash2 className="w-4 h-4" /></Button></div></div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
             {/* Pending Quotes */}
             <div>
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
