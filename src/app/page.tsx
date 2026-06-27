@@ -546,7 +546,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "SSL + Security",
         "Performance Optimization",
         "3 Total Revisions",
-        "90-Day Support",
+        "Temporary Support",
       ],
       popular: false,
     },
@@ -671,7 +671,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 || plan.name === "Monthly" ? (
                 <div className="space-y-3 mb-8">
                   {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Continued Support", "Analytics Dashboard", "2 Revisions / Month"].includes(f)), "Unlimited Revisions", "__sub__Full Redesigns", "VIP Priority Support", "Subdomain Configuration"]
+                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Continued Support", "Analytics Reports", "2 Revisions / Month"].includes(f)), "Subdomain Configuration", "Unlimited Revisions", "__sub__Full Redesigns", "VIP, Priority Support"]
                     : plan.features
                   ).map((feature: string) => (
                     feature.startsWith("__sub__") ? (
@@ -783,7 +783,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     { perk: "Performance", up: true, mo: true, hy: true, an: true },
                     { perk: "Security", up: true, mo: true, hy: true, an: true },
                     { perk: "Revisions", up: "3", mo: "2/month", hy: "4/month", an: "∞" },
-                    { perk: "Support", up: "90 Days", mo: "∞", hy: "∞", an: "∞⚡" },
+                    { perk: "Support", up: "6 Months", mo: "∞", hy: "∞", an: "∞⚡" },
                     { perk: "Analytics", up: false, mo: true, hy: true, an: true },
                     { perk: "Monthly Discount", up: false, mo: false, hy: true, an: true },
                     { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
@@ -823,11 +823,11 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
               <p>The <span className="font-semibold text-foreground">Upfront Plan</span> is a one-time fee — <strong className="text-foreground">no</strong> subscription, <strong className="text-foreground">no</strong> recurring charges. It’s best suited for:</p>
               <ul className="space-y-1.5 list-none">
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">First-time</strong> site owners looking for a quick, <strong className="text-foreground">simple</strong> site</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Young businesses interested in <strong className="text-foreground">limited</strong> support</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>First-time site owners looking for a quick, <strong className="text-foreground">simple</strong> site</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>New businesses interested in <strong className="text-foreground">temporary</strong> support</span></li>
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Individuals who prefer a <strong className="text-foreground">short-term</strong> investment</span></li>
               </ul>
-              <p>Once the 90-day support period ends and the three revision credits are used, maintenance and updates will <strong className="text-foreground">no longer</strong> be delivered.</p>
+              <p>Once the 6-month support period and 3 revision credits are up, maintenance and updates will <strong className="text-foreground">no longer</strong> be delivered.</p>
             </div>
             <button type="button" onClick={() => setShowUpfrontPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
           </div>
@@ -845,21 +845,21 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
               {monthlyBilling === "monthly" ? (
                 <>
-                  <p>The <span className="font-semibold text-foreground">Monthly Plan</span> is a recurring monthly <strong className="text-foreground">subscription</strong> — It’s ideal for:</p>
+                  <p>The <span className="font-semibold text-foreground">Monthly Plan</span> is a recurring monthly subscription — It’s ideal for:</p>
                   <ul className="space-y-1.5 list-none">
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Growing businesses that want <strong className="text-foreground">continued</strong> support and <strong className="text-foreground">ongoing</strong> updates</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Mildly</strong> involved sites that benefit from <strong className="text-foreground">regular</strong> revisions (2/month)</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Growing businesses that want <strong className="text-foreground">continued</strong> support and ongoing updates</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Mildly</strong> involved sites that benefit from regular revisions (2/month)</span></li>
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>People that prefer spreading their costs <strong className="text-foreground">over time</strong> rather than dropping a large upfront sum</span></li>
                   </ul>
                   <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
                 </>
               ) : (
                 <>
-                  <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring <strong className="text-foreground">yearly</strong> subscription — It’s beneficial for:</p>
+                  <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring yearly subscription — It’s beneficial for:</p>
                   <ul className="space-y-1.5 list-none">
                     <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses willing to <strong className="text-foreground">commit</strong> for the year</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites requiring <strong className="text-foreground">premium</strong> amenities, including <strong className="text-foreground">unlimited</strong> revisions and VIP <strong className="text-foreground">priority</strong> support</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% savings</span> (approx. two months <strong className="text-foreground">free</strong>)</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites requiring <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
+                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% savings</span> (approx. 2 months <strong className="text-foreground">free</strong>)</span></li>
                   </ul>
                   <p>Cancel anytime — no <strong className="text-foreground">lock-in</strong>.</p>
                 </>
