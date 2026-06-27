@@ -641,8 +641,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   <div className="relative flex-shrink-0">
                     {showMonthlyBubble && (
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
-                        <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg">
-                          Is this plan for me?
+                        <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
+                          Is this Plan for me?
                           <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
                         </div>
                       </div>
