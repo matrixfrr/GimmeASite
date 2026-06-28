@@ -877,7 +877,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         </div>
       )}
 
-      {/* Monthly / Annual Plan Popup */}
+      {/* Monthly Plan Popup */}
       {showMonthlyPopup && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowMonthlyPopup(false)}>
           <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
@@ -886,30 +886,39 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <button type="button" onClick={() => setShowMonthlyPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
             </div>
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
-              {monthlyBilling === "monthly" ? (
-                <>
-                  <p>The <span className="font-semibold text-foreground">Monthly Plan</span> is a recurring monthly subscription — It’s ideal for:</p>
-                  <ul className="space-y-1.5 list-none">
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Growing businesses that want <strong className="text-foreground">continued</strong> support and ongoing updates</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Moderately</strong> involved sites that benefit from regular revisions (2/month)</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>People who prefer to spread their costs <strong className="text-foreground">over time</strong> rather than submitting an upfront sum</span></li>
-                  </ul>
-                </>
-              ) : (
-                <>
-                  <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring yearly subscription — It’s beneficial for:</p>
-                  <ul className="space-y-1.5 list-none">
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses looking to <strong className="text-foreground">commit</strong> for the year</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites with <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
-                    <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% savings</span> (approx. 2 months free)</span></li>
-                  </ul>
-                </>
-              )}
+              <p>The <span className="font-semibold text-foreground">Monthly Plan</span> is a recurring monthly subscription — It’s ideal for:</p>
+              <ul className="space-y-1.5 list-none">
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Growing businesses that want <strong className="text-foreground">continued</strong> support and ongoing updates</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Moderately</strong> involved sites that benefit from regular revisions (2/month)</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>People who prefer to spread their costs <strong className="text-foreground">over time</strong> rather than submitting an upfront sum</span></li>
+              </ul>
             </div>
             <button type="button" onClick={() => setShowMonthlyPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
           </div>
         </div>
       )}
+
+      {/* Annual Plan Popup */}
+      {showAnnualPopup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowAnnualPopup(false)}>
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-bold">Is this Plan for me?</h3>
+              <button type="button" onClick={() => setShowAnnualPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
+              <p>The <span className="font-semibold text-foreground">Annual Plan</span> is a recurring yearly subscription — It’s beneficial for:</p>
+              <ul className="space-y-1.5 list-none">
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses looking to <strong className="text-foreground">commit</strong> for the year</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites with <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% savings</span> (approx. 2 months free)</span></li>
+              </ul>
+            </div>
+            <button type="button" onClick={() => setShowAnnualPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
+          </div>
+        </div>
+      )}
+
       {showEquityCmsPopup && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
