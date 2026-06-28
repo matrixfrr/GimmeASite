@@ -569,7 +569,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       name: "Monthly",
       price: "Contact us",
       priceLabel: "for more information",
-      description: "Everything in __Upfront__, including:",
+      description: "Everything in Upfront, including:",
       features: [
         "Advanced Security",
         "Analytics Reports",
@@ -579,15 +579,27 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       popular: true,
     },
     {
-      name: "Annual",
+      name: "Hybrid",
       price: "Contact us",
       priceLabel: "for more information",
       description: "Everything in Monthly, including:",
+      features: [
+        "4 Revisions / Month",
+        "__green__10% Off Monthly",
+      ],
+      popular: false,
+    },
+    {
+      name: "Annual",
+      price: "Contact us",
+      priceLabel: "for more information",
+      description: "Everything in Hybrid, including:",
       features: [
         "Subdomain Configuration",
         "Full Redesigns",
         "Unlimited Revisions",
         "VIP, Priority Support",
+        "__green__15% Off Monthly",
       ],
       popular: false,
     },
@@ -618,7 +630,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 items-stretch">
           {plans.map((plan) => (
             <Card
               key={plan.name}
@@ -630,11 +642,14 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             >
               {plan.popular && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
-                  Most Popular
+                  Popular
                 </Badge>
               )}
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="text-2xl font-bold">{plan.name}</h3>
+                {plan.name === "Hybrid" && (
+                  <span className="text-xs font-normal text-green-500">Save 10%</span>
+                )}
                 {plan.name === "Annual" && (
                   <span className="text-xs font-normal text-green-500">Save 15%</span>
                 )}
@@ -660,10 +675,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 {plan.name === "Monthly" && (
                   <div className="relative">
                     {showMonthlyBubble && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2.5 z-20 pointer-events-none">
                         <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
                           Is this Plan for me?
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
+                          <div className="absolute top-1/2 right-full -translate-y-1/2 border-4 border-transparent border-r-foreground" />
                         </div>
                       </div>
                     )}
@@ -716,7 +731,12 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               {plan.features.length > 0 ? (
                 <div className="space-y-3 mb-8">
                   {plan.features.map((feature: string) => (
-                    feature.startsWith("__sub__") ? (
+                    feature.startsWith("__green__") ? (
+                      <div key={feature} className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                        <span className="text-green-500">{feature.replace("__green__", "")}</span>
+                      </div>
+                    ) : feature.startsWith("__sub__") ? (
                       <div key={feature} className="flex items-center gap-3 pl-6">
                         <Check className="w-4 h-4 text-primary flex-shrink-0" />
                         <span className="text-sm">{feature.replace("__sub__", "")}</span>
@@ -754,6 +774,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     onOpenPayment("one-time");
                   } else if (plan.name === "Monthly") {
                     onOpenPayment("monthly", "monthly");
+                  } else if (plan.name === "Hybrid") {
+                    onOpenPayment("hybrid" as "monthly", "monthly");
                   } else if (plan.name === "Annual") {
                     onOpenPayment("monthly", "annual");
                   } else if (plan.name === "Equity") {
