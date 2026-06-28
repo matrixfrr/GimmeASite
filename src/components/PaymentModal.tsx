@@ -189,21 +189,6 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
           </div>
         </div>
 
-        {/* Important Notice */}
-        <div className="bg-red-500/15 border-2 border-red-500/50 rounded-xl p-4 mb-6 shadow-lg shadow-red-500/10">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <AlertTriangle className="w-5 h-5 text-red-500" />
-            </div>
-            <div>
-              <h4 className="font-bold text-red-500 text-sm mb-2 uppercase tracking-wide">Important Notice</h4>
-              <p className="text-sm font-bold text-red-500">
-                Do not pay until you have received your finished site from our team.
-              </p>
-            </div>
-          </div>
-        </div>
-
         <Separator className="mb-6" />
 
         {/* Email Input */}
