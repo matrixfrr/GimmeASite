@@ -539,7 +539,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showEquityCmsPopup, setShowEquityCmsPopup] = useState(false);
   const [showUpfrontPopup, setShowUpfrontPopup] = useState(false);
   const [showMonthlyPopup, setShowMonthlyPopup] = useState(false);
-  const [monthlyBilling, setMonthlyBilling] = useState<"monthly" | "annual">("monthly");
+  const [showAnnualPopup, setShowAnnualPopup] = useState(false);
   const [showUpfrontBubble, setShowUpfrontBubble] = useState(false);
   const [showMonthlyBubble, setShowMonthlyBubble] = useState(false);
   const [showAnnualBubble, setShowAnnualBubble] = useState(false);
@@ -579,6 +579,19 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       popular: true,
     },
     {
+      name: "Annual",
+      price: "Contact us",
+      priceLabel: "for more information",
+      description: "Everything in Monthly, including:",
+      features: [
+        "Subdomain Configuration",
+        "Full Redesigns",
+        "Unlimited Revisions",
+        "VIP, Priority Support",
+      ],
+      popular: false,
+    },
+    {
       name: "Equity",
       price: "Contact us",
       priceLabel: "for more information",
@@ -605,11 +618,11 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 items-stretch">
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={`p-8 relative group h-full flex flex-col ${
+              className={`p-6 relative group h-full flex flex-col ${
                 plan.popular
                   ? "bg-primary/5 border-primary/30 animate-attention-bounce"
                   : "bg-card/50 border-border/50"
@@ -620,27 +633,14 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   Most Popular
                 </Badge>
               )}
-              {plan.name === "Monthly" ? (
-                <div className="flex items-center gap-2 mb-3 flex-wrap">
-                  <div className="relative flex rounded-full border border-border/50 bg-muted/30 p-1">
-                    <div className={`absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] rounded-full bg-foreground transition-all duration-300 ease-in-out ${monthlyBilling === "annual" ? "translate-x-[calc(100%+4px)]" : "translate-x-0"}`} />
-                    <button
-                      type="button"
-                      onClick={() => setMonthlyBilling("monthly")}
-                      className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold leading-none tracking-tight rounded-full transition-colors duration-300 ${monthlyBilling === "monthly" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
-                    >
-                      Monthly
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMonthlyBilling("annual")}
-                      className={`relative z-10 flex-1 py-2 px-3 text-center text-2xl font-bold leading-none tracking-tight rounded-full transition-colors duration-300 flex items-center justify-center gap-1.5 ${monthlyBilling === "annual" ? "text-background" : "text-muted-foreground hover:text-foreground"}`}
-                    >
-                      Annual <span className="text-xs font-normal text-green-500">Save 15%</span>
-                    </button>
-                  </div>
-                  <div className="relative flex-shrink-0">
-                    {(monthlyBilling === "monthly" ? showMonthlyBubble : showAnnualBubble) && (
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <h3 className="text-2xl font-bold">{plan.name}</h3>
+                {plan.name === "Annual" && (
+                  <span className="text-xs font-normal text-green-500">Save 15%</span>
+                )}
+                {plan.name === "Upfront" && (
+                  <div className="relative">
+                    {showUpfrontBubble && (
                       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
                         <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
                           Is this Plan for me?
@@ -651,59 +651,71 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     <button
                       type="button"
                       className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                      onClick={() => { setShowMonthlyPopup(true); if (monthlyBilling === "monthly") { setShowMonthlyBubble(false); } else { setShowAnnualBubble(false); } }}
+                      onClick={() => { setShowUpfrontPopup(true); setShowUpfrontBubble(false); }}
                     >
                       ?
                     </button>
                   </div>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  <h3 className="text-2xl font-bold">{plan.name}</h3>
-                  {plan.name === "Upfront" && (
-                    <div className="relative">
-                      {showUpfrontBubble && (
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
-                          <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
-                            Is this Plan for me?
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
-                          </div>
+                )}
+                {plan.name === "Monthly" && (
+                  <div className="relative">
+                    {showMonthlyBubble && (
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                        <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
+                          Is this Plan for me?
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
                         </div>
-                      )}
-                      <button
-                        type="button"
-                        className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                        onClick={() => { setShowUpfrontPopup(true); setShowUpfrontBubble(false); }}
-                      >
-                        ?
-                      </button>
-                    </div>
-                  )}
-                  {plan.name === "Equity" && (
+                      </div>
+                    )}
                     <button
                       type="button"
                       className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                      onClick={() => setShowEquityCmsPopup(true)}
+                      onClick={() => { setShowMonthlyPopup(true); setShowMonthlyBubble(false); }}
                     >
                       ?
                     </button>
-                  )}
-                </div>
-              )}
+                  </div>
+                )}
+                {plan.name === "Annual" && (
+                  <div className="relative">
+                    {showAnnualBubble && (
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                        <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
+                          Is this Plan for me?
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                      onClick={() => { setShowAnnualPopup(true); setShowAnnualBubble(false); }}
+                    >
+                      ?
+                    </button>
+                  </div>
+                )}
+                {plan.name === "Equity" && (
+                  <button
+                    type="button"
+                    className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                    onClick={() => setShowEquityCmsPopup(true)}
+                  >
+                    ?
+                  </button>
+                )}
+              </div>
               {plan.description && (
                 <p className="mb-4 font-medium text-muted-foreground">
-                  {plan.name === "Monthly"
-                    ? <span>Everything in <strong>{monthlyBilling === "annual" ? "Monthly" : "Upfront"}</strong>, including:<span title="Conditions may apply." className="text-red-500 font-bold text-sm cursor-help ml-0.5 align-middle">*</span></span>
+                  {(plan.name === "Monthly" || plan.name === "Annual")
+                    ? <span>{plan.description}<span title="Conditions may apply." className="text-red-500 font-bold text-sm cursor-help ml-0.5 align-middle">*</span></span>
                     : plan.description}
                 </p>
               )}
               <Separator className="mb-6" />
-              {plan.features.length > 0 || plan.name === "Monthly" ? (
+              {plan.features.length > 0 ? (
                 <div className="space-y-3 mb-8">
-                  {(plan.name === "Monthly" && monthlyBilling === "annual"
-                    ? [...plan.features.filter((f: string) => !["Advanced Security", "Continued Support", "Analytics Reports", "2 Revisions / Month"].includes(f)), "Subdomain Configuration", "Full Redesigns", "Unlimited Revisions", "VIP, Priority Support"]
-                    : plan.features
-                  ).map((feature: string) => (
+                  {plan.features.map((feature: string) => (
                     feature.startsWith("__sub__") ? (
                       <div key={feature} className="flex items-center gap-3 pl-6">
                         <Check className="w-4 h-4 text-primary flex-shrink-0" />
@@ -741,7 +753,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   if (plan.name === "Upfront") {
                     onOpenPayment("one-time");
                   } else if (plan.name === "Monthly") {
-                    onOpenPayment("monthly", monthlyBilling);
+                    onOpenPayment("monthly", "monthly");
+                  } else if (plan.name === "Annual") {
+                    onOpenPayment("monthly", "annual");
                   } else if (plan.name === "Equity") {
                     setShowComingSoon(true);
                   }
