@@ -183,6 +183,15 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 20px 40px rgba(255, 107, 53, 0.15);
 }
 
+.hover-lift-green {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift-green:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(34, 197, 94, 0.25);
+}
+
 /* Card shine effect */
 .card-shine {
   position: relative;
