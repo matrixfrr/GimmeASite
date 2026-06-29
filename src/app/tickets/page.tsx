@@ -9,8 +9,12 @@ import Link from "next/link";
 
 const TICKET_TYPES = [
   { value: "revision", label: "Revision Request" },
+  { value: "extra_revisions", label: "Extra Revisions Request" },
+  { value: "redesign", label: "Full Redesign Request" },
+  { value: "domain_change", label: "Domain Change" },
   { value: "bug", label: "Bug Report" },
   { value: "inquiry", label: "General Inquiry" },
+  { value: "cancellation", label: "Cancellation" },
   { value: "other", label: "Other" },
 ];
 
@@ -25,6 +29,19 @@ export default function TicketsPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const isCancellation = ticketType === "cancellation";
+
+  const subjectPlaceholders: Record<string, string> = {
+    revision: "e.g. Update the text on the About page",
+    extra_revisions: "e.g. Need 3 additional revisions this month",
+    redesign: "e.g. Refresh the entire site with a new look",
+    domain_change: "e.g. Switch from myolddomain.com to mynewdomain.com",
+    bug: "e.g. Contact form not sending emails",
+    inquiry: "e.g. Question about my plan features",
+    cancellation: "",
+    other: "Brief summary of your request",
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,7 +127,10 @@ export default function TicketsPage() {
           ) : (
             <>
               <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold">Open a Ticket</h1>
+                <div className="mx-auto mb-4 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <img src="/favicon.svg" alt="GimmeASite" className="w-9 h-9" />
+                </div>
+                <h1 className="text-2xl font-bold text-primary">Open a Ticket</h1>
                 <p className="text-muted-foreground mt-2 text-sm">
                   Need help or want to make a change? Submit a ticket and we&apos;ll take care of it.
                 </p>
@@ -142,7 +162,7 @@ export default function TicketsPage() {
                     </label>
                     <select
                       value={ticketType}
-                      onChange={(e) => setTicketType(e.target.value)}
+                      onChange={(e) => { setTicketType(e.target.value); setSubject(""); setDescription(""); }}
                       className="w-full h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm"
                       required
                     >
@@ -152,70 +172,88 @@ export default function TicketsPage() {
                     </select>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      What is your ticket about? <span className="text-red-500">*</span>
-                    </label>
-                    <Input
-                      placeholder="e.g. Update the homepage hero text"
-                      value={subject}
-                      onChange={(e) => setSubject(e.target.value)}
-                      className="bg-background"
-                      required
-                      maxLength={150}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Details <span className="text-red-500">*</span>
-                    </label>
-                    <Textarea
-                      placeholder="Please describe your request or issue in as much detail as possible. The more context you provide, the faster we can help."
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      className="bg-background min-h-[140px] resize-y"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">
-                      Attachment <span className="text-xs text-muted-foreground font-normal">(optional)</span>
-                    </label>
-                    {attachment ? (
-                      <div className="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg px-3 py-2.5">
-                        <Paperclip className="w-4 h-4 text-primary flex-shrink-0" />
-                        <span className="text-sm flex-1 truncate">{attachment.name}</span>
-                        <button
-                          type="button"
-                          onClick={() => { setAttachment(null); if (fileRef.current) fileRef.current.value = ""; }}
-                          className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+                  {isCancellation ? (
+                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-4 text-sm text-amber-600 dark:text-amber-400 space-y-1">
+                      <p className="font-semibold">Want to cancel your subscription?</p>
+                      <p>
+                        You can manage or cancel your subscription directly from the{" "}
+                        <a
+                          href="https://gimmeasite.com/billing"
+                          className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
                         >
-                          <X className="w-4 h-4" />
-                        </button>
+                          Billing Portal
+                        </a>
+                        .
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Subject <span className="text-red-500">*</span>
+                        </label>
+                        <Input
+                          placeholder={subjectPlaceholders[ticketType] || "Brief summary of your request"}
+                          value={subject}
+                          onChange={(e) => setSubject(e.target.value)}
+                          className="bg-background"
+                          required
+                          maxLength={150}
+                        />
                       </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => fileRef.current?.click()}
-                        className="w-full flex items-center gap-2 border border-dashed border-border rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
-                      >
-                        <Paperclip className="w-4 h-4" />
-                        Click to attach a file
-                      </button>
-                    )}
-                    <input
-                      ref={fileRef}
-                      type="file"
-                      className="hidden"
-                      onChange={(e) => setAttachment(e.target.files?.[0] || null)}
-                      accept="image/*,.pdf,.doc,.docx,.txt,.zip"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1.5">
-                      Images, PDFs, documents, or ZIP files accepted.
-                    </p>
-                  </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Details <span className="text-red-500">*</span>
+                        </label>
+                        <Textarea
+                          placeholder="Please describe your request or issue in as much detail as possible. The more context you provide, the faster we can help."
+                          value={description}
+                          onChange={(e) => setDescription(e.target.value)}
+                          className="bg-background min-h-[140px] resize-y"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          Attachment <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+                        </label>
+                        {attachment ? (
+                          <div className="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg px-3 py-2.5">
+                            <Paperclip className="w-4 h-4 text-primary flex-shrink-0" />
+                            <span className="text-sm flex-1 truncate">{attachment.name}</span>
+                            <button
+                              type="button"
+                              onClick={() => { setAttachment(null); if (fileRef.current) fileRef.current.value = ""; }}
+                              className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => fileRef.current?.click()}
+                            className="w-full flex items-center gap-2 border border-dashed border-border rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                          >
+                            <Paperclip className="w-4 h-4" />
+                            Click to attach a file
+                          </button>
+                        )}
+                        <input
+                          ref={fileRef}
+                          type="file"
+                          className="hidden"
+                          onChange={(e) => setAttachment(e.target.files?.[0] || null)}
+                          accept=".png,.jpg,.jpeg,.pdf,.docx,.zip"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1.5">
+                          PNG, JPG, PDF, DOCX, or ZIP files accepted.
+                        </p>
+                      </div>
+                    </>
+                  )}
 
                   {error && (
                     <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-500">
@@ -224,9 +262,11 @@ export default function TicketsPage() {
                     </div>
                   )}
 
-                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
-                    {loading ? "Submitting..." : "Submit Ticket"}
-                  </Button>
+                  {!isCancellation && (
+                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
+                      {loading ? "Submitting..." : "Submit Ticket"}
+                    </Button>
+                  )}
                 </form>
               </div>
             </>
