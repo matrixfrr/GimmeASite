@@ -118,7 +118,7 @@ export default function SuccessPage() {
                     2
                   </span>
                   <span>
-                    Our team will reach out within 30 minutes to discuss connecting your website to your domain.
+                    Our team will reach out to you shortly about connecting your site to your domain.
                   </span>
                 </li>
               </ul>
