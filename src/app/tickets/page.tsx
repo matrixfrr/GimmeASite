@@ -33,6 +33,7 @@ export default function TicketsPage() {
   const [clientName, setClientName] = useState("");
   const [email, setEmail] = useState("");
   const [ticketType, setTicketType] = useState("");
+  const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
   const [attachment, setAttachment] = useState<File | null>(null);
@@ -41,7 +42,23 @@ export default function TicketsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isCancellation = ticketType === "cancellation";
-  const hasType = ticketType !== "";
+  const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
+
+  const handleTypeSelect = (value: string) => {
+    setTicketType(value);
+    setShowTypeDropdown(false);
+    setSubject("");
+    setDescription("");
+    setError("");
+  };
+
+  const clearTypeSelection = () => {
+    setTicketType("");
+    setShowTypeDropdown(false);
+    setSubject("");
+    setDescription("");
+    setError("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -160,20 +177,56 @@ export default function TicketsPage() {
                     </p>
                   </div>
 
+                  {/* Ticket Type custom dropdown */}
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       Ticket Type <span className="text-red-500">*</span>
                     </label>
-                    <select
-                      value={ticketType}
-                      onChange={(e) => { setTicketType(e.target.value); setSubject(""); setDescription(""); setError(""); }}
-                      className="w-full h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm"
-                    >
-                      <option value="">{hasType ? "Clear Selection" : "Select a Ticket Type"}</option>
-                      {TICKET_TYPES.map((t) => (
-                        <option key={t.value} value={t.value}>{t.label}</option>
-                      ))}
-                    </select>
+                    <div className="relative">
+                      {showTypeDropdown && (
+                        <div className="fixed inset-0 z-[5]" onClick={() => setShowTypeDropdown(false)} />
+                      )}
+                      <button
+                        type="button"
+                        className="w-full h-11 flex items-center justify-between bg-background border border-input hover:border-primary/50 rounded-lg px-4 py-2 text-left text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                        onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+                      >
+                        <span className={ticketType ? "text-foreground" : "text-muted-foreground"}>
+                          {selectedLabel || "Select a Ticket Type"}
+                        </span>
+                        <svg
+                          className={`w-4 h-4 text-muted-foreground transition-transform ${showTypeDropdown ? "rotate-180" : ""}`}
+                          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      {showTypeDropdown && (
+                        <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-10 overflow-hidden">
+                          {ticketType && (
+                            <button
+                              type="button"
+                              className="w-full px-3 py-2 text-left text-sm text-muted-foreground hover:bg-muted/50 transition-colors border-b border-border"
+                              onClick={clearTypeSelection}
+                            >
+                              Clear Selection
+                            </button>
+                          )}
+                          {TICKET_TYPES.map((t) => (
+                            <button
+                              key={t.value}
+                              type="button"
+                              className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors ${
+                                ticketType === t.value ? "bg-primary/10 text-primary" : ""
+                              }`}
+                              onClick={() => handleTypeSelect(t.value)}
+                            >
+                              {t.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {isCancellation && (
