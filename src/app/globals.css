@@ -135,8 +135,8 @@
 /* Fix for cut-off descenders in headings */
 h1, h2, h3, h4, h5, h6 {
   overflow: visible;
-  padding-bottom: 0.1em;
-  line-height: 1.1;
+  padding-bottom: 0.2em;
+  line-height: 1.2;
 }
 
 /* Noise texture overlay */
