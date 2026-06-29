@@ -13,6 +13,7 @@ import Link from "next/link";
 import confetti from "canvas-confetti";
 
 export default function SuccessPage() {
+  useEffect(() => { document.title = "Success!"; }, []);
   const [showConfetti, setShowConfetti] = useState(false);
 
   const fireConfetti = useCallback(() => {
