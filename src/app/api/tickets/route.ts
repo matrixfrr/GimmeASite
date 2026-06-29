@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { createClient } from "@supabase/supabase-js";
 
 export async function GET(request: Request) {
   try {
@@ -28,7 +29,45 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { email, subject, description } = await request.json();
+    let email: string, ticket_type: string, subject: string, description: string;
+    let attachmentUrl: string | null = null;
+
+    const contentType = request.headers.get("content-type") || "";
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
+      email = (formData.get("email") as string) || "";
+      ticket_type = (formData.get("ticket_type") as string) || "revision";
+      subject = (formData.get("subject") as string) || "";
+      description = (formData.get("description") as string) || "";
+
+      const file = formData.get("attachment") as File | null;
+      if (file && file.size > 0) {
+        const supabaseAdmin = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        const ext = file.name.split(".").pop() || "bin";
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const arrayBuffer = await file.arrayBuffer();
+        const { error: uploadError } = await supabaseAdmin.storage
+          .from("ticket-attachments")
+          .upload(fileName, arrayBuffer, { contentType: file.type });
+
+        if (!uploadError) {
+          const { data: urlData } = supabaseAdmin.storage
+            .from("ticket-attachments")
+            .getPublicUrl(fileName);
+          attachmentUrl = urlData?.publicUrl || null;
+        }
+      }
+    } else {
+      const body = await request.json();
+      email = body.email || "";
+      ticket_type = body.ticket_type || "revision";
+      subject = body.subject || "";
+      description = body.description || "";
+    }
 
     if (!email || !subject?.trim() || !description?.trim()) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -62,8 +101,10 @@ export async function POST(request: Request) {
         email: email.toLowerCase(),
         name: quote.name,
         plan_type: quote.plan_type,
+        ticket_type,
         subject: subject.trim(),
         description: description.trim(),
+        attachment_url: attachmentUrl,
         status: "open",
       }])
       .select()
@@ -75,7 +116,8 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ ticket, name: quote.name });
-  } catch {
+  } catch (err) {
+    console.error("Tickets POST error:", err);
     return NextResponse.json({ error: "Failed to submit ticket" }, { status: 500 });
   }
 }
