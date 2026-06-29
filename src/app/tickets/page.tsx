@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, AlertCircle, Paperclip, X, TicketCheck } from "lucide-react";
+import { CheckCircle, AlertCircle, Paperclip, X, TicketCheck, Info } from "lucide-react";
 import Link from "next/link";
 
 const TICKET_TYPES = [
@@ -28,6 +28,13 @@ const SUBJECT_PLACEHOLDERS: Record<string, string> = {
   other: "Brief description of your request",
 };
 
+interface RevisionCheck {
+  allowed: boolean;
+  used: number;
+  limit: number | null;
+  period: "total" | "monthly";
+}
+
 export default function TicketsPage() {
   const [submitted, setSubmitted] = useState(false);
   const [clientName, setClientName] = useState("");
@@ -39,10 +46,29 @@ export default function TicketsPage() {
   const [attachment, setAttachment] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [revisionCheck, setRevisionCheck] = useState<RevisionCheck | null>(null);
+  const [revisionChecking, setRevisionChecking] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isCancellation = ticketType === "cancellation";
+  const isRevision = ticketType === "revision";
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
+
+  // Check revision limit whenever email + revision type are both set
+  useEffect(() => {
+    if (!isRevision || !email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
+      setRevisionCheck(null);
+      return;
+    }
+    let cancelled = false;
+    setRevisionChecking(true);
+    fetch(`/api/tickets?checkRevisions=${encodeURIComponent(email)}`)
+      .then((r) => r.json())
+      .then((data) => { if (!cancelled) setRevisionCheck(data); })
+      .catch(() => { if (!cancelled) setRevisionCheck(null); })
+      .finally(() => { if (!cancelled) setRevisionChecking(false); });
+    return () => { cancelled = true; };
+  }, [isRevision, email]);
 
   const handleTypeSelect = (value: string) => {
     setTicketType(value);
@@ -50,6 +76,7 @@ export default function TicketsPage() {
     setSubject("");
     setDescription("");
     setError("");
+    setRevisionCheck(null);
   };
 
   const clearTypeSelection = () => {
@@ -58,6 +85,7 @@ export default function TicketsPage() {
     setSubject("");
     setDescription("");
     setError("");
+    setRevisionCheck(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,6 +129,8 @@ export default function TicketsPage() {
     }
   };
 
+  const revisionLimitReached = isRevision && revisionCheck && !revisionCheck.allowed;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -140,6 +170,7 @@ export default function TicketsPage() {
                   setAttachment(null);
                   setClientName("");
                   setError("");
+                  setRevisionCheck(null);
                 }}
               >
                 Submit Another Ticket
@@ -168,7 +199,7 @@ export default function TicketsPage() {
                       type="email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); }}
                       className="bg-background"
                       required
                       autoFocus
@@ -230,15 +261,40 @@ export default function TicketsPage() {
                     </div>
                   </div>
 
+                  {/* Revision limit feedback */}
+                  {isRevision && email && (
+                    revisionChecking ? (
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <div className="w-3 h-3 border-2 border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin" />
+                        Checking revision allowance...
+                      </div>
+                    ) : revisionCheck && (
+                      revisionLimitReached ? (
+                        <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-500">
+                          <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                          <span>
+                            You&apos;ve used all {revisionCheck.limit} of your revision{revisionCheck.limit === 1 ? "" : "s"}{" "}
+                            {revisionCheck.period === "monthly" ? "for this month" : "included in your plan"}.{" "}
+                            Please submit a <button type="button" className="underline font-medium" onClick={() => handleTypeSelect("extra_revisions")}>Revision Refill</button> ticket or contact us at{" "}
+                            <a href="mailto:hello@gimmeasite.com" className="underline font-medium">hello@gimmeasite.com</a>.
+                          </span>
+                        </div>
+                      ) : revisionCheck.limit !== null && (
+                        <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 rounded-lg px-3 py-2 text-xs text-green-600 dark:text-green-400">
+                          <Info className="w-3.5 h-3.5 flex-shrink-0" />
+                          {revisionCheck.used} of {revisionCheck.limit} revision{revisionCheck.limit === 1 ? "" : "s"} used{" "}
+                          {revisionCheck.period === "monthly" ? "this month" : "in total"}.
+                        </div>
+                      )
+                    )
+                  )}
+
                   {isCancellation && (
                     <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-4 text-sm text-primary space-y-1">
                       <p className="font-semibold">Want to cancel your subscription?</p>
                       <p>
                         You can manage or cancel your subscription directly from the{" "}
-                        <a
-                          href="https://gimmeasite.com/billing"
-                          className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
-                        >
+                        <a href="https://gimmeasite.com/billing" className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity">
                           Billing Portal
                         </a>
                         .
@@ -323,7 +379,11 @@ export default function TicketsPage() {
                   )}
 
                   {!isCancellation && (
-                    <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
+                    <Button
+                      type="submit"
+                      className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50"
+                      disabled={loading || !!revisionLimitReached}
+                    >
                       {loading ? "Submitting..." : "Submit Ticket"}
                     </Button>
                   )}
