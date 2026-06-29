@@ -33,9 +33,7 @@ function BillingContent() {
               GimmeASite
             </span>
           </Link>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <CreditCard className="w-4 h-4" />
-          </div>
+
         </div>
       </header>
 
