@@ -25,7 +25,7 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PaymentModal } from "@/components/PaymentModal";
 
@@ -396,7 +396,7 @@ function ServicesSection() {
     <>
       <style>{`@keyframes servicePop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.1);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.96);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.06);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .service-pop{animation:servicePop 15s ease-out forwards}`}</style>
       <section id="services" className="py-20 relative noise-bg">
-      <div className="w-full px-4 lg:px-8">
+      <div className="max-w-[96rem] mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Services</Badge>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
@@ -542,20 +542,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showAnnualBubble, setShowAnnualBubble] = useState(false);
   const [showEquityBubble, setShowEquityBubble] = useState(false);
   const [equityVote, setEquityVote] = useState<'up' | 'down' | null>(null);
-  const cardsGridRef = useRef<HTMLDivElement>(null);
-  const [planPositions, setPlanPositions] = useState<Array<{left: number; width: number}>>([]);
-  useEffect(() => {
-    const updatePositions = () => {
-      if (!cardsGridRef.current) return;
-      const gridRect = cardsGridRef.current.getBoundingClientRect();
-      const cards = Array.from(cardsGridRef.current.children).slice(0, 4) as HTMLElement[];
-      setPlanPositions(cards.map(c => { const r = c.getBoundingClientRect(); return { left: r.left - gridRect.left, width: r.width }; }));
-    };
-    updatePositions();
-    const ro = new ResizeObserver(updatePositions);
-    if (cardsGridRef.current) ro.observe(cardsGridRef.current);
-    return () => ro.disconnect();
-  }, []);
   useEffect(() => {
     const t = setTimeout(() => { setShowUpfrontBubble(true); setShowMonthlyBubble(true); setShowAnnualBubble(true); setShowEquityBubble(true); }, 10000);
     return () => clearTimeout(t);
@@ -629,7 +615,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <section id="pricing" className="pt-32 pb-32 relative">
+      <section id="pricing" className="pt-32 pb-32 relative overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
@@ -643,8 +629,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </p>
         </div>
 
-        <div className="overflow-x-auto -mx-4 px-4 lg:-mx-8 lg:px-8 pb-2">
-        <div ref={cardsGridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-stretch min-w-max xl:min-w-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-stretch">
           {plans.map((plan) => (
             <Card
               key={plan.name}
@@ -689,10 +674,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 {plan.name === "Monthly" && (
                   <div className="relative">
                     {showMonthlyBubble && (
-                      <div className="absolute bottom-full right-full mb-1 mr-1 z-20 pointer-events-none">
+                      <div className="absolute bottom-0 left-full ml-2 z-20 pointer-events-none">
                         <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
                           Is this Plan for me?
-                          <div className="absolute top-full right-0 border-4 border-transparent border-t-foreground" />
+                          <div className="absolute top-1/2 -translate-y-1/2 right-full border-4 border-transparent border-r-foreground" />
                         </div>
                       </div>
                     )}
@@ -813,7 +798,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             </Card>
           ))}
         </div>
-        </div>
 
 
         {showComingSoon && (
@@ -857,29 +841,18 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       </div>
 
       {/* Plan Comparison Table — inline between pricing cards and contact form */}
-      <div className="w-full px-4 lg:px-8 mt-16">
-        {/* Plan name headers aligned to pricing cards via JS measurement */}
-        {planPositions.length >= 4 && (
-          <div className="relative h-7 mb-3">
-            {['Upfront', 'Monthly', 'Hybrid', 'Annual'].map((name, i) => (
-              <div key={name} className="absolute text-center text-sm font-semibold text-foreground"
-                style={{ left: planPositions[i]?.left ?? 0, width: planPositions[i]?.width ?? 0 }}>
-                {name}
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="max-w-[96rem] mx-auto px-6 mt-16">
         <div className="bg-card/50 border border-border/50 rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-5">Plan Comparison</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead className="sr-only">
+              <thead>
                 <tr>
-                  <th>Amenities</th>
-                  <th>Upfront</th>
-                  <th>Monthly</th>
-                  <th>Hybrid</th>
-                  <th>Annual</th>
+                  <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/5">Amenities</th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground">Upfront</th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground">Monthly</th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground">Hybrid</th>
+                  <th className="text-center py-2 px-4 font-semibold text-foreground">Annual</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -994,11 +967,11 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <button type="button" onClick={() => setShowEquityCmsPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
             </div>
             <div className="text-sm text-muted-foreground space-y-3 leading-relaxed mb-4">
-              <p>The <span className="font-semibold text-foreground">Equity Plan</span> is a partnership arrangement — It's suited for:</p>
+              <p>The <span className="font-semibold text-foreground">Equity Plan</span> is a revenue-percentage agreement — It's appropriate for:</p>
               <ul className="space-y-1.5 list-none">
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Startups and small businesses looking to <strong className="text-foreground">minimize</strong> upfront and/or recurring costs</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Founders who prefer a <strong className="text-foreground">revenue-share or equity-share</strong> model over traditional fees</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Businesses that want a long-term partner <strong className="text-foreground">invested</strong> in their growth</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Extremely <strong className="text-foreground">advanced</strong> sites with highly intricate back-end systems</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Businesses interested in a <strong className="text-foreground">lifetime</strong> agreement with GimmeASite</span></li>
               </ul>
               <div className="pt-3 border-t border-border/40">
                 <p className="font-semibold text-foreground text-xs mb-2">Do you like this Plan?</p>
