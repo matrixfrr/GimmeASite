@@ -1280,15 +1280,21 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       newErrors.domainSearch = "Please search for domain availability before submitting";
     } else if (!ownsDomain && domainAvailability === "unavailable") {
       newErrors.domain = "This domain is already taken. Please choose a different one.";
-    } else {
+    } else if (!ownsDomain) {
       const submittedDomains: string[] = JSON.parse(localStorage.getItem('gs_submitted_domains') || '[]');
-      const domainKey = (ownsDomain ? existingDomain : formData.domain).toLowerCase().trim().replace(/^www\./, '');
+      const domainKey = formData.domain.toLowerCase().trim().replace(/^www\./, '');
       if (domainKey && submittedDomains.includes(domainKey)) {
         newErrors.domain = "A request for this domain has already been submitted. Please contact us at hello@gimmeasite.com if you have questions.";
       }
     }
     if (ownsDomain && !existingDomain.trim()) {
       newErrors.existingDomain = "Please enter your existing domain";
+    } else if (ownsDomain && existingDomain.trim()) {
+      const submittedDomains: string[] = JSON.parse(localStorage.getItem('gs_submitted_domains') || '[]');
+      const domainKey = existingDomain.toLowerCase().trim().replace(/^www\./, '');
+      if (domainKey && submittedDomains.includes(domainKey)) {
+        newErrors.existingDomain = "A request for this domain has already been submitted. Please contact us at hello@gimmeasite.com if you have questions.";
+      }
     }
 
     if (!formData.paymentPlan) {
