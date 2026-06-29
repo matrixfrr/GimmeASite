@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -17,6 +17,7 @@ import Link from "next/link";
 const STRIPE_BILLING_PORTAL_URL = "https://account.gimmeasite.com/p/login/dRmfZjaqK6e87c6gsz0co00";
 
 function BillingContent() {
+  useEffect(() => { document.title = "Billing Portal"; }, []);
   const handleAccessPortal = () => {
     window.location.href = STRIPE_BILLING_PORTAL_URL;
   };
@@ -34,7 +35,6 @@ function BillingContent() {
           </Link>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <CreditCard className="w-4 h-4" />
-            <span className="hidden sm:inline">Billing Portal</span>
           </div>
         </div>
       </header>
