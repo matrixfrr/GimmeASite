@@ -283,7 +283,7 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
               </Button>
               <Button
                 className="flex-1 bg-primary hover:bg-primary/90"
-                onClick={() => { window.location.href = "https://account.gimmeasite.com/p/login/dRmfZjaqK6e87c6gsz0co00"; }}
+                onClick={() => { window.location.href = "https://gimmeasite.com/billing"; }}
               >
                 Proceed
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -586,7 +586,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       description: "Everything in Monthly, including:",
       features: [
         "4 Revisions / Month",
-        "__green__10% Off Monthly",
+        "__green__10% Off / Month",
       ],
       popular: false,
     },
@@ -600,7 +600,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "Full Redesigns",
         "Unlimited Revisions",
         "VIP, Priority Support",
-        "__green__15% Off Monthly",
+        "__green__15% Off / Year",
       ],
       popular: false,
     },
@@ -1244,6 +1244,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       newErrors.name = "Name is required";
     } else if (!/^[a-zA-Z\s'-]+$/.test(formData.name.trim())) {
       newErrors.name = "Name can only contain letters, spaces, hyphens, and apostrophes";
+    } else if (formData.name.trim().split(/\s+/).filter(Boolean).length < 2) {
+      newErrors.name = "Please enter your first and last name";
     }
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
@@ -1254,27 +1256,15 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       newErrors.phone = "Phone number is required";
     } else {
       const phone = formData.phone.trim();
-
-      const format1 = /^\d{10}$/;
-      const format2 = /^\d{3}-\d{3}-\d{4}$/;
-      const format3 = /^\+1 \(\d{3}\) \d{3}-\d{4}$/;
-
-      if (!format1.test(phone) && !format2.test(phone) && !format3.test(phone)) {
-        const validChars = /^[\d\s\-\+\(\)]+$/;
-        if (!validChars.test(phone)) {
-          newErrors.phone = "Phone number can only contain numbers, hyphens, parentheses, spaces, and + for country code";
-        } else {
-          const digitsOnly = phone.replace(/\D/g, '');
-
-          if (phone.startsWith('+') && !phone.startsWith('+1')) {
-            newErrors.phone = "Only USA phone numbers (+1) are accepted at this time";
-          } else if (digitsOnly.length === 11 && digitsOnly.startsWith('1')) {
-            newErrors.phone = "Please use format: +1 (xxx) xxx-xxxx, xxx-xxx-xxxx, or xxxxxxxxxx";
-          } else if (digitsOnly.length !== 10 && !(digitsOnly.length === 11 && digitsOnly.startsWith('1'))) {
-            newErrors.phone = "Phone number must be 10 digits (or 11 with +1 country code)";
-          } else {
-            newErrors.phone = "Please use format: +1 (xxx) xxx-xxxx, xxx-xxx-xxxx, or xxxxxxxxxx";
-          }
+      const validChars = /^[\d\s\-\+\(\.\)]+$/;
+      if (!validChars.test(phone)) {
+        newErrors.phone = "Phone number can only contain digits, spaces, +, -, (, ), and .";
+      } else {
+        const digitsOnly = phone.replace(/\D/g, '');
+        if (digitsOnly.length < 7) {
+          newErrors.phone = "Phone number must have at least 7 digits";
+        } else if (digitsOnly.length > 15) {
+          newErrors.phone = "Phone number must have no more than 15 digits";
         }
       }
     }
@@ -1290,6 +1280,12 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       newErrors.domainSearch = "Please search for domain availability before submitting";
     } else if (!ownsDomain && domainAvailability === "unavailable") {
       newErrors.domain = "This domain is already taken. Please choose a different one.";
+    } else {
+      const submittedDomains: string[] = JSON.parse(localStorage.getItem('gs_submitted_domains') || '[]');
+      const domainKey = (ownsDomain ? existingDomain : formData.domain).toLowerCase().trim().replace(/^www\./, '');
+      if (domainKey && submittedDomains.includes(domainKey)) {
+        newErrors.domain = "A request for this domain has already been submitted. Please contact us at hello@gimmeasite.com if you have questions.";
+      }
     }
     if (ownsDomain && !existingDomain.trim()) {
       newErrors.existingDomain = "Please enter your existing domain";
@@ -1364,6 +1360,14 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         setSubmitSuccess(true);
         setShowSubmitToast(true);
         onSuccess?.();
+        const domainKey = (ownsDomain ? existingDomain : formData.domain).toLowerCase().trim().replace(/^www\./, '');
+        if (domainKey) {
+          const submittedDomains: string[] = JSON.parse(localStorage.getItem('gs_submitted_domains') || '[]');
+          if (!submittedDomains.includes(domainKey)) {
+            submittedDomains.push(domainKey);
+            localStorage.setItem('gs_submitted_domains', JSON.stringify(submittedDomains));
+          }
+        }
         setFormData({
           name: "",
           email: "",
