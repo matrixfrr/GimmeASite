@@ -44,6 +44,8 @@ interface Ticket {
   subject: string;
   description: string;
   status: "open" | "in_progress" | "resolved";
+  ticket_type: string;
+  attachment_url?: string;
   created_at: string;
   updated_at: string;
 }
@@ -844,6 +846,9 @@ export default function AdminPage() {
                           <span className={`text-xs px-2 py-0.5 rounded-full border ${statusColors[ticket.status]}`}>
                             {statusLabel[ticket.status]}
                           </span>
+                          <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
+                            {ticket.ticket_type === "revision" ? "Revision Request" : ticket.ticket_type === "bug" ? "Bug Report" : ticket.ticket_type === "inquiry" ? "General Inquiry" : "Other"}
+                          </span>
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {ticket.name} · {ticket.email}
@@ -852,6 +857,11 @@ export default function AdminPage() {
                           {formatDate(ticket.created_at)}
                         </p>
                         <p className="text-sm mt-3 text-foreground/80 whitespace-pre-wrap">{ticket.description}</p>
+                        {ticket.attachment_url && (
+                          <a href={ticket.attachment_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-2 text-xs text-primary underline underline-offset-2 hover:text-primary/80">
+                            View Attachment
+                          </a>
+                        )}
                       </div>
                       <div className="flex flex-col gap-2 flex-shrink-0">
                         {ticket.status !== "open" && (
