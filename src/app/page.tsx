@@ -655,7 +655,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   : (plan.name === "Hybrid" || plan.name === "Annual")
                   ? "bg-green-500/5 border-green-500/20 animate-attention-bounce"
                   : "bg-card/50 border-border/50"
-              } hover-lift`}
+              } ${(plan.name === "Hybrid" || plan.name === "Annual") ? "hover-lift-green" : "hover-lift"}`}
             >
               {plan.popular && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
@@ -821,6 +821,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     ? "bg-green-500 hover:bg-green-600 text-white"
                     : "bg-primary hover:bg-primary/90"
                 } transition-all duration-300`}
+                style={(plan.name === "Hybrid" || plan.name === "Annual") ? {boxShadow: "0 4px 20px rgba(34, 197, 94, 0.4)"} : undefined}
                 onClick={() => {
                   if (plan.name === "Upfront") {
                     onOpenPayment("one-time");
