@@ -155,6 +155,7 @@ export default function TicketsPage() {
                 <p className="text-muted-foreground mt-2 text-sm">
                   Need help or want to make a change? Submit a ticket and we&apos;ll take care of it.
                 </p>
+                <p className="text-xs text-muted-foreground/70 mt-1.5">Please allow up to one week for your ticket to be resolved.</p>
               </div>
 
               <div className="bg-card border border-border rounded-2xl p-8 shadow-xl">
