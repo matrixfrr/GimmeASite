@@ -663,12 +663,12 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 </Badge>
               )}
               {plan.name === "Hybrid" && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white border-0">
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 hover:bg-green-600 text-white border-0 transition-all duration-300" style={{boxShadow: "0 2px 12px rgba(34, 197, 94, 0.5)"}}>
                   Save 10%
                 </Badge>
               )}
               {plan.name === "Annual" && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white border-0">
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 hover:bg-green-600 text-white border-0 transition-all duration-300" style={{boxShadow: "0 2px 12px rgba(34, 197, 94, 0.5)"}}>
                   Save 15%
                 </Badge>
               )}
