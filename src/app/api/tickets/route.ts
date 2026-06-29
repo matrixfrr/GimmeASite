@@ -2,11 +2,75 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 import { createClient } from "@supabase/supabase-js";
 
+// Returns { allowed, used, limit, period } for revision tickets
+async function checkRevisionLimit(email: string, planType: string): Promise<{
+  allowed: boolean; used: number; limit: number | null; period: "total" | "monthly";
+}> {
+  // Annual = unlimited
+  if (planType === "annual") return { allowed: true, used: 0, limit: null, period: "total" };
+
+  let limit: number;
+  let period: "total" | "monthly";
+
+  if (planType === "one-time") {
+    limit = 3;
+    period = "total";
+  } else if (planType === "monthly") {
+    limit = 2;
+    period = "monthly";
+  } else if (planType === "hybrid") {
+    limit = 4;
+    period = "monthly";
+  } else {
+    // Unknown plan type — allow through
+    return { allowed: true, used: 0, limit: null, period: "total" };
+  }
+
+  let query = supabase
+    .from("tickets")
+    .select("id", { count: "exact", head: true })
+    .eq("email", email.toLowerCase())
+    .eq("ticket_type", "revision");
+
+  if (period === "monthly") {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    query = query.gte("created_at", startOfMonth);
+  }
+
+  const { count, error } = await query;
+  if (error) return { allowed: true, used: 0, limit, period }; // fail open
+
+  const used = count ?? 0;
+  return { allowed: used < limit, used, limit, period };
+}
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const adminPassword = searchParams.get("adminPassword");
+    const checkEmail = searchParams.get("checkRevisions");
 
+    // Revision limit check (client-facing, no auth needed)
+    if (checkEmail) {
+      const { data: quote, error: qErr } = await supabase
+        .from("client_quotes")
+        .select("plan_type")
+        .eq("email", checkEmail.toLowerCase())
+        .eq("paid", true)
+        .order("paid_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (qErr || !quote) {
+        return NextResponse.json({ error: "Email not found" }, { status: 404 });
+      }
+
+      const result = await checkRevisionLimit(checkEmail, quote.plan_type);
+      return NextResponse.json(result);
+    }
+
+    // Admin fetch
     if (adminPassword !== process.env.ADMIN_PASSWORD) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -92,6 +156,18 @@ export async function POST(request: Request) {
         { error: "No paid account found for this email. Please contact us at hello@gimmeasite.com if you believe this is an error." },
         { status: 404 }
       );
+    }
+
+    // Enforce revision limit
+    if (ticket_type === "revision") {
+      const { allowed, used, limit, period } = await checkRevisionLimit(email, quote.plan_type);
+      if (!allowed) {
+        const periodLabel = period === "monthly" ? "this month" : "in total";
+        return NextResponse.json(
+          { error: `You have used all ${limit} of your revision${limit === 1 ? "" : "s"} ${periodLabel}. Please submit a Revision Refill ticket or contact us at hello@gimmeasite.com.`, revisionLimitReached: true, used, limit },
+          { status: 403 }
+        );
+      }
     }
 
     const { data: ticket, error: ticketError } = await supabase
