@@ -652,6 +652,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               className={`p-6 relative group h-full flex flex-col ${
                 plan.popular
                   ? "bg-primary/5 border-primary/30 animate-attention-bounce"
+                  : (plan.name === "Hybrid" || plan.name === "Annual")
+                  ? "bg-green-500/5 border-green-500/20 animate-attention-bounce"
                   : "bg-card/50 border-border/50"
               } hover-lift`}
             >
@@ -660,40 +662,44 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   Popular
                 </Badge>
               )}
+              {plan.name === "Hybrid" && (
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white border-0">
+                  Save 10%
+                </Badge>
+              )}
+              {plan.name === "Annual" && (
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white border-0">
+                  Save 15%
+                </Badge>
+              )}
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="text-2xl font-bold">{plan.name}</h3>
                 {plan.name === "Hybrid" && (
-                  <>
-                    <div className="relative">
-                      {showHybridBubble && (
-                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
-                          <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
-                            Is this Plan for me?
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
-                          </div>
+                  <div className="relative">
+                    {showHybridBubble && (
+                      <div className="absolute bottom-0 left-full ml-2 z-20 pointer-events-none">
+                        <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
+                          Is this Plan for me?
+                          <div className="absolute top-1/2 -translate-y-1/2 right-full border-4 border-transparent border-r-foreground" />
                         </div>
-                      )}
-                      <button
-                        type="button"
-                        className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
-                        onClick={() => { setShowHybridPopup(true); setShowHybridBubble(false); }}
-                      >
-                        ?
-                      </button>
-                    </div>
-                    <span className="text-xs font-normal text-green-500">Save 10%</span>
-                  </>
-                )}
-                {plan.name === "Annual" && (
-                  <span className="text-xs font-normal text-green-500">Save 15%</span>
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                      onClick={() => { setShowHybridPopup(true); setShowHybridBubble(false); }}
+                    >
+                      ?
+                    </button>
+                  </div>
                 )}
                 {plan.name === "Upfront" && (
                   <div className="relative">
                     {showUpfrontBubble && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                      <div className="absolute bottom-0 left-full ml-2 z-20 pointer-events-none">
                         <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
                           Is this Plan for me?
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
+                          <div className="absolute top-1/2 -translate-y-1/2 right-full border-4 border-transparent border-r-foreground" />
                         </div>
                       </div>
                     )}
@@ -728,10 +734,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 {plan.name === "Annual" && (
                   <div className="relative">
                     {showAnnualBubble && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                      <div className="absolute bottom-0 left-full ml-2 z-20 pointer-events-none">
                         <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
                           Is this Plan for me?
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
+                          <div className="absolute top-1/2 -translate-y-1/2 right-full border-4 border-transparent border-r-foreground" />
                         </div>
                       </div>
                     )}
@@ -747,10 +753,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 {plan.name === "Equity" && (
                   <div className="relative">
                     {showEquityBubble && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                      <div className="absolute bottom-0 left-full ml-2 z-20 pointer-events-none">
                         <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
                           Is this Plan for me?
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
+                          <div className="absolute top-1/2 -translate-y-1/2 right-full border-4 border-transparent border-r-foreground" />
                         </div>
                       </div>
                     )}
