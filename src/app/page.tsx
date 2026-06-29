@@ -540,10 +540,12 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showUpfrontBubble, setShowUpfrontBubble] = useState(false);
   const [showMonthlyBubble, setShowMonthlyBubble] = useState(false);
   const [showAnnualBubble, setShowAnnualBubble] = useState(false);
+  const [showHybridBubble, setShowHybridBubble] = useState(false);
+  const [showHybridPopup, setShowHybridPopup] = useState(false);
   const [showEquityBubble, setShowEquityBubble] = useState(false);
   const [equityVote, setEquityVote] = useState<'up' | 'down' | null>(null);
   useEffect(() => {
-    const t = setTimeout(() => { setShowUpfrontBubble(true); setShowMonthlyBubble(true); setShowAnnualBubble(true); setShowEquityBubble(true); }, 10000);
+    const t = setTimeout(() => { setShowUpfrontBubble(true); setShowMonthlyBubble(true); setShowHybridBubble(true); setShowAnnualBubble(true); setShowEquityBubble(true); }, 10000);
     return () => clearTimeout(t);
   }, []);
 
@@ -647,7 +649,26 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <h3 className="text-2xl font-bold">{plan.name}</h3>
                 {plan.name === "Hybrid" && (
-                  <span className="text-xs font-normal text-green-500">Save 10%</span>
+                  <>
+                    <div className="relative">
+                      {showHybridBubble && (
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2.5 z-20 pointer-events-none">
+                          <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
+                            Is this Plan for me?
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-foreground" />
+                          </div>
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        className="inline-flex items-center justify-center w-5 h-5 text-xs bg-muted rounded-full hover:bg-primary/20 transition-colors"
+                        onClick={() => { setShowHybridPopup(true); setShowHybridBubble(false); }}
+                      >
+                        ?
+                      </button>
+                    </div>
+                    <span className="text-xs font-normal text-green-500">Save 10%</span>
+                  </>
                 )}
                 {plan.name === "Annual" && (
                   <span className="text-xs font-normal text-green-500">Save 15%</span>
@@ -932,6 +953,26 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         </div>
       )}
 
+      {/* Hybrid Plan Popup */}
+      {showHybridPopup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowHybridPopup(false)}>
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-bold">Is the Hybrid Plan for me?</h3>
+              <button type="button" onClick={() => setShowHybridPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors ml-3 flex-shrink-0"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="text-sm text-muted-foreground space-y-3 leading-relaxed">
+              <p>The <span className="font-semibold text-foreground">Hybrid Plan</span> is a combination of the Upfront and Monthly Plans. It's perfect for:</p>
+              <ul className="space-y-1.5 list-none">
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Businesses that would like to pay an upfront fee for <span className="text-green-500 font-semibold">10% off</span> each month</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Individuals who could use 2 <strong className="text-foreground">extra</strong> monthly revisions</span></li>
+              </ul>
+            </div>
+            <button type="button" onClick={() => setShowHybridPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
+          </div>
+        </div>
+      )}
+
       {/* Annual Plan Popup */}
       {showAnnualPopup && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowAnnualPopup(false)}>
@@ -945,7 +986,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <ul className="space-y-1.5 list-none">
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses looking to <strong className="text-foreground">commit</strong> for the year</span></li>
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites with <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% savings</span> (approx. 2 months free)</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% off</span> (approx. 2 months free)</span></li>
               </ul>
             </div>
             <button type="button" onClick={() => setShowAnnualPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
