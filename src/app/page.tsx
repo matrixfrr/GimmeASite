@@ -783,22 +783,22 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   {plan.features.map((feature: string) => (
                     feature.startsWith("__green__") ? (
                       <div key={feature} className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                        <Check className={`w-5 h-5 flex-shrink-0 ${(plan.name === "Hybrid" || plan.name === "Annual") ? "text-green-500" : "text-primary"}`} />
                         <span className="text-green-500">{feature.replace("__green__", "")}</span>
                       </div>
                     ) : feature.startsWith("__sub__") ? (
                       <div key={feature} className="flex items-center gap-3 pl-6">
-                        <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                        <Check className={`w-4 h-4 flex-shrink-0 ${(plan.name === "Hybrid" || plan.name === "Annual") ? "text-green-500" : "text-primary"}`} />
                         <span className="text-sm">{feature.replace("__sub__", "")}</span>
                       </div>
                     ) : feature === "Domain" ? (
                       <div key={feature} className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                        <Check className={`w-5 h-5 flex-shrink-0 ${(plan.name === "Hybrid" || plan.name === "Annual") ? "text-green-500" : "text-primary"}`} />
                         <span>Domain<span title="Conditions may apply." className="text-red-500 font-bold text-sm cursor-help ml-0.5 align-middle">*</span></span>
                       </div>
                     ) : (
                       <div key={feature} className="flex items-center gap-3">
-                        <Check className="w-5 h-5 text-primary flex-shrink-0" />
+                        <Check className={`w-5 h-5 flex-shrink-0 ${(plan.name === "Hybrid" || plan.name === "Annual") ? "text-green-500" : "text-primary"}`} />
                         <span>{feature}</span>
                       </div>
                     )
@@ -817,6 +817,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                     ? "bg-primary hover:bg-primary/90"
                     : plan.name === "Equity"
                     ? "bg-secondary text-muted-foreground hover:bg-secondary hover:text-muted-foreground cursor-pointer"
+                    : (plan.name === "Hybrid" || plan.name === "Annual")
+                    ? "bg-green-500 hover:bg-green-600 text-white"
                     : "bg-primary hover:bg-primary/90"
                 } transition-all duration-300`}
                 onClick={() => {
