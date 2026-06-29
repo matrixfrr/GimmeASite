@@ -116,13 +116,16 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "Failed to verify email. Please try again.");
+        setError(<>Failed to verify email. Please <a href="mailto:hello@gimmeasite.com" className="font-bold underline underline-offset-2 hover:opacity-80">contact us</a> if this continues.</>);
         setIsLoading(false);
         return;
       }
 
       if (!data.found) {
-        setError(data.message || "This email address is not recognized.");
+        setError(data.reason === "plan_mismatch"
+          ? <>{data.message?.split("contact us")[0] || "Your quote is for a different plan. "}Please <a href="mailto:hello@gimmeasite.com" className="font-bold underline underline-offset-2 hover:opacity-80">contact us</a> if you believe this is an error.</>
+          : <>The email address is not recognized. Please <a href="mailto:hello@gimmeasite.com" className="font-bold underline underline-offset-2 hover:opacity-80">contact us</a> if you believe this is an error.</>
+        );
         setIsLoading(false);
         return;
       }
