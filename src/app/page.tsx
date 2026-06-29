@@ -50,7 +50,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What are revisions?",
-    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
+    answer: (<span>A different allowance of revisions are included in each Plan. You can request revisions at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. Requesting extra revisions (&ldquo;Revision Refill&rdquo;) or full redesigns may incur additional fees depending on the conditions of your Plan.</span>),
   },
   {
     question: "Where do I manage my subscription?",
