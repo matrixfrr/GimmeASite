@@ -47,8 +47,8 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
     answer: "In the Upfront Plan, there is a temporary support period included that lasts 6 months beginning from the billing date. Within that timeframe, you have access to accelerated response time for support questions, 3 revision credits, reports from regular security scans and performance monitoring, and more. Following the conclusion of this period, your site will remain online, but we will no longer maintain its full-stack unless you renew your support period. However, you can still reach out to us via email with questions or concerns, as we are always available.",
   },
   {
-    question: "What if I need revisions to my site?",
-    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions by contacting support. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
+    question: "What are revisions?",
+    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions by going to <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">gimmeasite.com/tickets</a>. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
   },
   {
     question: "Where do I manage my subscription?",
@@ -267,26 +267,31 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
               </div>
               <button type="button" onClick={() => setShowAccountPopup(false)} className="text-muted-foreground hover:text-foreground transition-colors mt-0.5"><X className="w-4 h-4" /></button>
             </div>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-2">
-              You will be taken to your billing portal, where you can manage your subscription, update your payment method, and view invoices.
-            </p>
             <p className="text-sm text-muted-foreground leading-relaxed mb-5">
               <span className="font-medium text-foreground">Note:</span> An account is only created for you after your first payment is processed.
             </p>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 mb-4">
+              <Button
+                className="w-full bg-primary hover:bg-primary/90"
+                onClick={() => { window.location.href = "https://gimmeasite.com/billing"; }}
+              >
+                Billing Portal
+              </Button>
               <Button
                 variant="outline"
-                className="flex-1"
+                className="w-full"
+                onClick={() => { window.location.href = "https://gimmeasite.com/tickets"; }}
+              >
+                Open a Ticket
+              </Button>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                variant="ghost"
+                className="text-muted-foreground hover:text-foreground"
                 onClick={() => setShowAccountPopup(false)}
               >
                 Cancel
-              </Button>
-              <Button
-                className="flex-1 bg-primary hover:bg-primary/90"
-                onClick={() => { window.location.href = "https://gimmeasite.com/billing"; }}
-              >
-                Proceed
-                <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
           </div>
