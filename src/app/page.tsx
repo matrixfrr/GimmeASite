@@ -24,7 +24,7 @@ import {
   UserCircle,
   ThumbsUp,
   ThumbsDown,
-} from "lucide-react";
+, CreditCard, TicketCheck} from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PaymentModal } from "@/components/PaymentModal";
@@ -48,7 +48,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "What are revisions?",
-    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions by going to <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">gimmeasite.com/tickets</a>. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
+    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">gimmeasite.com/tickets</a>. Requesting extra revisions (beyond your limit/support period) or full redesigns may incur additional fees depending on the conditions of your selected Plan.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
   },
   {
     question: "Where do I manage my subscription?",
@@ -270,20 +270,27 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
             <p className="text-sm text-muted-foreground leading-relaxed mb-5">
               <span className="font-medium text-foreground">Note:</span> An account is only created for you after your first payment is processed.
             </p>
-            <div className="flex flex-col gap-3 mb-4">
-              <Button
-                className="w-full bg-primary hover:bg-primary/90"
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <button
+                type="button"
+                className="flex flex-col items-center gap-2.5 p-4 rounded-xl border border-border bg-background hover:border-primary/50 hover:bg-primary/5 transition-colors"
                 onClick={() => { window.location.href = "https://gimmeasite.com/billing"; }}
               >
-                Billing Portal
-              </Button>
-              <Button
-                variant="outline"
-                className="w-full"
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-primary" />
+                </div>
+                <span className="text-sm font-medium text-center leading-tight">Billing Portal</span>
+              </button>
+              <button
+                type="button"
+                className="flex flex-col items-center gap-2.5 p-4 rounded-xl border border-border bg-background hover:border-primary/50 hover:bg-primary/5 transition-colors"
                 onClick={() => { window.location.href = "https://gimmeasite.com/tickets"; }}
               >
-                Open a Ticket
-              </Button>
+                <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                  <TicketCheck className="w-5 h-5 text-primary" />
+                </div>
+                <span className="text-sm font-medium text-center leading-tight">Open a Ticket</span>
+              </button>
             </div>
             <div className="flex justify-center">
               <Button
