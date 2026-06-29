@@ -434,7 +434,7 @@ export default function TicketsPage() {
                       </div>
                       <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                         <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                        <span>Domain changes may take an extended amount of time to process and could affect your pricing. We may need to sell off your current domain, and the new domain may cost more depending on availability and registration fees.</span>
+                        <span>Domain changes may take an extended amount of time to process and could affect your pricing. We will need to sell off your current domain, and the new domain may cost more depending on availability and registration fees.</span>
                       </div>
                     </div>
                   )}
