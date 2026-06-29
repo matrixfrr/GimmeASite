@@ -2584,6 +2584,9 @@ function ThanksPopup({ isOpen, onClose, onBookCall }: { isOpen: boolean; onClose
               Book a Call to Review Your Draft
             </a>
           </Button>
+          <p className="text-xs text-muted-foreground/70 text-center mt-2 leading-snug">
+            Drafts are completed within one business day, and you cannot book us within 24 hours of your meeting — Your draft will be ready.
+          </p>
         </div>
       </div>
     </div>
