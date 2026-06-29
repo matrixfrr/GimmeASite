@@ -184,6 +184,11 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
 
         <Separator className="mb-6" />
 
+        {/* Contact form tip */}
+        <div className="flex items-start gap-2 bg-primary/8 border border-primary/20 rounded-lg px-3 py-2.5 mb-4 text-xs text-muted-foreground">
+          <span className="text-primary font-bold mt-px flex-shrink-0">💡</span>
+          <span>Make sure to fill out the{" "}<Link href="/#contact" onClick={onClose} className="text-primary font-semibold underline underline-offset-2 hover:text-primary/80 transition-colors">contact form</Link>{" "}before paying so we know what you need!</span>
+        </div>
         {/* Email Input */}
         <div className="space-y-4 mb-6">
           <div>
@@ -243,11 +248,6 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
           </div>
         )}
 
-        {/* Contact form tip */}
-        <div className="flex items-start gap-2 bg-primary/8 border border-primary/20 rounded-lg px-3 py-2.5 mb-4 text-xs text-muted-foreground">
-          <span className="text-primary font-bold mt-px flex-shrink-0">💡</span>
-          <span>Make sure to fill out the{" "}<Link href="/#contact" onClick={onClose} className="text-primary font-semibold underline underline-offset-2 hover:text-primary/80 transition-colors">contact form</Link>{" "}before paying so we know what you need!</span>
-        </div>
         {/* Checkout Button */}
         <Button
           onClick={handleProceedToCheckout}
