@@ -109,7 +109,7 @@ export default function TicketsPage() {
       const data = await res.json();
 
       if (res.status === 404) {
-        setError(data.error || "No paid account found for this email address.");
+        setError("__contact_error__");
         setLoading(false);
         return;
       }
@@ -183,10 +183,11 @@ export default function TicketsPage() {
                   <TicketCheck className="w-8 h-8 text-primary" />
                 </div>
                 <h1 className="text-2xl font-bold text-primary">Open a Ticket</h1>
+                <p className="text-xs font-medium text-muted-foreground/60 mt-1 uppercase tracking-widest">Paid Customers Only</p>
                 <p className="text-muted-foreground mt-2 text-sm">
                   Need help or want to make a change? Submit a ticket and we&apos;ll take care of it.
                 </p>
-                <p className="text-xs text-muted-foreground/70 mt-1.5">Please allow up to one week for your ticket to be resolved.</p>
+                <p className="text-xs text-muted-foreground/70 mt-1.5">Please allow us sufficient time for your ticket to be resolved.</p>
               </div>
 
               <div className="bg-card border border-border rounded-2xl p-8 shadow-xl">
@@ -374,7 +375,7 @@ export default function TicketsPage() {
                   {error && (
                     <div className="flex items-start gap-2 bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-sm text-red-500">
                       <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <span>{error}</span>
+                      <span>{error === "__contact_error__" ? <>The email address is not recognized. Please <a href="mailto:hello@gimmeasite.com" className="font-bold underline underline-offset-2 hover:opacity-80">contact us</a> if you believe this is an error.</> : error}</span>
                     </div>
                   )}
 
