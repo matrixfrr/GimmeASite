@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, AlertCircle, Paperclip, X, TicketCheck, Info } from "lucide-react";
+import { CheckCircle, AlertCircle, Paperclip, X, TicketCheck, Info, Search, Check } from "lucide-react";
 import Link from "next/link";
 
 const TICKET_TYPES = [
@@ -22,21 +22,28 @@ const TICKET_TYPES = [
 
 const SUBJECT_PLACEHOLDERS: Record<string, string> = {
   revision: "Brief description of the change needed",
-  extra_revisions: "Brief description of your refill request",
   redesign: "Brief description of the redesign scope",
-  domain_change: "Brief description of the domain change",
   bug: "Brief description of the issue",
   inquiry: "Brief description of your question",
   upfront_renewal: "Brief description of your renewal request",
-  transfer_ownership: "What would you like transferred",
   other: "Brief description of your request",
 };
+
+const REVISION_PACKS = [
+  { value: "1", label: "1 Extra Revision" },
+  { value: "5", label: "5-Pack" },
+  { value: "10", label: "10-Pack" },
+];
 
 interface RevisionCheck {
   allowed: boolean;
   used: number;
   limit: number | null;
   period: "total" | "monthly";
+}
+
+function validateDomain(d: string) {
+  return /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i.test(d.trim());
 }
 
 export default function TicketsPage() {
@@ -54,14 +61,21 @@ export default function TicketsPage() {
   const [revisionChecking, setRevisionChecking] = useState(false);
   const [transferDomain, setTransferDomain] = useState(false);
   const [transferFiles, setTransferFiles] = useState(false);
+  const [domainChangeQuery, setDomainChangeQuery] = useState("");
+  const [domainChangeAvailability, setDomainChangeAvailability] = useState<"available" | "unavailable" | null>(null);
+  const [domainChangeChecking, setDomainChangeChecking] = useState(false);
+  const [revisionPack, setRevisionPack] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isCancellation = ticketType === "cancellation";
   const isTransfer = ticketType === "transfer_ownership";
+  const isDomainChange = ticketType === "domain_change";
+  const isExtraRevisions = ticketType === "extra_revisions";
   const isRevision = ticketType === "revision";
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
-  // Check revision limit whenever email + revision type are both set
+  const showSubject = !isCancellation && !isTransfer && !isDomainChange && !isExtraRevisions;
+
   useEffect(() => {
     if (!isRevision || !email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
       setRevisionCheck(null);
@@ -77,32 +91,55 @@ export default function TicketsPage() {
     return () => { cancelled = true; };
   }, [isRevision, email]);
 
-  const handleTypeSelect = (value: string) => {
-    setTicketType(value);
-    setShowTypeDropdown(false);
+  const checkDomainChange = async (domain: string) => {
+    if (!validateDomain(domain)) { setDomainChangeAvailability(null); return; }
+    setDomainChangeChecking(true);
+    setDomainChangeAvailability(null);
+    try {
+      const res = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`);
+      if (res.ok) {
+        const data = await res.json();
+        setDomainChangeAvailability(data.Answer && data.Answer.length > 0 ? "unavailable" : "available");
+      }
+    } catch { /* silent */ } finally {
+      setDomainChangeChecking(false);
+    }
+  };
+
+  const resetTypeState = () => {
     setSubject("");
     setDescription("");
     setError("");
     setRevisionCheck(null);
     setTransferDomain(false);
     setTransferFiles(false);
+    setDomainChangeQuery("");
+    setDomainChangeAvailability(null);
+    setDomainChangeChecking(false);
+    setRevisionPack("");
+  };
+
+  const handleTypeSelect = (value: string) => {
+    setTicketType(value);
+    setShowTypeDropdown(false);
+    resetTypeState();
   };
 
   const clearTypeSelection = () => {
     setTicketType("");
     setShowTypeDropdown(false);
-    setSubject("");
-    setDescription("");
-    setError("");
-    setRevisionCheck(null);
-    setTransferDomain(false);
-    setTransferFiles(false);
+    resetTypeState();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!ticketType) {
-      setError("Please select a ticket type.");
+    if (!ticketType) { setError("Please select a ticket type."); return; }
+    if (isTransfer && !transferDomain && !transferFiles) {
+      setError("Please select at least one option for what you would like transferred.");
+      return;
+    }
+    if (isExtraRevisions && !revisionPack) {
+      setError("Please select a revision pack.");
       return;
     }
     setLoading(true);
@@ -115,25 +152,23 @@ export default function TicketsPage() {
       if (isTransfer) {
         fd.append("transfer_domain", String(transferDomain));
         fd.append("transfer_files", String(transferFiles));
+        fd.append("subject", [transferDomain && "Domain", transferFiles && "Website Files"].filter(Boolean).join(" + "));
+      } else if (isDomainChange) {
+        fd.append("subject", domainChangeQuery || "Domain change request");
+      } else if (isExtraRevisions) {
+        const pack = REVISION_PACKS.find(p => p.value === revisionPack);
+        fd.append("subject", pack ? `Revision Refill — ${pack.label}` : "Revision Refill");
+      } else {
+        fd.append("subject", subject);
       }
-      fd.append("subject", subject);
       fd.append("description", description);
       if (attachment) fd.append("attachment", attachment);
 
       const res = await fetch("/api/tickets", { method: "POST", body: fd });
       const data = await res.json();
 
-      if (res.status === 404) {
-        setError("__contact_error__");
-        setLoading(false);
-        return;
-      }
-
-      if (!res.ok) {
-        setError(data.error || "Failed to submit ticket.");
-        setLoading(false);
-        return;
-      }
+      if (res.status === 404) { setError("__contact_error__"); setLoading(false); return; }
+      if (!res.ok) { setError(data.error || "Failed to submit ticket."); setLoading(false); return; }
 
       setClientName(data.name || "");
       setSubmitted(true);
@@ -148,7 +183,6 @@ export default function TicketsPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
       <header className="w-full border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -158,7 +192,6 @@ export default function TicketsPage() {
         </div>
       </header>
 
-      {/* Main content */}
       <div className="flex-1 flex items-center justify-center p-4 sm:p-8">
         <div className="w-full max-w-lg">
           {submitted ? (
@@ -180,12 +213,9 @@ export default function TicketsPage() {
                   setSubmitted(false);
                   setEmail("");
                   setTicketType("");
-                  setSubject("");
-                  setDescription("");
+                  resetTypeState();
                   setAttachment(null);
                   setClientName("");
-                  setError("");
-                  setRevisionCheck(null);
                 }}
               >
                 Submit Another Ticket
@@ -207,6 +237,7 @@ export default function TicketsPage() {
 
               <div className="bg-card border border-border rounded-2xl p-8 shadow-xl">
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  {/* Email */}
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       Email Address <span className="text-red-500">*</span>
@@ -225,7 +256,7 @@ export default function TicketsPage() {
                     </p>
                   </div>
 
-                  {/* Ticket Type custom dropdown */}
+                  {/* Ticket Type */}
                   <div>
                     <label className="block text-sm font-medium mb-2">
                       Ticket Type <span className="text-red-500">*</span>
@@ -305,19 +336,20 @@ export default function TicketsPage() {
                     )
                   )}
 
+                  {/* Cancellation notice */}
                   {isCancellation && (
                     <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-4 text-sm text-primary space-y-2">
                       <p className="font-semibold">Before you go — take your site with you.</p>
                       <p>
-                        If you'd like to keep your domain or website files, open a{" "}
+                        If you&apos;d like to keep your domain and/or website files, open a{" "}
                         <button
                           type="button"
                           className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
-                          onClick={() => { setTicketType("transfer_ownership"); }}
+                          onClick={() => { setTicketType("transfer_ownership"); resetTypeState(); }}
                         >
                           Transfer Ownership
                         </button>
-                        {" "}ticket and we'll get everything over to you.
+                        {" "}ticket and we&apos;ll get everything over to you.
                       </p>
                       <p>
                         Ready to cancel? Head to the{" "}
@@ -329,6 +361,7 @@ export default function TicketsPage() {
                     </div>
                   )}
 
+                  {/* Transfer Ownership checkboxes */}
                   {isTransfer && (
                     <div className="space-y-3 p-4 rounded-xl bg-secondary/40 border border-border/50">
                       <p className="text-sm font-medium">What would you like transferred? <span className="text-red-500">*</span></p>
@@ -353,22 +386,101 @@ export default function TicketsPage() {
                     </div>
                   )}
 
-                  {!isCancellation && (
-                    <>
+                  {/* Domain Change — new domain search */}
+                  {isDomainChange && (
+                    <div className="space-y-3">
                       <div>
                         <label className="block text-sm font-medium mb-2">
-                          Subject <span className="text-red-500">*</span>
+                          What would you like your domain changed to? <span className="text-red-500">*</span>
                         </label>
-                        <Input
-                          placeholder={SUBJECT_PLACEHOLDERS[ticketType] || "Brief description of your request"}
-                          value={subject}
-                          onChange={(e) => setSubject(e.target.value)}
-                          className="bg-background"
-                          required
-                          maxLength={150}
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            type="text"
+                            placeholder="example.com"
+                            value={domainChangeQuery}
+                            onChange={(e) => {
+                              setDomainChangeQuery(e.target.value);
+                              setDomainChangeAvailability(null);
+                            }}
+                            onBlur={() => { if (domainChangeQuery.trim()) checkDomainChange(domainChangeQuery); }}
+                            onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); checkDomainChange(domainChangeQuery); } }}
+                            className={`bg-background flex-1 ${
+                              domainChangeAvailability === "available" ? "border-green-500" :
+                              domainChangeAvailability === "unavailable" ? "border-red-500" : ""
+                            }`}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="flex-shrink-0 hover:bg-primary/10 hover:border-primary/50"
+                            onClick={() => checkDomainChange(domainChangeQuery)}
+                            disabled={domainChangeChecking}
+                          >
+                            <Search className="w-4 h-4" />
+                          </Button>
+                        </div>
+                        {domainChangeChecking && (
+                          <p className="text-orange-500 text-xs mt-1">Checking availability...</p>
+                        )}
+                        {!domainChangeChecking && domainChangeAvailability === "available" && (
+                          <p className="text-green-500 text-xs mt-1 flex items-center gap-1">
+                            <Check className="w-3 h-3" /> This domain appears to be available!
+                          </p>
+                        )}
+                        {!domainChangeChecking && domainChangeAvailability === "unavailable" && (
+                          <p className="text-red-500 text-xs mt-1">This domain is already taken. You may still request it — contact us to discuss options.</p>
+                        )}
                       </div>
+                      <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
+                        <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                        <span>Domain changes may take an extended amount of time to process and could affect your pricing. We may need to sell off your current domain, and the new domain may cost more depending on availability and registration fees.</span>
+                      </div>
+                    </div>
+                  )}
 
+                  {/* Revision Refill pack selector */}
+                  {isExtraRevisions && (
+                    <div className="space-y-3 p-4 rounded-xl bg-secondary/40 border border-border/50">
+                      <p className="text-sm font-medium">How many extra revisions would you like? <span className="text-red-500">*</span></p>
+                      <div className="flex flex-col gap-2">
+                        {REVISION_PACKS.map((pack) => (
+                          <label key={pack.value} className="flex items-center gap-3 cursor-pointer select-none">
+                            <input
+                              type="radio"
+                              name="revisionPack"
+                              value={pack.value}
+                              checked={revisionPack === pack.value}
+                              onChange={() => setRevisionPack(pack.value)}
+                              className="w-4 h-4 accent-primary"
+                            />
+                            <span className="text-sm">{pack.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Subject — hidden for transfer, domain change, extra revisions, cancellation */}
+                  {showSubject && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Subject <span className="text-red-500">*</span>
+                      </label>
+                      <Input
+                        placeholder={SUBJECT_PLACEHOLDERS[ticketType] || "Brief description of your request"}
+                        value={subject}
+                        onChange={(e) => setSubject(e.target.value)}
+                        className="bg-background"
+                        required
+                        maxLength={150}
+                      />
+                    </div>
+                  )}
+
+                  {/* Details + Attachment — hidden only for cancellation */}
+                  {!isCancellation && (
+                    <>
                       <div>
                         <label className="block text-sm font-medium mb-2">
                           Details <span className="text-red-500">*</span>
@@ -445,7 +557,6 @@ export default function TicketsPage() {
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="border-t border-border/50 py-6">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
           <p>&copy; 2026 GimmeASite. All rights reserved.</p>
