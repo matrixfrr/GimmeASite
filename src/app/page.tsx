@@ -1542,7 +1542,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <Input
                       id="email"
                       type="email"
-                      placeholder="first@example.com"
+                      placeholder="you@example.com"
                       className={`bg-background ${errors.email ? "border-red-500" : ""}`}
                       value={formData.email}
                       onChange={handleChange}
