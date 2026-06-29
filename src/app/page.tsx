@@ -521,7 +521,7 @@ function AboutUsSection() {
         <div className="max-w-3xl mx-auto">
           <Card className="p-8 bg-card/50 border-border/50">
             <p className="text-lg text-muted-foreground leading-relaxed text-center">
-              Matthew and Christopher became friends in high school, but later began this project in 2025 as college students to deliver superb websites in an expedited fashion to businesses of all types and sizes. They continue to focus on improving the online presence and customer outreach of their clients through websites, as their drive for success inspired them to create an agency that is slowly expanding into the marketing industry as a whole.
+              Matthew and Christopher became friends in middle school, but later began this project in 2025 as college students to deliver superb websites in an expedited fashion to businesses of all types and sizes. They continue to focus on improving the online presence and customer outreach of their clients through their services.
             </p>
           </Card>
         </div>
