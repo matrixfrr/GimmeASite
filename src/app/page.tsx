@@ -24,7 +24,9 @@ import {
   UserCircle,
   ThumbsUp,
   ThumbsDown,
-, CreditCard, TicketCheck} from "lucide-react";
+  CreditCard,
+  TicketCheck,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { PaymentModal } from "@/components/PaymentModal";
