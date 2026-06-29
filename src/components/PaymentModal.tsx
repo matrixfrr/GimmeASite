@@ -173,15 +173,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
                     {plan.label}
                     {plan.key === "hybrid" && <span className="text-green-500 font-normal" style={{fontSize:"0.6rem"}}>Save 10%</span>}
                     {plan.key === "annual" && <span className="text-green-500 font-normal" style={{fontSize:"0.6rem"}}>Save 15%</span>}
-                    {plan.key === "hybrid" && (
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        onClick={(e) => { e.stopPropagation(); setDropdownOpen(false); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 1 })); }}
-                        onKeyDown={(e) => { if (e.key === "Enter") { e.stopPropagation(); setDropdownOpen(false); window.dispatchEvent(new CustomEvent("openFaqAt", { detail: 1 })); } }}
-                        className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-current text-muted-foreground hover:text-primary hover:border-primary transition-colors text-[0.5rem] leading-none flex-shrink-0"
-                      >?</span>
-                    )}
+
                   </button>
                 ))}
               </div>
