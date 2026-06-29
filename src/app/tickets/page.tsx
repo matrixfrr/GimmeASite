@@ -164,32 +164,20 @@ export default function TicketsPage() {
                     <label className="block text-sm font-medium mb-2">
                       Ticket Type <span className="text-red-500">*</span>
                     </label>
-                    <div className="flex gap-2">
-                      <select
-                        value={ticketType}
-                        onChange={(e) => { setTicketType(e.target.value); setSubject(""); setDescription(""); setError(""); }}
-                        className="flex-1 h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm"
-                      >
-                        <option value="" disabled>Select a Ticket Type</option>
-                        {TICKET_TYPES.map((t) => (
-                          <option key={t.value} value={t.value}>{t.label}</option>
-                        ))}
-                      </select>
-                      {hasType && (
-                        <button
-                          type="button"
-                          onClick={() => { setTicketType(""); setSubject(""); setDescription(""); setError(""); }}
-                          className="h-11 w-11 flex-shrink-0 flex items-center justify-center rounded-lg border border-input bg-background text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
-                          title="Clear selection"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
+                    <select
+                      value={ticketType}
+                      onChange={(e) => { setTicketType(e.target.value); setSubject(""); setDescription(""); setError(""); }}
+                      className="w-full h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm"
+                    >
+                      <option value="">{hasType ? "Clear Selection" : "Select a Ticket Type"}</option>
+                      {TICKET_TYPES.map((t) => (
+                        <option key={t.value} value={t.value}>{t.label}</option>
+                      ))}
+                    </select>
                   </div>
 
                   {isCancellation && (
-                    <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl px-4 py-4 text-sm text-amber-600 dark:text-amber-400 space-y-1">
+                    <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-4 text-sm text-primary space-y-1">
                       <p className="font-semibold">Want to cancel your subscription?</p>
                       <p>
                         You can manage or cancel your subscription directly from the{" "}
@@ -204,7 +192,7 @@ export default function TicketsPage() {
                     </div>
                   )}
 
-                  {hasType && !isCancellation && (
+                  {!isCancellation && (
                     <>
                       <div>
                         <label className="block text-sm font-medium mb-2">
@@ -280,7 +268,7 @@ export default function TicketsPage() {
                     </div>
                   )}
 
-                  {hasType && !isCancellation && (
+                  {!isCancellation && (
                     <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={loading}>
                       {loading ? "Submitting..." : "Submit Ticket"}
                     </Button>
