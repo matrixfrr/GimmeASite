@@ -616,7 +616,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   return (
     <>
       <section id="pricing" className="pt-32 pb-32 relative overflow-x-hidden">
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-[1600px] mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
