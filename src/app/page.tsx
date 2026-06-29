@@ -2357,7 +2357,7 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
               </ul>
 
               <h4 className="text-foreground font-semibold mt-6">Intellectual Property</h4>
-              <p>GimmeASite retains all intellectual property rights to websites, designs, and code produced under our services. Upon receipt of full payment, clients are granted a limited, non-exclusive license to use and display the delivered website for its intended commercial purpose. Full transfer of ownership rights is not included as part of any standard service Plan and remains the property of GimmeASite unless separately arranged in writing. We reserve the right to display delivered work in our portfolio unless a written opt-out is agreed upon.</p>
+              <p>GimmeASite retains all intellectual property rights to websites, designs, and code produced under our services. Upon receipt of full payment, clients are granted a limited, non-exclusive license to use and display the delivered website for its intended commercial purpose. Full transfer of ownership rights is included as part of every service Plan. We reserve the right to display delivered work in our portfolio unless a written opt-out is agreed upon.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Revisions and Support</h4>
               <p>Each project includes a reasonable number of revisions as specified in your Plan, as well as a designated support period. Additional revisions and continued support outside of your Plan may incur extra charges.</p>
