@@ -343,7 +343,7 @@ function HeroSection() {
           <div className="flex items-center justify-center gap-8 mt-12 text-sm text-muted-foreground animate-slideIn opacity-0 stagger-5">
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-primary" />
-              <span>No Hidden Fees</span>
+              <span>Proven Results</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-primary" />
@@ -597,9 +597,12 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       name: "Hybrid",
       price: "Contact us",
       priceLabel: "for more information",
-      description: "Everything in Monthly, including:",
+      description: "",
       features: [
-        "4 Revisions / Month",
+        "__green__Advanced Security",
+        "__green__Analytics Reports",
+        "__green__4 Revisions / Month",
+        "__green__Continued Support",
         "__green__10% Off / Month",
       ],
       popular: false,
@@ -636,9 +639,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-            Transparent Pricing,
+            The Plan That's
             <br />
-            <span className="gradient-text">No Surprises</span>
+            <span className="gradient-text">Right for You</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Choose the perfect Plan for your business. All Plans include our quality and satisfaction guaranteed.
@@ -1485,7 +1488,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               Ready to Start
               <br />
-              Your <span className="gradient-text">Project?</span>
+              <span className="gradient-text">Your</span> <span className="gradient-text">Project?</span>
             </h2>
             <p className="text-xl text-muted-foreground mb-10">
               Drop us a message and we'll get back to you within 24 business hours.
