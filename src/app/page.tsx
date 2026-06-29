@@ -25,7 +25,7 @@ import {
   ThumbsUp,
   ThumbsDown,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { PaymentModal } from "@/components/PaymentModal";
 
@@ -396,7 +396,7 @@ function ServicesSection() {
     <>
       <style>{`@keyframes servicePop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.1);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.96);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.06);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .service-pop{animation:servicePop 15s ease-out forwards}`}</style>
       <section id="services" className="py-20 relative noise-bg">
-      <div className="max-w-[96rem] mx-auto px-6">
+      <div className="w-full px-4 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Services</Badge>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
@@ -542,6 +542,20 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showAnnualBubble, setShowAnnualBubble] = useState(false);
   const [showEquityBubble, setShowEquityBubble] = useState(false);
   const [equityVote, setEquityVote] = useState<'up' | 'down' | null>(null);
+  const cardsGridRef = useRef<HTMLDivElement>(null);
+  const [planPositions, setPlanPositions] = useState<Array<{left: number; width: number}>>([]);
+  useEffect(() => {
+    const updatePositions = () => {
+      if (!cardsGridRef.current) return;
+      const gridRect = cardsGridRef.current.getBoundingClientRect();
+      const cards = Array.from(cardsGridRef.current.children).slice(0, 4) as HTMLElement[];
+      setPlanPositions(cards.map(c => { const r = c.getBoundingClientRect(); return { left: r.left - gridRect.left, width: r.width }; }));
+    };
+    updatePositions();
+    const ro = new ResizeObserver(updatePositions);
+    if (cardsGridRef.current) ro.observe(cardsGridRef.current);
+    return () => ro.disconnect();
+  }, []);
   useEffect(() => {
     const t = setTimeout(() => { setShowUpfrontBubble(true); setShowMonthlyBubble(true); setShowAnnualBubble(true); setShowEquityBubble(true); }, 10000);
     return () => clearTimeout(t);
@@ -629,7 +643,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 items-stretch">
+        <div className="overflow-x-auto -mx-4 px-4 lg:-mx-8 lg:px-8 pb-2">
+        <div ref={cardsGridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-stretch min-w-max xl:min-w-0">
           {plans.map((plan) => (
             <Card
               key={plan.name}
@@ -674,10 +689,10 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 {plan.name === "Monthly" && (
                   <div className="relative">
                     {showMonthlyBubble && (
-                      <div className="absolute bottom-full right-0 mb-2 z-20 pointer-events-none">
+                      <div className="absolute bottom-full right-full mb-1 mr-1 z-20 pointer-events-none">
                         <div className="bg-foreground text-background text-xs px-2.5 py-1.5 rounded-lg whitespace-nowrap font-medium shadow-lg animate-fade-in">
                           Is this Plan for me?
-                          <div className="absolute top-full right-2 border-4 border-transparent border-t-foreground" />
+                          <div className="absolute top-full right-0 border-4 border-transparent border-t-foreground" />
                         </div>
                       </div>
                     )}
@@ -798,6 +813,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             </Card>
           ))}
         </div>
+        </div>
 
 
         {showComingSoon && (
@@ -822,8 +838,11 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <p className="text-muted-foreground mb-6">
                   The Equity Plan is currently in development. We're working hard to bring you an exciting new way to partner with us!
                 </p>
+                <p className="text-sm text-muted-foreground mb-3">
+                  <button type="button" onClick={() => { setShowComingSoon(false); setTimeout(() => setShowEquityCmsPopup(true), 150); }} className="text-orange-500 font-medium underline">Want to know how this Plan works?</button>
+                </p>
                 <p className="text-sm text-muted-foreground mb-6">
-                  In the meantime, check out our <button type="button" onClick={() => { setShowComingSoon(false); setTimeout(() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="text-primary font-semibold underline">available</button> Plans.
+                  In the meantime, check out our available Plans.
                 </p>
                 <Button
                   onClick={() => setShowComingSoon(false)}
@@ -838,18 +857,29 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       </div>
 
       {/* Plan Comparison Table — inline between pricing cards and contact form */}
-      <div className="max-w-[96rem] mx-auto px-6 mt-16">
+      <div className="w-full px-4 lg:px-8 mt-16">
+        {/* Plan name headers aligned to pricing cards via JS measurement */}
+        {planPositions.length >= 4 && (
+          <div className="relative h-7 mb-3">
+            {['Upfront', 'Monthly', 'Hybrid', 'Annual'].map((name, i) => (
+              <div key={name} className="absolute text-center text-sm font-semibold text-foreground"
+                style={{ left: planPositions[i]?.left ?? 0, width: planPositions[i]?.width ?? 0 }}>
+                {name}
+              </div>
+            ))}
+          </div>
+        )}
         <div className="bg-card/50 border border-border/50 rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-5">Plan Comparison</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm border-collapse">
-              <thead>
+              <thead className="sr-only">
                 <tr>
-                  <th className="text-left py-2 pr-4 font-semibold text-foreground w-1/5">Amenities</th>
-                  <th className="text-center py-2 px-4 font-semibold text-foreground">Upfront</th>
-                  <th className="text-center py-2 px-4 font-semibold text-foreground">Monthly</th>
-                  <th className="text-center py-2 px-4 font-semibold text-foreground">Hybrid</th>
-                  <th className="text-center py-2 px-4 font-semibold text-foreground">Annual</th>
+                  <th>Amenities</th>
+                  <th>Upfront</th>
+                  <th>Monthly</th>
+                  <th>Hybrid</th>
+                  <th>Annual</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
@@ -971,21 +1001,21 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Businesses that want a long-term partner <strong className="text-foreground">invested</strong> in their growth</span></li>
               </ul>
               <div className="pt-3 border-t border-border/40">
-                <p className="font-semibold text-foreground text-xs mb-2">Do you like this Plan idea?</p>
+                <p className="font-semibold text-foreground text-xs mb-2">Do you like this Plan?</p>
                 <div className="flex gap-3">
                   <button
                     type="button"
                     onClick={() => setEquityVote(v => v === 'up' ? null : 'up')}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${equityVote === 'up' ? 'bg-green-500/20 border-green-500 text-green-500' : 'border-border/50 text-muted-foreground hover:border-green-500/50 hover:text-green-500'}`}
                   >
-                    <ThumbsUp className="w-3.5 h-3.5" /> Yes
+                    <ThumbsUp className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
                     onClick={() => setEquityVote(v => v === 'down' ? null : 'down')}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${equityVote === 'down' ? 'bg-red-500/20 border-red-500 text-red-500' : 'border-border/50 text-muted-foreground hover:border-red-500/50 hover:text-red-500'}`}
                   >
-                    <ThumbsDown className="w-3.5 h-3.5" /> No
+                    <ThumbsDown className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
