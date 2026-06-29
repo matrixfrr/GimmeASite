@@ -9,8 +9,8 @@ import Link from "next/link";
 
 const TICKET_TYPES = [
   { value: "revision", label: "Revision Request" },
-  { value: "extra_revisions", label: "Extra Revisions Request" },
   { value: "redesign", label: "Full Redesign Request" },
+  { value: "extra_revisions", label: "Revision Refill" },
   { value: "domain_change", label: "Domain Change" },
   { value: "bug", label: "Bug Report" },
   { value: "inquiry", label: "General Inquiry" },
@@ -20,7 +20,7 @@ const TICKET_TYPES = [
 
 const SUBJECT_PLACEHOLDERS: Record<string, string> = {
   revision: "Brief description of the change needed",
-  extra_revisions: "Brief description of your revision request",
+  extra_revisions: "Brief description of your refill request",
   redesign: "Brief description of the redesign scope",
   domain_change: "Brief description of the domain change",
   bug: "Brief description of the issue",
