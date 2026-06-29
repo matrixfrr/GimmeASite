@@ -121,9 +121,7 @@ function BillingContent() {
             <Link href="/" className="hover:text-foreground transition-colors">
               Home
             </Link>
-            <Link href="/#contact" className="hover:text-foreground transition-colors">
-              Contact
-            </Link>
+            <a href="mailto:hello@gimmeasite.com" className="hover:text-foreground transition-colors">Contact</a>
           </div>
         </div>
       </footer>
