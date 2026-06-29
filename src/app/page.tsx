@@ -358,7 +358,7 @@ function HeroSection() {
 
         <div className="grid grid-cols-3 gap-8 mt-12 animate-slideIn opacity-0 stagger-6">
           {[
-            { number: "100+", label: "Website Templates" },
+            { number: "100+", label: "Design Components" },
             { number: "97%", label: "Customer Satisfaction" },
             { number: "~25", label: "Available Countries" },
           ].map((stat) => (
