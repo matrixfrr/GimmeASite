@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -56,7 +57,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
   const [isLoading, setIsLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<React.ReactNode>("");
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Reset when modal opens/closes
