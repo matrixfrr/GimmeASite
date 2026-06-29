@@ -41,7 +41,7 @@ const scrollToSection = (sectionId: string) => {
 const faqItems: { question: string; answer: React.ReactNode }[] = [
   {
     question: "How long does it take for my site to be built?",
-    answer: "We value expedited services at GimmeASite. All sites are completed in up to five business days depending on complexity. However, some sites can even be delivered same-day!",
+    answer: "We value expedited services at GimmeASite. All sites are completed in up to five business days depending on complexity. However, some sites can even be delivered the next day!",
   },  {
     question: "How does temporary support work?",
     answer: "In the Upfront Plan, there is a temporary support period included that lasts 6 months beginning from the billing date. Within that timeframe, you have access to accelerated response time for support questions, 3 revision credits, reports from regular security scans and performance monitoring, and more. Following the conclusion of this period, your site will remain online, but we will no longer maintain its full-stack unless you renew your support period. However, you can still reach out to us via email with questions or concerns, as we are always available.",
