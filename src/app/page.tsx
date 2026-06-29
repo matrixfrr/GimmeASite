@@ -42,12 +42,7 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   {
     question: "How long does it take for my site to be built?",
     answer: "We value expedited services at GimmeASite. All sites are completed in up to five business days depending on complexity. However, some sites can even be delivered same-day!",
-  },
-  {
-    question: "What's the Hybrid Plan?",
-    answer: (<><span>The Hybrid Plan is a bundle-offering combining an Upfront fee and a <span className="text-green-500 font-semibold">10% off</span> recurring Monthly subscription, best suited for those looking to pay a discounted price each month, with 2 extra monthly revisions included.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">There's no payment box. How do I pay?</span><span className="text-sm">Go to the <button type="button" onClick={() => window.dispatchEvent(new CustomEvent('faqNavigate', { detail: 'pricing' }))} className="text-primary hover:underline font-medium">Pricing section</button>, click “Buy Now” on whichever payment box (except for Equity), and under “Proceed to Checkout”, switch the plan type to “Hybrid” from the drop-down. Alternatively, you can visit <a href="https://gimmeasite.com/hybrid" className="text-primary hover:underline font-medium">https://gimmeasite.com/hybrid</a>.</span></span></>),
-  },
-  {
+  },  {
     question: "How does temporary support work?",
     answer: "In the Upfront Plan, there is a temporary support period included that lasts 6 months beginning from the billing date. Within that timeframe, you have access to accelerated response time for support questions, 3 revision credits, reports from regular security scans and performance monitoring, and more. Following the conclusion of this period, your site will remain online, but we will no longer maintain its full-stack unless you renew your support period. However, you can still reach out to us via email with questions or concerns, as we are always available.",
   },
