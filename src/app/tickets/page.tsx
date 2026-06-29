@@ -14,6 +14,8 @@ const TICKET_TYPES = [
   { value: "domain_change", label: "Domain Change" },
   { value: "bug", label: "Bug Report" },
   { value: "inquiry", label: "General Inquiry" },
+  { value: "upfront_renewal", label: "Upfront Support Renewal" },
+  { value: "transfer_ownership", label: "Transfer Ownership" },
   { value: "cancellation", label: "Cancellation" },
   { value: "other", label: "Other" },
 ];
@@ -25,6 +27,8 @@ const SUBJECT_PLACEHOLDERS: Record<string, string> = {
   domain_change: "Brief description of the domain change",
   bug: "Brief description of the issue",
   inquiry: "Brief description of your question",
+  upfront_renewal: "Brief description of your renewal request",
+  transfer_ownership: "What would you like transferred",
   other: "Brief description of your request",
 };
 
@@ -48,9 +52,12 @@ export default function TicketsPage() {
   const [error, setError] = useState("");
   const [revisionCheck, setRevisionCheck] = useState<RevisionCheck | null>(null);
   const [revisionChecking, setRevisionChecking] = useState(false);
+  const [transferDomain, setTransferDomain] = useState(false);
+  const [transferFiles, setTransferFiles] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isCancellation = ticketType === "cancellation";
+  const isTransfer = ticketType === "transfer_ownership";
   const isRevision = ticketType === "revision";
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
@@ -77,6 +84,8 @@ export default function TicketsPage() {
     setDescription("");
     setError("");
     setRevisionCheck(null);
+    setTransferDomain(false);
+    setTransferFiles(false);
   };
 
   const clearTypeSelection = () => {
@@ -86,6 +95,8 @@ export default function TicketsPage() {
     setDescription("");
     setError("");
     setRevisionCheck(null);
+    setTransferDomain(false);
+    setTransferFiles(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,6 +112,10 @@ export default function TicketsPage() {
       const fd = new FormData();
       fd.append("email", email);
       fd.append("ticket_type", ticketType);
+      if (isTransfer) {
+        fd.append("transfer_domain", String(transferDomain));
+        fd.append("transfer_files", String(transferFiles));
+      }
       fd.append("subject", subject);
       fd.append("description", description);
       if (attachment) fd.append("attachment", attachment);
@@ -291,15 +306,50 @@ export default function TicketsPage() {
                   )}
 
                   {isCancellation && (
-                    <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-4 text-sm text-primary space-y-1">
-                      <p className="font-semibold">Want to cancel your subscription?</p>
+                    <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-4 text-sm text-primary space-y-2">
+                      <p className="font-semibold">Before you go — take your site with you.</p>
                       <p>
-                        You can manage or cancel your subscription directly from the{" "}
+                        If you'd like to keep your domain or website files, open a{" "}
+                        <button
+                          type="button"
+                          className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
+                          onClick={() => { setTicketType("transfer_ownership"); }}
+                        >
+                          Transfer Ownership
+                        </button>
+                        {" "}ticket and we'll get everything over to you.
+                      </p>
+                      <p>
+                        Ready to cancel? Head to the{" "}
                         <a href="https://gimmeasite.com/billing" className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity">
                           Billing Portal
                         </a>
-                        .
+                        {" "}to manage your subscription.
                       </p>
+                    </div>
+                  )}
+
+                  {isTransfer && (
+                    <div className="space-y-3 p-4 rounded-xl bg-secondary/40 border border-border/50">
+                      <p className="text-sm font-medium">What would you like transferred? <span className="text-red-500">*</span></p>
+                      <label className="flex items-center gap-3 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={transferDomain}
+                          onChange={(e) => setTransferDomain(e.target.checked)}
+                          className="w-4 h-4 accent-primary"
+                        />
+                        <span className="text-sm">Domain</span>
+                      </label>
+                      <label className="flex items-center gap-3 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={transferFiles}
+                          onChange={(e) => setTransferFiles(e.target.checked)}
+                          className="w-4 h-4 accent-primary"
+                        />
+                        <span className="text-sm">Website Files</span>
+                      </label>
                     </div>
                   )}
 
