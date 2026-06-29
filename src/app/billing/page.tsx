@@ -7,7 +7,6 @@ import {
   CreditCard,
   ArrowRight,
   Loader2,
-  Receipt,
   Settings,
   FileText,
   ExternalLink,
@@ -55,18 +54,18 @@ function BillingContent() {
 
             {/* Features list */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-              <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 border border-border/50">
+              <button type="button" onClick={handleAccessPortal} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors w-full">
                 <Settings className="w-6 h-6 text-primary" />
                 <span className="text-sm font-medium text-center">Manage Subscription</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 border border-border/50">
+              </button>
+              <button type="button" onClick={handleAccessPortal} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors w-full">
                 <CreditCard className="w-6 h-6 text-primary" />
                 <span className="text-sm font-medium text-center">Update Payment</span>
-              </div>
-              <div className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 border border-border/50">
+              </button>
+              <button type="button" onClick={handleAccessPortal} className="flex flex-col items-center gap-2 p-4 rounded-xl bg-secondary/50 border border-border/50 hover:border-primary/40 hover:bg-primary/5 transition-colors w-full">
                 <FileText className="w-6 h-6 text-primary" />
                 <span className="text-sm font-medium text-center">View Invoices</span>
-              </div>
+              </button>
             </div>
 
             {/* Info box */}
@@ -100,11 +99,7 @@ function BillingContent() {
           </div>
 
           {/* Trust badges */}
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-muted-foreground">
-            <div className="flex items-center gap-2 text-sm">
-              <Receipt className="w-4 h-4" />
-              <span>View Receipts</span>
-            </div>
+          <div className="mt-8 flex items-center justify-center text-muted-foreground">
             <div className="flex items-center gap-2 text-sm">
               <CreditCard className="w-4 h-4" />
               <span>Powered by Stripe</span>
