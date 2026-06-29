@@ -173,7 +173,7 @@ export default function SuccessPage() {
                 >
                   @gimmeasite
                 </a>
-                . It means the world to us to serve you!
+                . Thank you for the opportunity for us to design with passion!
               </p>
               <p>
                 Cheers,<br />
