@@ -416,7 +416,7 @@ function ServicesSection() {
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             Everything You Need to
             <br />
-            <span className="gradient-text">Succeed Online</span>
+            <span className="gradient-text" style={{paddingBottom: "0.25em", lineHeight: "1.3", display: "inline-block"}}>Succeed Online</span>
           </h2>
           <p className="text-xl text-muted-foreground">
             From discovery to deployment and beyond, we provide comprehensive sites for businesses of all types and sizes.
@@ -641,7 +641,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             The Plan That's
             <br />
-            <span className="gradient-text">Right for You</span>
+            <span className="gradient-text" style={{paddingBottom: "0.25em", lineHeight: "1.3", display: "inline-block"}}>Right for You</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
             Choose the perfect Plan for your business. All Plans include our quality and satisfaction guaranteed.
@@ -1488,7 +1488,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               Ready to Start
               <br />
-              <span className="gradient-text">Your</span> <span className="gradient-text">Project?</span>
+              <span className="gradient-text" style={{paddingBottom: "0.25em", lineHeight: "1.3", display: "inline-block"}}>Your</span> <span className="gradient-text" style={{paddingBottom: "0.25em", lineHeight: "1.3", display: "inline-block"}}>Project?</span>
             </h2>
             <p className="text-xl text-muted-foreground mb-10">
               Drop us a message and we'll get back to you within 24 business hours.
