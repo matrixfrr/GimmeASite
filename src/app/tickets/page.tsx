@@ -66,6 +66,8 @@ export default function TicketsPage() {
   const [domainChangeAvailability, setDomainChangeAvailability] = useState<"available" | "unavailable" | null>(null);
   const [domainChangeChecking, setDomainChangeChecking] = useState(false);
   const [revisionPack, setRevisionPack] = useState("");
+  const [emailChecking, setEmailChecking] = useState(false);
+  const [emailVerified, setEmailVerified] = useState<"valid" | "invalid" | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isCancellation = ticketType === "cancellation";
@@ -77,7 +79,8 @@ export default function TicketsPage() {
   const isRevision = ticketType === "revision";
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
-  const emailValid = /^[^@]+@[^@]+\.[^@]+$/.test(email);
+  const emailFormatValid = /^[^@]+@[^@]+\.[^@]+$/.test(email);
+  const emailReady = emailVerified === "valid";
   const showSubject = !isCancellation && !isTransfer && !isDomainChange && !isExtraRevisions;
 
   useEffect(() => {
@@ -94,6 +97,26 @@ export default function TicketsPage() {
       .finally(() => { if (!cancelled) setRevisionChecking(false); });
     return () => { cancelled = true; };
   }, [isRevision, email]);
+
+  // Debounced email verification against paid quotes
+  useEffect(() => {
+    setEmailVerified(null);
+    if (!emailFormatValid) return;
+    let cancelled = false;
+    const timer = setTimeout(async () => {
+      setEmailChecking(true);
+      try {
+        const res = await fetch(`/api/tickets?checkRevisions=${encodeURIComponent(email)}`);
+        if (!cancelled) setEmailVerified(res.ok ? "valid" : "invalid");
+      } catch {
+        if (!cancelled) setEmailVerified(null);
+      } finally {
+        if (!cancelled) setEmailChecking(false);
+      }
+    }, 600);
+    return () => { cancelled = true; clearTimeout(timer); };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email]);
 
   const checkDomainChange = async (domain: string) => {
     if (!validateDomain(domain)) { setDomainChangeAvailability(null); return; }
@@ -250,7 +273,7 @@ export default function TicketsPage() {
                       type="email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); }}
+                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); setEmailVerified(null); if (ticketType) { setTicketType(""); resetTypeState(); } }}
                       className="bg-background"
                       required
                       autoFocus
@@ -271,9 +294,9 @@ export default function TicketsPage() {
                       )}
                       <button
                         type="button"
-                        className={`w-full h-11 flex items-center justify-between bg-background border border-input rounded-lg px-4 py-2 text-left text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${emailValid ? "hover:border-primary/50 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
-                        onClick={() => { if (emailValid) setShowTypeDropdown(!showTypeDropdown); }}
-                        disabled={!emailValid}
+                        className={`w-full h-11 flex items-center justify-between bg-background border border-input rounded-lg px-4 py-2 text-left text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${emailReady ? "hover:border-primary/50 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                        onClick={() => { if (emailReady) setShowTypeDropdown(!showTypeDropdown); }}
+                        disabled={!emailReady}
                       >
                         <span className={ticketType ? "text-foreground" : "text-muted-foreground"}>
                           {selectedLabel || "Select a Ticket Type"}
@@ -313,8 +336,9 @@ export default function TicketsPage() {
                     </div>
                   </div>
 
+                  {/* All fields below gated on emailReady */}
                   {/* Revision limit feedback */}
-                  {isRevision && email && (
+                  {isRevision && email && emailReady && (
                     revisionChecking ? (
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <div className="w-3 h-3 border-2 border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin" />
@@ -342,7 +366,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Cancellation notice */}
-                  {isCancellation && (
+                  {isCancellation && emailReady && (
                     <div className="bg-primary/10 border border-primary/30 rounded-xl px-4 py-4 text-sm text-primary space-y-2">
                       <p className="font-semibold">Before you go — take your site with you.</p>
                       <p>
@@ -367,7 +391,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Transfer Ownership checkboxes */}
-                  {isTransfer && (
+                  {isTransfer && emailReady && (
                     <div className="space-y-3 p-4 rounded-xl bg-secondary/40 border border-border/50">
                       <p className="text-sm font-medium">What would you like transferred? <span className="text-red-500">*</span></p>
                       <label className="flex items-center gap-3 cursor-pointer select-none">
@@ -396,7 +420,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Upfront Support Renewal notice */}
-                  {isUpfrontRenewal && (
+                  {isUpfrontRenewal && emailReady && (
                   <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                     <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                     <span>A small additional fee may apply once your ticket is resolved. We'll always reach out before charging anything extra.</span>
@@ -404,7 +428,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Full Redesign notice */}
-                  {isRedesign && (
+                  {isRedesign && emailReady && (
                     <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                       <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                       <span>Depending on the scope, a fee may apply once your redesign is complete. Annual Plan members are covered — no extra charge. We'll always confirm pricing with you before moving forward.</span>
@@ -412,7 +436,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Domain Change — new domain search */}
-                  {isDomainChange && (
+                  {isDomainChange && emailReady && (
                     <div className="space-y-3">
                       <div>
                         <label className="block text-sm font-medium mb-2">
@@ -465,7 +489,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Revision Refill pack selector */}
-                  {isExtraRevisions && (
+                  {isExtraRevisions && emailReady && (
                     <div className="space-y-3 p-4 rounded-xl bg-secondary/40 border border-border/50">
                       <p className="text-sm font-medium">How many extra revisions would you like? <span className="text-red-500">*</span></p>
                       <div className="flex flex-col gap-2">
@@ -487,7 +511,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Revision Refill charge notice */}
-                  {isExtraRevisions && (
+                  {isExtraRevisions && emailReady && (
                   <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                     <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                     <span>A small additional fee may apply once your ticket is resolved. We'll always reach out before charging anything extra.</span>
@@ -495,7 +519,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Subject — hidden for transfer, domain change, extra revisions, cancellation */}
-                  {showSubject && (
+                  {showSubject && emailReady && (
                     <div>
                       <label className="block text-sm font-medium mb-2">
                         Subject <span className="text-red-500">*</span>
@@ -512,7 +536,7 @@ export default function TicketsPage() {
                   )}
 
                   {/* Details + Attachment — hidden only for cancellation */}
-                  {!isCancellation && (
+                  {!isCancellation && emailReady && (
                     <>
                       <div>
                         <label className="block text-sm font-medium mb-2">
@@ -574,7 +598,7 @@ export default function TicketsPage() {
                     </div>
                   )}
 
-                  {!isCancellation && (
+                  {!isCancellation && emailReady && (
                     <Button
                       type="submit"
                       className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50"
