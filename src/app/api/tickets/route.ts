@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 import { createClient } from "@supabase/supabase-js";
 
 // Returns { allowed, used, limit, period } for revision tickets
-async function checkRevisionLimit(email: string, planType: string): Promise<{
+async function checkRevisionLimit(email: string, planType: string, revisionCredits = 0): Promise<{
   allowed: boolean; used: number; limit: number | null; period: "total" | "monthly";
 }> {
   // Annual = unlimited
@@ -13,7 +13,7 @@ async function checkRevisionLimit(email: string, planType: string): Promise<{
   let period: "total" | "monthly";
 
   if (planType === "one-time") {
-    limit = 3;
+    limit = 3 + revisionCredits;
     period = "total";
   } else if (planType === "monthly") {
     limit = 2;
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     if (checkEmail) {
       const { data: quote, error: qErr } = await supabase
         .from("client_quotes")
-        .select("plan_type, paid_at")
+        .select("plan_type, paid_at, revision_credits")
         .eq("email", checkEmail.toLowerCase())
         .eq("paid", true)
         .order("paid_at", { ascending: false })
@@ -66,8 +66,9 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: "Email not found" }, { status: 404 });
       }
 
-      const result = await checkRevisionLimit(checkEmail, quote.plan_type);
-      return NextResponse.json({ ...result, plan: quote.plan_type, billingDate: quote.paid_at ?? null });
+      const credits = quote.revision_credits ?? 0;
+      const result = await checkRevisionLimit(checkEmail, quote.plan_type, credits);
+      return NextResponse.json({ ...result, plan: quote.plan_type, billingDate: quote.paid_at ?? null, revisionCredits: credits });
     }
 
     // Admin fetch
@@ -139,7 +140,7 @@ export async function POST(request: Request) {
 
     const { data: quote, error: quoteError } = await supabase
       .from("client_quotes")
-      .select("id, name, email, plan_type, paid_at")
+      .select("id, name, email, plan_type, paid_at, revision_credits")
       .eq("email", email.toLowerCase())
       .eq("paid", true)
       .order("paid_at", { ascending: false })
@@ -158,8 +159,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // Enforce support expiry for one-time plan users (6 months from paid_at)
-    if (quote.plan_type === "one-time" && ticket_type !== "upfront_renewal") {
+    // Enforce support expiry for one-time plan users (6 months from paid_at, waived if they have renewal credits)
+    if (quote.plan_type === "one-time" && ticket_type !== "upfront_renewal" && !(quote.revision_credits > 0)) {
       const paidAt = quote.paid_at ? new Date(quote.paid_at) : null;
       if (paidAt) {
         const expiry = new Date(paidAt);
@@ -175,7 +176,7 @@ export async function POST(request: Request) {
 
     // Enforce revision limit
     if (ticket_type === "revision") {
-      const { allowed, used, limit, period } = await checkRevisionLimit(email, quote.plan_type);
+      const { allowed, used, limit, period } = await checkRevisionLimit(email, quote.plan_type, quote.revision_credits ?? 0);
       if (!allowed) {
         const periodLabel = period === "monthly" ? "this month" : "in total";
         return NextResponse.json(
