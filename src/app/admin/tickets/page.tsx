@@ -187,8 +187,6 @@ function PricingPanel({ ticket, adminPassword, onSuccess }: {
   );
 }
 
-}
-
 export default function AdminTicketsPage() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
