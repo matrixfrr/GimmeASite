@@ -95,7 +95,11 @@ export default function TicketsPage() {
 
   const availableTicketTypes = supportExpired
     ? TICKET_TYPES.filter((tt) => tt.value === "upfront_renewal")
-    : TICKET_TYPES;
+    : TICKET_TYPES.filter((tt) => {
+        if (tt.value === "cancellation" && clientPlan === "one-time") return false;
+        if (tt.value === "extra_revisions" && clientPlan === "annual") return false;
+        return true;
+      });
 
   const showSubject = !isCancellation && !isTransfer && !isDomainChange;
 
@@ -469,7 +473,7 @@ export default function TicketsPage() {
                   {isRedesign && emailReady && (
                     <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                       <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                      <span>Depending on the scope, a fee may apply once your redesign is complete. Annual Plan members are covered — no extra charge. We'll always confirm pricing with you before moving forward.</span>
+                      <span>Additional fees will be due before your redesign goes live. We'll always confirm pricing with you before moving forward.</span>
                     </div>
                   )}
 
@@ -521,17 +525,8 @@ export default function TicketsPage() {
                       </div>
                       <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                         <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                        <span>Domain changes may take an extended amount of time to process and could affect your pricing. We will need to sell off your current domain, and the new domain may cost more depending on availability and registration fees.</span>
+                        <span>Domain changes may take an extended amount of time to process and could affect your pricing, as the new domain may cost more depending on availability and registration fees.</span>
                       </div>
-                      <label className="flex items-start gap-3 cursor-pointer select-none mt-1">
-                        <input
-                          type="checkbox"
-                          checked={domainChangeConfirmed}
-                          onChange={(e) => setDomainChangeConfirmed(e.target.checked)}
-                          className="w-4 h-4 mt-0.5 accent-primary flex-shrink-0"
-                        />
-                        <span className="text-sm">I understand that this action is irreversible. Once I submit this ticket, my current domain will be sold and my new domain will be acquired upon agreeing to new payment terms.</span>
-                      </label>
                     </div>
                   )}
 
@@ -614,6 +609,19 @@ export default function TicketsPage() {
                         </p>
                       </div>
                     </>
+                  )}
+
+                  {/* Domain change irreversibility confirmation — shown after attachment */}
+                  {isDomainChange && emailReady && (
+                    <label className="flex items-start gap-3 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={domainChangeConfirmed}
+                        onChange={(e) => setDomainChangeConfirmed(e.target.checked)}
+                        className="w-4 h-4 mt-0.5 accent-primary flex-shrink-0"
+                      />
+                      <span className="text-sm text-red-400">I understand that this action is irreversible, and that once I submit this ticket, my current domain will be put up for sale and my new domain will be acquired upon agreeing to my new payment terms, if applicable.</span>
+                    </label>
                   )}
 
                   {error && (
