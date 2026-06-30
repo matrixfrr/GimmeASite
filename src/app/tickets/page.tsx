@@ -21,7 +21,7 @@ const TICKET_TYPES = [
 ];
 
 const SUBJECT_PLACEHOLDERS: Record<string, string> = {
-  revision: "Brief description of the change needed",
+  revision: "Brief description of the edits needed",
   redesign: "Brief description of the redesign scope",
   bug: "Brief description of the issue",
   inquiry: "Brief description of your question",
