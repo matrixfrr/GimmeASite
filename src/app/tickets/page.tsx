@@ -77,6 +77,7 @@ export default function TicketsPage() {
   const isRevision = ticketType === "revision";
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
+  const emailValid = /^[^@]+@[^@]+\.[^@]+$/.test(email);
   const showSubject = !isCancellation && !isTransfer && !isDomainChange && !isExtraRevisions;
 
   useEffect(() => {
@@ -270,8 +271,9 @@ export default function TicketsPage() {
                       )}
                       <button
                         type="button"
-                        className="w-full h-11 flex items-center justify-between bg-background border border-input hover:border-primary/50 rounded-lg px-4 py-2 text-left text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                        onClick={() => setShowTypeDropdown(!showTypeDropdown)}
+                        className={`w-full h-11 flex items-center justify-between bg-background border border-input rounded-lg px-4 py-2 text-left text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${emailValid ? "hover:border-primary/50 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+                        onClick={() => { if (emailValid) setShowTypeDropdown(!showTypeDropdown); }}
+                        disabled={!emailValid}
                       >
                         <span className={ticketType ? "text-foreground" : "text-muted-foreground"}>
                           {selectedLabel || "Select a Ticket Type"}
