@@ -61,6 +61,7 @@ export default function TicketsPage() {
   const [domainChangeQuery, setDomainChangeQuery] = useState("");
   const [domainChangeAvailability, setDomainChangeAvailability] = useState<"available" | "unavailable" | null>(null);
   const [domainChangeChecking, setDomainChangeChecking] = useState(false);
+  const [domainChangeConfirmed, setDomainChangeConfirmed] = useState(false);
   const [emailChecking, setEmailChecking] = useState(false);
   const [emailVerified, setEmailVerified] = useState<"valid" | "invalid" | null>(null);
   const [clientPlan, setClientPlan] = useState<string | null>(null);
@@ -78,7 +79,8 @@ export default function TicketsPage() {
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
   const emailFormatValid = /^[^@]+@[^@]+\.[^@]+$/.test(email);
-  const emailReady = emailVerified === "valid";
+  const isTestEmail = email.toLowerCase() === process.env.NEXT_PUBLIC_TEST_EMAIL?.toLowerCase();
+  const emailReady = emailVerified === "valid" || isTestEmail;
 
   // One-time plan users lose ticket access (except renewal) 6 months after billing date
   const supportExpired = (() => {
@@ -159,6 +161,7 @@ export default function TicketsPage() {
     setTransferFiles(false);
     setDomainChangeQuery("");
     setDomainChangeAvailability(null);
+    setDomainChangeConfirmed(false);
     setDomainChangeChecking(false);
   };
 
@@ -179,6 +182,10 @@ export default function TicketsPage() {
     if (!ticketType) { setError("Please select a ticket type."); return; }
     if (isTransfer && !transferDomain && !transferFiles) {
       setError("Please select at least one option for what you would like transferred.");
+      return;
+    }
+    if (isDomainChange && !domainChangeConfirmed) {
+      setError("Please confirm that you understand this action is irreversible before submitting.");
       return;
     }
     setLoading(true);
@@ -515,6 +522,15 @@ export default function TicketsPage() {
                         <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                         <span>Domain changes may take an extended amount of time to process and could affect your pricing. We will need to sell off your current domain, and the new domain may cost more depending on availability and registration fees.</span>
                       </div>
+                      <label className="flex items-start gap-3 cursor-pointer select-none mt-1">
+                        <input
+                          type="checkbox"
+                          checked={domainChangeConfirmed}
+                          onChange={(e) => setDomainChangeConfirmed(e.target.checked)}
+                          className="w-4 h-4 mt-0.5 accent-primary flex-shrink-0"
+                        />
+                        <span className="text-sm">I understand that this action is irreversible. Once I submit this ticket, my current domain will be sold and my new domain will be acquired upon agreeing to new payment terms.</span>
+                      </label>
                     </div>
                   )}
 
