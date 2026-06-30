@@ -72,6 +72,8 @@ export default function TicketsPage() {
   const isTransfer = ticketType === "transfer_ownership";
   const isDomainChange = ticketType === "domain_change";
   const isExtraRevisions = ticketType === "extra_revisions";
+  const isRedesign = ticketType === "redesign";
+  const isUpfrontRenewal = ticketType === "upfront_renewal";
   const isRevision = ticketType === "revision";
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
@@ -323,7 +325,7 @@ export default function TicketsPage() {
                           <span>
                             You&apos;ve used all {revisionCheck.limit} of your revision{revisionCheck.limit === 1 ? "" : "s"}{" "}
                             {revisionCheck.period === "monthly" ? "for this month" : "included in your plan"}.{" "}
-                            Please submit a <button type="button" className="underline font-medium" onClick={() => handleTypeSelect("extra_revisions")}>Revision Refill</button> ticket or contact us at{" "}
+                            To get more, submit a <button type="button" className="underline font-medium" onClick={() => handleTypeSelect("extra_revisions")}>Revision Refill</button> ticket — additional charges will incur. You can also contact us at{" "}
                             <a href="mailto:hello@gimmeasite.com" className="underline font-medium">hello@gimmeasite.com</a>.
                           </span>
                         </div>
@@ -384,6 +386,26 @@ export default function TicketsPage() {
                         />
                         <span className="text-sm">Website Files</span>
                       </label>
+                  <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
+                    <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                    <span>Additional charges will incur following the resolution of your ticket.</span>
+                  </div>
+                    </div>
+                  )}
+
+                  {/* Upfront Support Renewal notice */}
+                  {isUpfrontRenewal && (
+                  <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
+                    <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                    <span>Additional charges will incur following the resolution of your ticket.</span>
+                  </div>
+                  )}
+
+                  {/* Full Redesign notice */}
+                  {isRedesign && (
+                    <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
+                      <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                      <span>Additional charges will incur following the resolution of your ticket. Annual Plan members are exempt.</span>
                     </div>
                   )}
 
@@ -460,6 +482,14 @@ export default function TicketsPage() {
                         ))}
                       </div>
                     </div>
+                  )}
+
+                  {/* Revision Refill charge notice */}
+                  {isExtraRevisions && (
+                  <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
+                    <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                    <span>Additional charges will incur following the resolution of your ticket.</span>
+                  </div>
                   )}
 
                   {/* Subject — hidden for transfer, domain change, extra revisions, cancellation */}
