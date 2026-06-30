@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       }
 
       const result = await checkRevisionLimit(checkEmail, quote.plan_type);
-      return NextResponse.json(result);
+      return NextResponse.json({ ...result, plan: quote.plan_type });
     }
 
     // Admin fetch
