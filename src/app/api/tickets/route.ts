@@ -53,6 +53,12 @@ export async function GET(request: Request) {
 
     // Revision limit check (client-facing, no auth needed)
     if (checkEmail) {
+      // Test email bypass
+      const testEmail = process.env.TEST_EMAIL;
+      if (testEmail && checkEmail.toLowerCase() === testEmail.toLowerCase()) {
+        return NextResponse.json({ allowed: true, used: 0, limit: null, period: "total", plan: "annual", billingDate: null, revisionCredits: 0 });
+      }
+
       const { data: quote, error: qErr } = await supabase
         .from("client_quotes")
         .select("plan_type, paid_at, revision_credits")
@@ -153,6 +159,16 @@ export async function POST(request: Request) {
     }
 
     if (!quote) {
+      const testEmail = process.env.TEST_EMAIL;
+      if (testEmail && email.toLowerCase() === testEmail.toLowerCase()) {
+        // Test mode — insert ticket without a real quote
+        const { data: testTicket, error: testErr } = await supabase
+          .from("tickets")
+          .insert([{ email: email.toLowerCase(), name: "Test User", plan_type: "annual", ticket_type, subject: subject.trim(), description: description.trim(), attachment_url: attachmentUrl, status: "open" }])
+          .select().single();
+        if (testErr) return NextResponse.json({ error: "Failed to create test ticket" }, { status: 500 });
+        return NextResponse.json({ ticket: testTicket, name: "Test User" });
+      }
       return NextResponse.json(
         { error: "No paid account found for this email. Please contact us at hello@gimmeasite.com if you believe this is an error." },
         { status: 404 }
