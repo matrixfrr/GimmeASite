@@ -79,13 +79,16 @@ export default function TicketsPage() {
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
   const emailFormatValid = /^[^@]+@[^@]+\.[^@]+$/.test(email);
-  const isTestEmail = email.toLowerCase() === process.env.NEXT_PUBLIC_TEST_EMAIL?.toLowerCase()
-    || email.toLowerCase() === process.env.NEXT_PUBLIC_TEST_EMAIL_2?.toLowerCase();
+  const isTestEmail1 = !!process.env.NEXT_PUBLIC_TEST_EMAIL && email.toLowerCase() === process.env.NEXT_PUBLIC_TEST_EMAIL.toLowerCase();
+  const isTestEmail2 = !!process.env.NEXT_PUBLIC_TEST_EMAIL_2 && email.toLowerCase() === process.env.NEXT_PUBLIC_TEST_EMAIL_2.toLowerCase();
+  const isTestEmail = isTestEmail1 || isTestEmail2;
   const emailReady = emailVerified === "valid" || isTestEmail;
+  // For test emails derive plan immediately rather than waiting for async fetch
+  const effectivePlan = isTestEmail1 ? "annual" : isTestEmail2 ? "one-time" : clientPlan;
 
   // One-time plan users lose ticket access (except renewal) 6 months after billing date
   const supportExpired = (() => {
-    if (clientPlan !== "one-time" || !billingDate) return false;
+    if (effectivePlan !== "one-time" || !billingDate) return false;
     if (revisionCredits > 0) return false; // renewed
     const billed = new Date(billingDate);
     const expiry = new Date(billed);
@@ -96,8 +99,8 @@ export default function TicketsPage() {
   const availableTicketTypes = supportExpired
     ? TICKET_TYPES.filter((tt) => tt.value === "upfront_renewal")
     : TICKET_TYPES.filter((tt) => {
-        if (tt.value === "cancellation" && clientPlan === "one-time") return false;
-        if (tt.value === "extra_revisions" && clientPlan === "annual") return false;
+        if (tt.value === "cancellation" && effectivePlan === "one-time") return false;
+        if (tt.value === "extra_revisions" && effectivePlan === "annual") return false;
         return true;
       });
 
