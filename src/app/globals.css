@@ -128,15 +128,13 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  padding-bottom: 0.35em;
-  display: inline-block;
-  overflow: visible;
-  line-height: 1.3;
 }
 
 /* Fix for cut-off descenders in headings */
 h1, h2, h3, h4, h5, h6 {
   overflow: visible;
+  padding-bottom: 0.1em;
+  line-height: 1.1;
 }
 
 /* Noise texture overlay */
