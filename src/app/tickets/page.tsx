@@ -58,6 +58,7 @@ export default function TicketsPage() {
   const [revisionChecking, setRevisionChecking] = useState(false);
   const [transferDomain, setTransferDomain] = useState(false);
   const [transferFiles, setTransferFiles] = useState(false);
+  const [transferConfirmed, setTransferConfirmed] = useState(false);
   const [domainChangeQuery, setDomainChangeQuery] = useState("");
   const [domainChangeAvailability, setDomainChangeAvailability] = useState<"available" | "unavailable" | null>(null);
   const [domainChangeChecking, setDomainChangeChecking] = useState(false);
@@ -167,6 +168,7 @@ export default function TicketsPage() {
     setRevisionCheck(null);
     setTransferDomain(false);
     setTransferFiles(false);
+    setTransferConfirmed(false);
     setDomainChangeQuery("");
     setDomainChangeAvailability(null);
     setDomainChangeConfirmed(false);
@@ -190,6 +192,10 @@ export default function TicketsPage() {
     if (!ticketType) { setError("Please select a ticket type."); return; }
     if (isTransfer && !transferDomain && !transferFiles) {
       setError("Please select at least one option for what you would like transferred.");
+      return;
+    }
+    if (isTransfer && !transferConfirmed) {
+      setError("Please confirm that you understand this action is irreversible before submitting.");
       return;
     }
     if (isDomainChange && !domainChangeConfirmed) {
@@ -464,22 +470,6 @@ export default function TicketsPage() {
                     </div>
                   )}
 
-                  {/* Upfront Support Renewal notice */}
-                  {isUpfrontRenewal && emailReady && (
-                  <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
-                    <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                    <span>A small additional fee may apply once your ticket is resolved. We'll always reach out before charging anything extra.</span>
-                  </div>
-                  )}
-
-                  {/* Redesign notice */}
-                  {isRedesign && emailReady && (
-                    <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
-                      <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                      <span>Additional fees will be due before your redesign goes live. We'll always confirm pricing with you before moving forward.</span>
-                    </div>
-                  )}
-
                   {/* Domain Change — new domain search */}
                   {isDomainChange && emailReady && (
                     <div className="space-y-3">
@@ -526,19 +516,7 @@ export default function TicketsPage() {
                           <p className="text-red-500 text-xs mt-1">This domain is already taken. You may still request it — contact us to discuss options.</p>
                         )}
                       </div>
-                      <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
-                        <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                        <span>Domain changes may take an extended amount of time to process and could affect your pricing, as the new domain may cost more depending on availability and registration fees.</span>
-                      </div>
                     </div>
-                  )}
-
-                  {/* Revision Refill charge notice */}
-                  {isExtraRevisions && emailReady && (
-                  <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
-                    <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                    <span>A small additional fee may apply once your ticket is resolved. We'll always reach out before charging anything extra.</span>
-                  </div>
                   )}
 
                   {/* Subject — hidden for transfer, domain change, extra revisions, cancellation */}
@@ -614,6 +592,19 @@ export default function TicketsPage() {
                     </>
                   )}
 
+                  {/* Transfer of Ownership irreversibility confirmation */}
+                  {isTransfer && emailReady && (
+                    <label className="flex items-start gap-3 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={transferConfirmed}
+                        onChange={(e) => setTransferConfirmed(e.target.checked)}
+                        className="w-4 h-4 mt-0.5 accent-primary flex-shrink-0"
+                      />
+                      <span className="text-sm text-red-400">I understand that this action is irreversible, and that once I submit this ticket, my website may go offline temporarily while GimmeASite transfers my materials.</span>
+                    </label>
+                  )}
+
                   {/* Domain change irreversibility confirmation — shown after attachment */}
                   {isDomainChange && emailReady && (
                     <label className="flex items-start gap-3 cursor-pointer select-none">
@@ -623,7 +614,7 @@ export default function TicketsPage() {
                         onChange={(e) => setDomainChangeConfirmed(e.target.checked)}
                         className="w-4 h-4 mt-0.5 accent-primary flex-shrink-0"
                       />
-                      <span className="text-sm text-red-400">I understand that this action is irreversible, and that once I submit this ticket, my current domain will be put up for sale and my new domain will be acquired upon agreeing to my new payment terms, if applicable.</span>
+                      <span className="text-sm text-red-400">I understand that this action is irreversible, and that once I submit this ticket, my website may go offline temporarily as a part of the domain change process. I must agree to new payment terms, if applicable, before GimmeASite acquires my new domain.</span>
                     </label>
                   )}
 
