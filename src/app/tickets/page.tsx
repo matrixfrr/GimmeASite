@@ -23,18 +23,13 @@ const TICKET_TYPES = [
 const SUBJECT_PLACEHOLDERS: Record<string, string> = {
   revision: "Brief description of the edits needed",
   redesign: "Brief description of the redesign scope",
+  extra_revisions: "How many extra revisions would you like? (1–10)",
   bug: "Brief description of the issue",
   inquiry: "Brief description of your question",
   upfront_renewal: "Brief description of your renewal request",
   other: "Brief description of your request",
 };
 
-const REVISION_PACKS = [
-  { value: "1", label: "1 Extra Revision" },
-  { value: "3", label: "3-Pack" },
-  { value: "5", label: "5-Pack" },
-  { value: "10", label: "10-Pack" },
-];
 
 interface RevisionCheck {
   allowed: boolean;
@@ -66,7 +61,6 @@ export default function TicketsPage() {
   const [domainChangeQuery, setDomainChangeQuery] = useState("");
   const [domainChangeAvailability, setDomainChangeAvailability] = useState<"available" | "unavailable" | null>(null);
   const [domainChangeChecking, setDomainChangeChecking] = useState(false);
-  const [revisionPack, setRevisionPack] = useState("");
   const [emailChecking, setEmailChecking] = useState(false);
   const [emailVerified, setEmailVerified] = useState<"valid" | "invalid" | null>(null);
   const [clientPlan, setClientPlan] = useState<string | null>(null);
@@ -100,7 +94,7 @@ export default function TicketsPage() {
     ? TICKET_TYPES.filter((tt) => tt.value === "upfront_renewal")
     : TICKET_TYPES;
 
-  const showSubject = !isCancellation && !isTransfer && !isDomainChange && !isExtraRevisions;
+  const showSubject = !isCancellation && !isTransfer && !isDomainChange;
 
   useEffect(() => {
     if (!isRevision || !email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
@@ -166,7 +160,6 @@ export default function TicketsPage() {
     setDomainChangeQuery("");
     setDomainChangeAvailability(null);
     setDomainChangeChecking(false);
-    setRevisionPack("");
   };
 
   const handleTypeSelect = (value: string) => {
@@ -188,10 +181,6 @@ export default function TicketsPage() {
       setError("Please select at least one option for what you would like transferred.");
       return;
     }
-    if (isExtraRevisions && !revisionPack) {
-      setError("Please select a revision pack.");
-      return;
-    }
     setLoading(true);
     setError("");
 
@@ -205,9 +194,6 @@ export default function TicketsPage() {
         fd.append("subject", [transferDomain && "Domain", transferFiles && "Website Files"].filter(Boolean).join(" + "));
       } else if (isDomainChange) {
         fd.append("subject", domainChangeQuery || "Domain change request");
-      } else if (isExtraRevisions) {
-        const pack = REVISION_PACKS.find(p => p.value === revisionPack);
-        fd.append("subject", pack ? `Revision Refill — ${pack.label}` : "Revision Refill");
       } else {
         fd.append("subject", subject);
       }
@@ -528,28 +514,6 @@ export default function TicketsPage() {
                       <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                         <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                         <span>Domain changes may take an extended amount of time to process and could affect your pricing. We will need to sell off your current domain, and the new domain may cost more depending on availability and registration fees.</span>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Revision Refill pack selector */}
-                  {isExtraRevisions && emailReady && (
-                    <div className="space-y-3 p-4 rounded-xl bg-secondary/40 border border-border/50">
-                      <p className="text-sm font-medium">How many extra revisions would you like? <span className="text-red-500">*</span></p>
-                      <div className="flex flex-col gap-2">
-                        {REVISION_PACKS.map((pack) => (
-                          <label key={pack.value} className="flex items-center gap-3 cursor-pointer select-none">
-                            <input
-                              type="radio"
-                              name="revisionPack"
-                              value={pack.value}
-                              checked={revisionPack === pack.value}
-                              onChange={() => setRevisionPack(pack.value)}
-                              className="w-4 h-4 accent-primary"
-                            />
-                            <span className="text-sm">{pack.label}</span>
-                          </label>
-                        ))}
                       </div>
                     </div>
                   )}
