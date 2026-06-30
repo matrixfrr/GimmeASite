@@ -413,7 +413,7 @@ function ServicesSection() {
       <div className="max-w-[96rem] mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Services</Badge>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-normal pb-4 overflow-visible">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             Everything You Need to
             <br />
             <span className="gradient-text">Succeed Online</span>
@@ -638,7 +638,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       <div className="max-w-[1600px] mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-normal pb-4 overflow-visible">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             The Plan That's
             <br />
             <span className="gradient-text">Right for You</span>
@@ -1485,7 +1485,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         <div className="grid lg:grid-cols-2 gap-16">
           <div>
             <Badge variant="secondary" className="mb-4">Contact</Badge>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-normal pb-4 overflow-visible">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
               Ready to Start
               <br />
               <span className="gradient-text">Your</span> <span className="gradient-text">Project?</span>
