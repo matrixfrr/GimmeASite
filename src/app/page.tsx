@@ -614,7 +614,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       description: "Everything in Hybrid, including:",
       features: [
         "Subdomain Configuration",
-        "Full Redesigns",
+        "Redesigns",
         "Unlimited Revisions",
         "VIP, Priority Support",
         "__green__15% Off / Year",
@@ -913,7 +913,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   { perk: "Support", up: "6 Months", mo: "∞", hy: "∞", an: "∞⚡" },
                   { perk: "Analytics", up: false, mo: true, hy: true, an: true },
                   { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "15%" },
-                  { perk: "Full Redesigns", up: false, mo: false, hy: false, an: true },
+                  { perk: "Redesigns", up: false, mo: false, hy: false, an: true },
                   { perk: "Subdomains", up: false, mo: false, hy: false, an: true },
                 ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
                   const cell = (v: boolean | string) => typeof v === "string"
@@ -2375,7 +2375,7 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
               <p>Each project includes a reasonable number of revisions as specified in your Plan, as well as a designated support period. Additional revisions and continued support outside of your Plan may incur extra charges.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Add-Ons</h4>
-              <p>GimmeASite offers optional add-on services that extend or supplement your Plan. Available add-ons include, but are not limited to: Revision Refills, Full Redesign Requests, Domain Changes, Transfer of Ownership, and Upfront Support Renewals. Add-ons are requested through our ticketing system and are subject to availability and pricing at the time of the request. A small additional fee may apply upon resolution, and we will always confirm pricing with you before any charge is made. Some add-ons may be included at no extra cost depending on your Plan.</p>
+              <p>GimmeASite offers optional add-on services that extend or supplement your Plan. Available add-ons include, but are not limited to: Revision Refills, Redesign Requests, Domain Changes, Transfer of Ownership, and Upfront Support Renewals. Add-ons are requested through our ticketing system and are subject to availability and pricing at the time of the request. A small additional fee may apply upon resolution, and we will always confirm pricing with you before any charge is made. Some add-ons may be included at no extra cost depending on your Plan.</p>
 
               <h4 className="text-foreground font-semibold mt-6">Limitation of Liability</h4>
               <p>GimmeASite's liability is limited to the amount paid for services. We are not liable for indirect, incidental, or consequential damages.</p>
