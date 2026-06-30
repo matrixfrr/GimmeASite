@@ -278,9 +278,23 @@ export default function TicketsPage() {
                       required
                       autoFocus
                     />
-                    <p className="text-xs text-muted-foreground mt-1.5">
-                      Enter the email you used when you paid for your site.
-                    </p>
+                    {emailChecking && (
+                      <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
+                        <span className="w-3 h-3 border-2 border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin inline-block" />
+                        Verifying your account...
+                      </p>
+                    )}
+                    {!emailChecking && emailVerified === "valid" && (
+                      <p className="text-xs text-green-500 mt-1.5 flex items-center gap-1">
+                        <Check className="w-3 h-3" /> Account verified. You're good to go!
+                      </p>
+                    )}
+                    {!emailChecking && emailVerified === "invalid" && (
+                      <p className="text-xs text-red-500 mt-1.5">No paid account found for this email. Please <a href="mailto:hello@gimmeasite.com" className="font-bold underline underline-offset-2">contact us</a> if you believe this is an error.</p>
+                    )}
+                    {!emailChecking && emailVerified === null && (
+                      <p className="text-xs text-muted-foreground mt-1.5">Enter the email you used when you paid for your site.</p>
+                    )}
                   </div>
 
                   {/* Ticket Type */}
