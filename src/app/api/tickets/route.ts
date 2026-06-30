@@ -160,7 +160,7 @@ export async function POST(request: Request) {
 
     if (quoteError && quoteError.code !== "PGRST116") {
       console.error("Supabase error:", quoteError);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+      return NextResponse.json({ error: "Database error", detail: quoteError?.message, code: quoteError?.code }, { status: 500 });
     }
 
     if (!quote) {
@@ -237,7 +237,7 @@ export async function POST(request: Request) {
 
     if (ticketError) {
       console.error("Ticket insert error:", ticketError);
-      return NextResponse.json({ error: "Failed to create ticket" }, { status: 500 });
+      return NextResponse.json({ error: "Failed to create ticket", detail: ticketError?.message, code: ticketError?.code }, { status: 500 });
     }
 
     return NextResponse.json({ ticket, name: quote.name });
