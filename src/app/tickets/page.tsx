@@ -381,7 +381,7 @@ export default function TicketsPage() {
                               Clear Selection
                             </button>
                           )}
-                          {TICKET_TYPES.map((t) => (
+                          {availableTicketTypes.map((t) => (
                             <button
                               key={t.value}
                               type="button"
