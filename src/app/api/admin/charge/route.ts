@@ -4,18 +4,17 @@ import { createClient } from "@supabase/supabase-js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
+const TICKET_TYPE_LABELS: Record<string, string> = {
+  transfer_ownership: "Transfer of Ownership",
+  domain_change: "Domain Change",
+};
+
 export async function POST(request: Request) {
   try {
     const {
-      adminPassword,
-      ticketId,
-      email,
-      planType,
-      amountCents,       // for one-time invoice charges (Transfer, Domain Change upfront)
-      description,
-      // for subscription plan users on domain change:
-      newMonthlyCents,   // set to raise monthly amount (monthly/hybrid plans)
-      newYearlyCents,    // set to raise yearly amount (annual plan)
+      adminPassword, ticketId, email, planType,
+      amountCents, ticketType,
+      newMonthlyCents, newYearlyCents,
     } = await request.json();
 
     if (adminPassword !== process.env.ADMIN_PASSWORD) {
@@ -30,7 +29,7 @@ export async function POST(request: Request) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // ── Find or create Stripe customer by email ───────────────────────────────
+    // ── Find or create Stripe customer ────────────────────────────────────────
     const customers = await stripe.customers.list({ email: email.toLowerCase(), limit: 1 });
     let customer = customers.data[0];
     if (!customer) {
@@ -39,33 +38,54 @@ export async function POST(request: Request) {
 
     const results: Record<string, unknown> = { customerId: customer.id };
 
-    // ── One-time invoice (Transfer of Ownership, or Domain Change for upfront) ─
+    // ── One-time DRAFT invoice (Transfer, or Domain Change for upfront) ───────
     if (amountCents && amountCents > 0) {
+      const label = TICKET_TYPE_LABELS[ticketType] ?? "GimmeASite Service";
+
       await stripe.invoiceItems.create({
         customer: customer.id,
         amount: amountCents,
         currency: "usd",
-        description: description || `GimmeASite — ${ticketId}`,
+        description: label,
       });
+
+      // Create as draft — do NOT finalize or send yet
       const invoice = await stripe.invoices.create({
         customer: customer.id,
-        auto_advance: true,
+        auto_advance: false,   // stays draft
         collection_method: "send_invoice",
         days_until_due: 7,
+        description: label,
+        // memo shown on the Stripe-hosted payment page
+        footer: "Thank you for choosing GimmeASite.",
       });
-      const finalized = await stripe.invoices.finalizeInvoice(invoice.id);
-      await stripe.invoices.sendInvoice(finalized.id);
-      results.invoiceId = finalized.id;
-      results.invoiceUrl = finalized.hosted_invoice_url;
 
-      // Record price on the ticket row
+      // Schedule send time = ticket created_at + 3 days
+      const { data: ticket } = await supabaseAdmin
+        .from("tickets")
+        .select("created_at")
+        .eq("id", ticketId)
+        .single();
+
+      const scheduledAt = ticket
+        ? new Date(new Date(ticket.created_at).getTime() + 3 * 86400000).toISOString()
+        : new Date(Date.now() + 3 * 86400000).toISOString();
+
       await supabaseAdmin
         .from("tickets")
-        .update({ custom_price: amountCents })
+        .update({
+          custom_price: amountCents,
+          draft_invoice_id: invoice.id,
+          invoice_scheduled_at: scheduledAt,
+        })
         .eq("id", ticketId);
+
+      results.draftInvoiceId = invoice.id;
+      results.scheduledAt = scheduledAt;
     }
 
-    // ── Subscription price update (Domain Change for monthly/hybrid/annual) ──
+    // ── Subscription price update (Domain Change for subscribers) ─────────────
+    // Immediate — no invoice scheduling needed
     if (newMonthlyCents || newYearlyCents) {
       const subscriptions = await stripe.subscriptions.list({
         customer: customer.id,
@@ -74,40 +94,33 @@ export async function POST(request: Request) {
       });
       const sub = subscriptions.data[0];
       if (!sub) {
-        return NextResponse.json(
-          { error: "No active subscription found for this customer", ...results },
-          { status: 404 }
-        );
+        return NextResponse.json({ error: "No active subscription found for this customer", ...results }, { status: 404 });
       }
 
       const targetAmount = newMonthlyCents || newYearlyCents!;
       const interval = newYearlyCents ? "year" : "month";
-
-      // Create a new price on the same product
-      const existingPriceId = sub.items.data[0]?.price.id;
-      const existingPrice = await stripe.prices.retrieve(existingPriceId);
+      const existingPrice = await stripe.prices.retrieve(sub.items.data[0]?.price.id);
       const newPrice = await stripe.prices.create({
         unit_amount: targetAmount,
         currency: "usd",
         recurring: { interval },
         product: existingPrice.product as string,
-        nickname: `Domain change updated price — ticket ${ticketId}`,
+        nickname: `Domain change — ticket ${ticketId}`,
       });
 
-      // Update subscription to new price, prorated at next cycle
       await stripe.subscriptions.update(sub.id, {
         items: [{ id: sub.items.data[0].id, price: newPrice.id }],
         proration_behavior: "none",
       });
 
-      results.subscriptionId = sub.id;
-      results.newPriceId = newPrice.id;
-      results.newAmount = targetAmount;
-
       await supabaseAdmin
         .from("tickets")
         .update({ custom_price: targetAmount })
         .eq("id", ticketId);
+
+      results.subscriptionId = sub.id;
+      results.newPriceId = newPrice.id;
+      results.newAmount = targetAmount;
     }
 
     return NextResponse.json({ ok: true, ...results });
