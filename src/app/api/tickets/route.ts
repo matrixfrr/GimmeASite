@@ -58,6 +58,11 @@ export async function GET(request: Request) {
       if (testEmail && checkEmail.toLowerCase() === testEmail.toLowerCase()) {
         return NextResponse.json({ allowed: true, used: 0, limit: null, period: "total", plan: "annual", billingDate: null, revisionCredits: 0 });
       }
+      const testEmail2 = process.env.TEST_EMAIL_2;
+      if (testEmail2 && checkEmail.toLowerCase() === testEmail2.toLowerCase()) {
+        const result = await checkRevisionLimit(checkEmail, "one-time", 0);
+        return NextResponse.json({ ...result, plan: "one-time", billingDate: new Date().toISOString(), revisionCredits: 0 });
+      }
 
       const { data: quote, error: qErr } = await supabase
         .from("client_quotes")
@@ -161,13 +166,25 @@ export async function POST(request: Request) {
     if (!quote) {
       const testEmail = process.env.TEST_EMAIL;
       if (testEmail && email.toLowerCase() === testEmail.toLowerCase()) {
-        // Test mode — insert ticket without a real quote
         const { data: testTicket, error: testErr } = await supabase
           .from("tickets")
           .insert([{ email: email.toLowerCase(), name: "Test User", plan_type: "annual", ticket_type, subject: subject.trim(), description: description.trim(), attachment_url: attachmentUrl, status: "open" }])
           .select().single();
         if (testErr) return NextResponse.json({ error: "Failed to create test ticket" }, { status: 500 });
         return NextResponse.json({ ticket: testTicket, name: "Test User" });
+      }
+      const testEmail2 = process.env.TEST_EMAIL_2;
+      if (testEmail2 && email.toLowerCase() === testEmail2.toLowerCase()) {
+        const { allowed, used, limit, period } = await checkRevisionLimit(email, "one-time", 0);
+        if (ticket_type === "revision" && !allowed) {
+          return NextResponse.json({ error: `You have used all ${limit} of your revisions in total. Please submit a Revision Refill ticket.`, revisionLimitReached: true, used, limit }, { status: 403 });
+        }
+        const { data: testTicket, error: testErr } = await supabase
+          .from("tickets")
+          .insert([{ email: email.toLowerCase(), name: "Test User 2", plan_type: "one-time", ticket_type, subject: subject.trim(), description: description.trim(), attachment_url: attachmentUrl, status: "open" }])
+          .select().single();
+        if (testErr) return NextResponse.json({ error: "Failed to create test ticket" }, { status: 500 });
+        return NextResponse.json({ ticket: testTicket, name: "Test User 2" });
       }
       return NextResponse.json(
         { error: "No paid account found for this email. Please contact us at hello@gimmeasite.com if you believe this is an error." },
