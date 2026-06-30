@@ -132,9 +132,20 @@ export default function TicketsPage() {
       try {
         const res = await fetch(`/api/tickets?checkRevisions=${encodeURIComponent(email)}`);
         if (!cancelled) {
-          setEmailVerified(res.ok ? "valid" : "invalid");
-          if (res.ok) { const d = await res.json(); if (!cancelled) { setClientPlan(d.plan ?? null); setBillingDate(d.billingDate ?? null); setRevisionCredits(d.revisionCredits ?? 0); } }
-          else { setClientPlan(null); setBillingDate(null); setRevisionCredits(0); }
+          if (res.ok) {
+            const d = await res.json();
+            if (!cancelled) {
+              setClientPlan(d.plan ?? null);
+              setBillingDate(d.billingDate ?? null);
+              setRevisionCredits(d.revisionCredits ?? 0);
+              setEmailVerified("valid");
+            }
+          } else {
+            setClientPlan(null);
+            setBillingDate(null);
+            setRevisionCredits(0);
+            setEmailVerified("invalid");
+          }
         }
       } catch {
         if (!cancelled) setEmailVerified(null);
@@ -463,10 +474,6 @@ export default function TicketsPage() {
                         />
                         <span className="text-sm">Website Files</span>
                       </label>
-                  <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
-                    <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                    <span>A small additional fee may apply once your ticket is resolved. We'll always reach out before charging anything extra.</span>
-                  </div>
                     </div>
                   )}
 
