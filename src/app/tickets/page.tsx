@@ -71,6 +71,7 @@ export default function TicketsPage() {
   const [emailVerified, setEmailVerified] = useState<"valid" | "invalid" | null>(null);
   const [clientPlan, setClientPlan] = useState<string | null>(null);
   const [billingDate, setBillingDate] = useState<string | null>(null);
+  const [revisionCredits, setRevisionCredits] = useState<number>(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isCancellation = ticketType === "cancellation";
@@ -88,6 +89,7 @@ export default function TicketsPage() {
   // One-time plan users lose ticket access (except renewal) 6 months after billing date
   const supportExpired = (() => {
     if (clientPlan !== "one-time" || !billingDate) return false;
+    if (revisionCredits > 0) return false; // renewed
     const billed = new Date(billingDate);
     const expiry = new Date(billed);
     expiry.setMonth(expiry.getMonth() + 6);
@@ -126,8 +128,8 @@ export default function TicketsPage() {
         const res = await fetch(`/api/tickets?checkRevisions=${encodeURIComponent(email)}`);
         if (!cancelled) {
           setEmailVerified(res.ok ? "valid" : "invalid");
-          if (res.ok) { const d = await res.json(); if (!cancelled) { setClientPlan(d.plan ?? null); setBillingDate(d.billingDate ?? null); } }
-          else { setClientPlan(null); setBillingDate(null); }
+          if (res.ok) { const d = await res.json(); if (!cancelled) { setClientPlan(d.plan ?? null); setBillingDate(d.billingDate ?? null); setRevisionCredits(d.revisionCredits ?? 0); } }
+          else { setClientPlan(null); setBillingDate(null); setRevisionCredits(0); }
         }
       } catch {
         if (!cancelled) setEmailVerified(null);
@@ -293,7 +295,7 @@ export default function TicketsPage() {
                       type="email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); setEmailVerified(null); setClientPlan(null); setBillingDate(null); if (ticketType) { setTicketType(""); resetTypeState(); } }}
+                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); setEmailVerified(null); setClientPlan(null); setBillingDate(null); setRevisionCredits(0); if (ticketType) { setTicketType(""); resetTypeState(); } }}
                       className="bg-background"
                       required
                       autoFocus
