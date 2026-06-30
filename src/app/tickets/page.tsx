@@ -41,6 +41,7 @@ interface RevisionCheck {
   used: number;
   limit: number | null;
   period: "total" | "monthly";
+  plan?: string;
 }
 
 function validateDomain(d: string) {
@@ -68,6 +69,7 @@ export default function TicketsPage() {
   const [revisionPack, setRevisionPack] = useState("");
   const [emailChecking, setEmailChecking] = useState(false);
   const [emailVerified, setEmailVerified] = useState<"valid" | "invalid" | null>(null);
+  const [clientPlan, setClientPlan] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isCancellation = ticketType === "cancellation";
@@ -107,7 +109,11 @@ export default function TicketsPage() {
       setEmailChecking(true);
       try {
         const res = await fetch(`/api/tickets?checkRevisions=${encodeURIComponent(email)}`);
-        if (!cancelled) setEmailVerified(res.ok ? "valid" : "invalid");
+        if (!cancelled) {
+          setEmailVerified(res.ok ? "valid" : "invalid");
+          if (res.ok) { const d = await res.json(); if (!cancelled) setClientPlan(d.plan ?? null); }
+          else setClientPlan(null);
+        }
       } catch {
         if (!cancelled) setEmailVerified(null);
       } finally {
@@ -273,7 +279,7 @@ export default function TicketsPage() {
                       type="email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); setEmailVerified(null); if (ticketType) { setTicketType(""); resetTypeState(); } }}
+                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); setEmailVerified(null); setClientPlan(null); if (ticketType) { setTicketType(""); resetTypeState(); } }}
                       className="bg-background"
                       required
                       autoFocus
