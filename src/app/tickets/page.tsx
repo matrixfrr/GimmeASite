@@ -79,7 +79,8 @@ export default function TicketsPage() {
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
   const emailFormatValid = /^[^@]+@[^@]+\.[^@]+$/.test(email);
-  const isTestEmail = email.toLowerCase() === process.env.NEXT_PUBLIC_TEST_EMAIL?.toLowerCase();
+  const isTestEmail = email.toLowerCase() === process.env.NEXT_PUBLIC_TEST_EMAIL?.toLowerCase()
+    || email.toLowerCase() === process.env.NEXT_PUBLIC_TEST_EMAIL_2?.toLowerCase();
   const emailReady = emailVerified === "valid" || isTestEmail;
 
   // One-time plan users lose ticket access (except renewal) 6 months after billing date
