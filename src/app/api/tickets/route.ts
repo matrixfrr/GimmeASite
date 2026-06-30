@@ -139,7 +139,7 @@ export async function POST(request: Request) {
 
     const { data: quote, error: quoteError } = await supabase
       .from("client_quotes")
-      .select("id, name, email, plan_type")
+      .select("id, name, email, plan_type, paid_at")
       .eq("email", email.toLowerCase())
       .eq("paid", true)
       .order("paid_at", { ascending: false })
@@ -156,6 +156,21 @@ export async function POST(request: Request) {
         { error: "No paid account found for this email. Please contact us at hello@gimmeasite.com if you believe this is an error." },
         { status: 404 }
       );
+    }
+
+    // Enforce support expiry for one-time plan users (6 months from paid_at)
+    if (quote.plan_type === "one-time" && ticket_type !== "upfront_renewal") {
+      const paidAt = quote.paid_at ? new Date(quote.paid_at) : null;
+      if (paidAt) {
+        const expiry = new Date(paidAt);
+        expiry.setMonth(expiry.getMonth() + 6);
+        if (new Date() >= expiry) {
+          return NextResponse.json(
+            { error: "Your 6-month support period has ended. Please submit an Upfront Support Renewal ticket." },
+            { status: 403 }
+          );
+        }
+      }
     }
 
     // Enforce revision limit
