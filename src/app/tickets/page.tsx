@@ -31,6 +31,7 @@ const SUBJECT_PLACEHOLDERS: Record<string, string> = {
 
 const REVISION_PACKS = [
   { value: "1", label: "1 Extra Revision" },
+  { value: "3", label: "3-Pack" },
   { value: "5", label: "5-Pack" },
   { value: "10", label: "10-Pack" },
 ];
