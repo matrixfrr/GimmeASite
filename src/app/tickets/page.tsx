@@ -325,7 +325,7 @@ export default function TicketsPage() {
                           <span>
                             You&apos;ve used all {revisionCheck.limit} of your revision{revisionCheck.limit === 1 ? "" : "s"}{" "}
                             {revisionCheck.period === "monthly" ? "for this month" : "included in your plan"}.{" "}
-                            To get more, submit a <button type="button" className="underline font-medium" onClick={() => handleTypeSelect("extra_revisions")}>Revision Refill</button> ticket — additional charges will incur. You can also contact us at{" "}
+                            No worries — you can grab more with a <button type="button" className="underline font-medium" onClick={() => handleTypeSelect("extra_revisions")}>Revision Refill</button> ticket. A small fee applies depending on the pack. You can also reach us at{" "}
                             <a href="mailto:hello@gimmeasite.com" className="underline font-medium">hello@gimmeasite.com</a>.
                           </span>
                         </div>
@@ -388,7 +388,7 @@ export default function TicketsPage() {
                       </label>
                   <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                     <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                    <span>Additional charges will incur following the resolution of your ticket.</span>
+                    <span>A small additional fee may apply once your ticket is resolved. We'll always reach out before charging anything extra.</span>
                   </div>
                     </div>
                   )}
@@ -397,7 +397,7 @@ export default function TicketsPage() {
                   {isUpfrontRenewal && (
                   <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                     <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                    <span>Additional charges will incur following the resolution of your ticket.</span>
+                    <span>A small additional fee may apply once your ticket is resolved. We'll always reach out before charging anything extra.</span>
                   </div>
                   )}
 
@@ -405,7 +405,7 @@ export default function TicketsPage() {
                   {isRedesign && (
                     <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                       <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                      <span>Additional charges will incur following the resolution of your ticket. Annual Plan members are exempt.</span>
+                      <span>Depending on the scope, a fee may apply once your redesign is complete. Annual Plan members are covered — no extra charge. We'll always confirm pricing with you before moving forward.</span>
                     </div>
                   )}
 
@@ -488,7 +488,7 @@ export default function TicketsPage() {
                   {isExtraRevisions && (
                   <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                     <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                    <span>Additional charges will incur following the resolution of your ticket.</span>
+                    <span>A small additional fee may apply once your ticket is resolved. We'll always reach out before charging anything extra.</span>
                   </div>
                   )}
 
