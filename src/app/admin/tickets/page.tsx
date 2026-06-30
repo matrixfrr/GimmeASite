@@ -19,6 +19,9 @@ interface Ticket {
   status: "open" | "in_progress" | "resolved";
   attachment_url?: string;
   custom_price?: number;
+  draft_invoice_id?: string;
+  invoice_scheduled_at?: string;
+  invoice_sent_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -71,11 +74,13 @@ function PricingPanel({ ticket, adminPassword, onSuccess }: {
   const isDomainChange = ticket.ticket_type === "domain_change";
   const isSubscriber = ["monthly", "hybrid", "annual"].includes(ticket.plan_type);
   const isAnnual = ticket.plan_type === "annual";
-  const ready = daysSince(ticket.created_at) >= 3;
 
   if (!isTransfer && !isDomainChange) return null;
 
-  const handleSend = async () => {
+  const alreadySent = !!ticket.invoice_sent_at;
+  const alreadyScheduled = !!ticket.draft_invoice_id && !alreadySent;
+
+  const handleSchedule = async () => {
     const parsed = parseFloat(amount);
     if (!parsed || parsed <= 0) { setErr("Enter a valid amount."); return; }
     setLoading(true);
@@ -86,7 +91,8 @@ function PricingPanel({ ticket, adminPassword, onSuccess }: {
       ticketId: ticket.id,
       email: ticket.email,
       planType: ticket.plan_type,
-      description: `GimmeASite — ${TYPE_LABELS[ticket.ticket_type]} (${ticket.email})`,
+      ticketType: ticket.ticket_type,
+      description: `GimmeASite — ${ticket.ticket_type === "transfer_ownership" ? "Transfer of Ownership" : "Domain Change"} (${ticket.email})`,
     };
 
     if (isTransfer || !isSubscriber) {
@@ -105,11 +111,12 @@ function PricingPanel({ ticket, adminPassword, onSuccess }: {
       });
       const data = await res.json();
       if (!res.ok) { setErr(data.error || "Something went wrong."); return; }
-      onSuccess(
-        data.invoiceUrl
-          ? `Invoice sent. View: ${data.invoiceUrl}`
-          : `Subscription updated to $${parsed.toFixed(2)}/${isAnnual ? "yr" : "mo"}.`
-      );
+      if (data.scheduledAt) {
+        const d = new Date(data.scheduledAt);
+        onSuccess(`Invoice scheduled for ${d.toLocaleDateString("en-US", { month: "short", day: "numeric" })} at ${d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}.`);
+      } else {
+        onSuccess(`Subscription updated to $${parsed.toFixed(2)}/${isAnnual ? "yr" : "mo"} at next billing cycle.`);
+      }
       setAmount("");
     } catch {
       setErr("Request failed.");
@@ -122,17 +129,20 @@ function PricingPanel({ ticket, adminPassword, onSuccess }: {
     ? "One-time fee ($)"
     : `New ${isAnnual ? "yearly" : "monthly"} price ($)`;
 
-  const btnLabel = isTransfer || !isSubscriber
-    ? "Send Invoice"
-    : `Update Subscription`;
+  const btnLabel = isTransfer || !isSubscriber ? "Schedule Invoice" : "Update Subscription";
 
   return (
-    <div className="mt-4 pt-4 border-t border-border/50">
-      {!ready ? (
-        <p className="text-xs text-muted-foreground flex items-center gap-1.5">
-          <Clock className="w-3.5 h-3.5 text-yellow-400" />
-          Invoice available {availableDate(ticket.created_at)}
-          <span className="text-muted-foreground/50">— 3-day processing window</span>
+    <div className="mt-4 pt-4 border-t border-border/50 space-y-2">
+      {alreadySent ? (
+        <p className="text-xs text-green-400 flex items-center gap-1.5">
+          <CheckCircle className="w-3.5 h-3.5" />
+          Invoice sent {new Date(ticket.invoice_sent_at!).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}.
+        </p>
+      ) : alreadyScheduled ? (
+        <p className="text-xs text-blue-400 flex items-center gap-1.5">
+          <Clock className="w-3.5 h-3.5" />
+          Invoice scheduled for {new Date(ticket.invoice_scheduled_at!).toLocaleDateString("en-US", { month: "short", day: "numeric" })} at {new Date(ticket.invoice_scheduled_at!).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}.
+          {ticket.custom_price && <span className="text-muted-foreground ml-1">(${(ticket.custom_price / 100).toFixed(2)})</span>}
         </p>
       ) : (
         <div className="space-y-2">
@@ -152,7 +162,7 @@ function PricingPanel({ ticket, adminPassword, onSuccess }: {
             </div>
             <Button
               size="sm"
-              onClick={handleSend}
+              onClick={handleSchedule}
               disabled={loading || !amount}
               className="h-9 gap-1.5"
             >
@@ -161,6 +171,11 @@ function PricingPanel({ ticket, adminPassword, onSuccess }: {
             </Button>
           </div>
           {err && <p className="text-xs text-red-400">{err}</p>}
+          {(isTransfer || !isSubscriber) && (
+            <p className="text-xs text-muted-foreground/60">
+              Invoice will be sent {availableDate(ticket.created_at)} (3 days after ticket received).
+            </p>
+          )}
           {isSubscriber && isDomainChange && (
             <p className="text-xs text-muted-foreground/60">
               Takes effect at the start of their next billing cycle. No proration.
@@ -170,6 +185,8 @@ function PricingPanel({ ticket, adminPassword, onSuccess }: {
       )}
     </div>
   );
+}
+
 }
 
 export default function AdminTicketsPage() {
