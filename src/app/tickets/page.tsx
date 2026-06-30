@@ -102,6 +102,7 @@ export default function TicketsPage() {
     : TICKET_TYPES.filter((tt) => {
         if (tt.value === "cancellation" && effectivePlan === "one-time") return false;
         if (tt.value === "extra_revisions" && effectivePlan === "annual") return false;
+        if (tt.value === "upfront_renewal" && effectivePlan !== "one-time") return false;
         return true;
       });
 
