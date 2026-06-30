@@ -9,13 +9,13 @@ import Link from "next/link";
 
 const TICKET_TYPES = [
   { value: "revision", label: "Revision Request" },
-  { value: "redesign", label: "Full Redesign Request" },
+  { value: "redesign", label: "Redesign Request" },
   { value: "extra_revisions", label: "Revision Refill" },
   { value: "domain_change", label: "Domain Change" },
   { value: "bug", label: "Bug Report" },
   { value: "inquiry", label: "General Inquiry" },
   { value: "upfront_renewal", label: "Upfront Support Renewal" },
-  { value: "transfer_ownership", label: "Transfer Ownership" },
+  { value: "transfer_ownership", label: "Transfer of Ownership" },
   { value: "cancellation", label: "Cancellation" },
   { value: "other", label: "Other" },
 ];
@@ -390,7 +390,7 @@ export default function TicketsPage() {
                           className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
                           onClick={() => { setTicketType("transfer_ownership"); resetTypeState(); }}
                         >
-                          Transfer Ownership
+                          Transfer of Ownership
                         </button>
                         {" "}ticket and we&apos;ll get everything over to you.
                       </p>
@@ -404,7 +404,7 @@ export default function TicketsPage() {
                     </div>
                   )}
 
-                  {/* Transfer Ownership checkboxes */}
+                  {/* Transfer of Ownership checkboxes */}
                   {isTransfer && emailReady && (
                     <div className="space-y-3 p-4 rounded-xl bg-secondary/40 border border-border/50">
                       <p className="text-sm font-medium">What would you like transferred? <span className="text-red-500">*</span></p>
@@ -441,7 +441,7 @@ export default function TicketsPage() {
                   </div>
                   )}
 
-                  {/* Full Redesign notice */}
+                  {/* Redesign notice */}
                   {isRedesign && emailReady && (
                     <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-3 py-3 text-xs text-yellow-600 dark:text-yellow-400">
                       <Info className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
