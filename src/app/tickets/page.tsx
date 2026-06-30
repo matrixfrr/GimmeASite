@@ -70,6 +70,7 @@ export default function TicketsPage() {
   const [emailChecking, setEmailChecking] = useState(false);
   const [emailVerified, setEmailVerified] = useState<"valid" | "invalid" | null>(null);
   const [clientPlan, setClientPlan] = useState<string | null>(null);
+  const [billingDate, setBillingDate] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isCancellation = ticketType === "cancellation";
@@ -83,6 +84,20 @@ export default function TicketsPage() {
 
   const emailFormatValid = /^[^@]+@[^@]+\.[^@]+$/.test(email);
   const emailReady = emailVerified === "valid";
+
+  // One-time plan users lose ticket access (except renewal) 6 months after billing date
+  const supportExpired = (() => {
+    if (clientPlan !== "one-time" || !billingDate) return false;
+    const billed = new Date(billingDate);
+    const expiry = new Date(billed);
+    expiry.setMonth(expiry.getMonth() + 6);
+    return new Date() >= expiry;
+  })();
+
+  const availableTicketTypes = supportExpired
+    ? TICKET_TYPES.filter((tt) => tt.value === "upfront_renewal")
+    : TICKET_TYPES;
+
   const showSubject = !isCancellation && !isTransfer && !isDomainChange && !isExtraRevisions;
 
   useEffect(() => {
@@ -111,8 +126,8 @@ export default function TicketsPage() {
         const res = await fetch(`/api/tickets?checkRevisions=${encodeURIComponent(email)}`);
         if (!cancelled) {
           setEmailVerified(res.ok ? "valid" : "invalid");
-          if (res.ok) { const d = await res.json(); if (!cancelled) setClientPlan(d.plan ?? null); }
-          else setClientPlan(null);
+          if (res.ok) { const d = await res.json(); if (!cancelled) { setClientPlan(d.plan ?? null); setBillingDate(d.billingDate ?? null); } }
+          else { setClientPlan(null); setBillingDate(null); }
         }
       } catch {
         if (!cancelled) setEmailVerified(null);
@@ -279,7 +294,7 @@ export default function TicketsPage() {
                       type="email"
                       placeholder="you@example.com"
                       value={email}
-                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); setEmailVerified(null); setClientPlan(null); if (ticketType) { setTicketType(""); resetTypeState(); } }}
+                      onChange={(e) => { setEmail(e.target.value); setRevisionCheck(null); setEmailVerified(null); setClientPlan(null); setBillingDate(null); if (ticketType) { setTicketType(""); resetTypeState(); } }}
                       className="bg-background"
                       required
                       autoFocus
@@ -302,6 +317,14 @@ export default function TicketsPage() {
                       <p className="text-xs text-muted-foreground mt-1.5">Enter the email you used when you paid for your site.</p>
                     )}
                   </div>
+
+                  {/* Support expired notice for one-time plan users */}
+                  {emailReady && supportExpired && (
+                    <div className="flex items-start gap-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg px-4 py-3 text-sm text-yellow-200">
+                      <Info className="w-4 h-4 mt-0.5 shrink-0 text-yellow-400" />
+                      <span>Your complimentary 6-month support period has ended. You can renew your support below — or reach us at <a href="mailto:hello@gimmeasite.com" className="font-bold underline underline-offset-2">hello@gimmeasite.com</a> with any questions.</span>
+                    </div>
+                  )}
 
                   {/* Ticket Type */}
                   <div>
