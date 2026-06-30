@@ -55,7 +55,7 @@ export async function GET(request: Request) {
     if (checkEmail) {
       const { data: quote, error: qErr } = await supabase
         .from("client_quotes")
-        .select("plan_type")
+        .select("plan_type, paid_at")
         .eq("email", checkEmail.toLowerCase())
         .eq("paid", true)
         .order("paid_at", { ascending: false })
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       }
 
       const result = await checkRevisionLimit(checkEmail, quote.plan_type);
-      return NextResponse.json({ ...result, plan: quote.plan_type });
+      return NextResponse.json({ ...result, plan: quote.plan_type, billingDate: quote.paid_at ?? null });
     }
 
     // Admin fetch
