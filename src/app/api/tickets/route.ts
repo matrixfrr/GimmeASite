@@ -197,7 +197,12 @@ export async function POST(request: Request) {
       }
     }
 
-    const { data: ticket, error: ticketError } = await supabase
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data: ticket, error: ticketError } = await supabaseAdmin
       .from("tickets")
       .insert([{
         quote_id: quote.id,
@@ -215,7 +220,7 @@ export async function POST(request: Request) {
 
     if (ticketError) {
       console.error("Ticket insert error:", ticketError);
-      return NextResponse.json({ error: "Failed to create ticket", detail: ticketError?.message, code: ticketError?.code }, { status: 500 });
+      return NextResponse.json({ error: "Failed to create ticket" }, { status: 500 });
     }
 
     return NextResponse.json({ ticket, name: quote.name });
