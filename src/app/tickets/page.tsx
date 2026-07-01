@@ -237,7 +237,7 @@ export default function TicketsPage() {
       const data = await res.json();
 
       if (res.status === 404) { setError("__contact_error__"); setLoading(false); return; }
-      if (!res.ok) { setError((data.error || "Failed to submit ticket.") + (data.detail ? ` (${data.detail})` : "") + (data.code ? ` [${data.code}]` : "")); setLoading(false); return; }
+      if (!res.ok) { setError(data.error || "Failed to submit ticket."); setLoading(false); return; }
 
       setClientName(data.name || "");
       setSubmitted(true);
