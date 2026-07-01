@@ -173,6 +173,11 @@ export default function TicketsPage() {
     }
   };
 
+  useEffect(() => {
+    if (submitted) document.title = "Ticket Submitted!";
+    else document.title = "Open a Ticket | GimmeASite";
+  }, [submitted]);
+
   const resetTypeState = () => {
     setSubject("");
     setDescription("");
@@ -276,19 +281,24 @@ export default function TicketsPage() {
                 Questions? Reach us at{" "}
                 <a href="mailto:hello@gimmeasite.com" className="text-primary">hello@gimmeasite.com</a>
               </p>
-              <Button
-                className="mt-8 bg-primary hover:bg-primary/90"
-                onClick={() => {
-                  setSubmitted(false);
-                  setEmail("");
-                  setTicketType("");
-                  resetTypeState();
-                  setAttachment(null);
-                  setClientName("");
-                }}
-              >
-                Submit Another Ticket
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center mt-8">
+                <Button
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setEmail("");
+                    setTicketType("");
+                    resetTypeState();
+                    setAttachment(null);
+                    setClientName("");
+                  }}
+                >
+                  Submit Another Ticket
+                </Button>
+                <Button variant="outline" asChild>
+                  <a href="https://gimmeasite.com">Back to Home</a>
+                </Button>
+              </div>
             </div>
           ) : (
             <>
