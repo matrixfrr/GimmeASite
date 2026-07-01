@@ -175,7 +175,7 @@ export default function TicketsPage() {
 
   useEffect(() => {
     if (submitted) document.title = "Ticket Submitted!";
-    else document.title = "Open a Ticket | GimmeASite";
+    else document.title = "Open a Ticket";
   }, [submitted]);
 
   const resetTypeState = () => {
