@@ -170,7 +170,7 @@ export async function POST(request: Request) {
           .from("tickets")
           .insert([{ email: email.toLowerCase(), name: "Test User", plan_type: "annual", ticket_type, subject: subject.trim(), description: description.trim(), attachment_url: attachmentUrl, status: "open" }])
           .select().single();
-        if (testErr) return NextResponse.json({ error: "Failed to create test ticket" }, { status: 500 });
+        if (testErr) return NextResponse.json({ error: "Failed to create test ticket", detail: testErr?.message, code: testErr?.code }, { status: 500 });
         return NextResponse.json({ ticket: testTicket, name: "Test User" });
       }
       const testEmail2 = process.env.TEST_EMAIL_2;
@@ -183,7 +183,7 @@ export async function POST(request: Request) {
           .from("tickets")
           .insert([{ email: email.toLowerCase(), name: "Test User 2", plan_type: "one-time", ticket_type, subject: subject.trim(), description: description.trim(), attachment_url: attachmentUrl, status: "open" }])
           .select().single();
-        if (testErr) return NextResponse.json({ error: "Failed to create test ticket" }, { status: 500 });
+        if (testErr) return NextResponse.json({ error: "Failed to create test ticket", detail: testErr?.message, code: testErr?.code }, { status: 500 });
         return NextResponse.json({ ticket: testTicket, name: "Test User 2" });
       }
       return NextResponse.json(
