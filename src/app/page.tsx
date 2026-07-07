@@ -358,9 +358,9 @@ function HeroSection() {
 
         <div className="grid grid-cols-3 gap-8 mt-12 animate-slideIn opacity-0 stagger-6">
           {[
-            { number: "100+", label: "Design Components" },
+            { number: "250+", label: "Personal Templates" },
             { number: "97%", label: "Customer Satisfaction" },
-            { number: "~25", label: "Available Countries" },
+            { number: "∞", label: "Creative Opportunities" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
               <div className="text-4xl md:text-5xl font-bold gradient-text mb-2">{stat.number}</div>
