@@ -363,7 +363,9 @@ function HeroSection() {
             { number: "∞", label: "Creative Opportunities" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className={`font-bold gradient-text mb-2 ${stat.number === "∞" ? "text-6xl md:text-7xl" : "text-4xl md:text-5xl"}`}>{stat.number}</div>
+              <div className="h-16 md:h-20 flex items-center justify-center mb-2">
+                <span className={`font-bold gradient-text ${stat.number === "∞" ? "text-6xl md:text-7xl leading-none -mt-2" : "text-4xl md:text-5xl"}`}>{stat.number}</span>
+              </div>
               <div className="text-muted-foreground">{stat.label}</div>
             </div>
           ))}
