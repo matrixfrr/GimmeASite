@@ -16,6 +16,9 @@ const TICKET_TYPES = [
   { value: "inquiry", label: "General Inquiry" },
   { value: "upfront_renewal", label: "Upfront Support Renewal" },
   { value: "transfer_ownership", label: "Transfer of Ownership" },
+  { value: "upgrade_to_subscription", label: "Upgrade to a Subscription Plan" },
+  { value: "upgrade_plan", label: "Upgrade Plan" },
+  { value: "downgrade_plan", label: "Downgrade Plan" },
   { value: "cancellation", label: "Cancellation" },
   { value: "other", label: "Other" },
 ];
@@ -51,7 +54,10 @@ export default function TicketsPage() {
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
-  const [attachment, setAttachment] = useState<File | null>(null);
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachmentErrors, setAttachmentErrors] = useState<string[]>([]);
+  const [planChangeTarget, setPlanChangeTarget] = useState("");
+  const [showPlanChangeDropdown, setShowPlanChangeDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [revisionCheck, setRevisionCheck] = useState<RevisionCheck | null>(null);
@@ -77,6 +83,10 @@ export default function TicketsPage() {
   const isRedesign = ticketType === "redesign";
   const isUpfrontRenewal = ticketType === "upfront_renewal";
   const isRevision = ticketType === "revision";
+  const isUpgradeToSubscription = ticketType === "upgrade_to_subscription";
+  const isUpgradePlan = ticketType === "upgrade_plan";
+  const isDowngradePlan = ticketType === "downgrade_plan";
+  const isPlanChange = isUpgradeToSubscription || isUpgradePlan || isDowngradePlan;
   const selectedLabel = TICKET_TYPES.find((t) => t.value === ticketType)?.label || "";
 
   const emailFormatValid = /^[^@]+@[^@]+\.[^@]+$/.test(email);
@@ -103,10 +113,16 @@ export default function TicketsPage() {
         if (tt.value === "cancellation" && effectivePlan === "one-time") return false;
         if (tt.value === "extra_revisions" && effectivePlan === "annual") return false;
         if (tt.value === "upfront_renewal" && effectivePlan !== "one-time") return false;
+        // Upgrade to subscription: only for Upfront (one-time) users
+        if (tt.value === "upgrade_to_subscription" && effectivePlan !== "one-time") return false;
+        // Upgrade Plan: Monthly can upgrade to Hybrid or Annual; Hybrid can upgrade to Annual
+        if (tt.value === "upgrade_plan" && effectivePlan !== "monthly" && effectivePlan !== "hybrid") return false;
+        // Downgrade Plan: Annual can downgrade to Hybrid or Monthly; Hybrid can downgrade to Monthly
+        if (tt.value === "downgrade_plan" && effectivePlan !== "annual" && effectivePlan !== "hybrid") return false;
         return true;
       });
 
-  const showSubject = !isCancellation && !isTransfer && !isDomainChange;
+  const showSubject = !isCancellation && !isTransfer && !isDomainChange && !isPlanChange;
 
   useEffect(() => {
     if (!isRevision || !email || !/^[^@]+@[^@]+\.[^@]+$/.test(email)) {
@@ -196,6 +212,8 @@ export default function TicketsPage() {
     setDomainChangeAvailability(null);
     setDomainChangeConfirmed(false);
     setDomainChangeChecking(false);
+    setPlanChangeTarget("");
+    setShowPlanChangeDropdown(false);
   };
 
   const handleTypeSelect = (value: string) => {
@@ -213,6 +231,7 @@ export default function TicketsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ticketType) { setError("Please select a ticket type."); return; }
+    if (isPlanChange && !planChangeTarget) { setError("Please select a target plan."); return; }
     if (isTransfer && !transferDomain && !transferFiles) {
       setError("Please select at least one option for what you would like transferred.");
       return;
@@ -238,11 +257,14 @@ export default function TicketsPage() {
         fd.append("subject", [transferDomain && "Domain", transferFiles && "Website Files"].filter(Boolean).join(" + "));
       } else if (isDomainChange) {
         fd.append("subject", domainChangeQuery || "Domain change request");
+      } else if (isPlanChange) {
+        fd.append("subject", `${selectedLabel} → ${planChangeTarget}`);
       } else {
         fd.append("subject", subject);
       }
       fd.append("description", description);
-      if (attachment) fd.append("attachment", attachment);
+      if (isPlanChange && planChangeTarget) fd.append("plan_change_target", planChangeTarget);
+      attachments.forEach(f => fd.append("attachment", f));
 
       const res = await fetch("/api/tickets", { method: "POST", body: fd });
       const data = await res.json();
@@ -251,6 +273,8 @@ export default function TicketsPage() {
       if (!res.ok) { setError(data.error || "Failed to submit ticket."); setLoading(false); return; }
 
       setClientName(data.name || "");
+      setAttachments([]);
+      setAttachmentErrors([]);
       setSubmitted(true);
     } catch {
       setError("Something went wrong. Please try again.");
@@ -295,7 +319,8 @@ export default function TicketsPage() {
                     setEmail("");
                     setTicketType("");
                     resetTypeState();
-                    setAttachment(null);
+                    setAttachments([]);
+                    setAttachmentErrors([]);
                     setClientName("");
                   }}
                 >
@@ -543,6 +568,50 @@ export default function TicketsPage() {
                     </div>
                   )}
 
+                  {/* Plan Change Target */}
+                  {isPlanChange && emailReady && (
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        {isUpgradeToSubscription ? "Which plan would you like to upgrade to?" : isUpgradePlan ? "Which plan would you like to upgrade to?" : "Which plan would you like to downgrade to?"}{" "}
+                        <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        {showPlanChangeDropdown && (
+                          <div className="fixed inset-0 z-[5]" onClick={() => setShowPlanChangeDropdown(false)} />
+                        )}
+                        <button
+                          type="button"
+                          className="w-full h-11 flex items-center justify-between bg-background border border-input rounded-lg px-4 py-2 text-left text-sm hover:border-primary/50 transition-all"
+                          onClick={() => setShowPlanChangeDropdown(!showPlanChangeDropdown)}
+                        >
+                          <span className={planChangeTarget ? "text-foreground" : "text-muted-foreground"}>
+                            {planChangeTarget || "Select a plan"}
+                          </span>
+                          <svg className={`w-4 h-4 text-muted-foreground transition-transform ${showPlanChangeDropdown ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        {showPlanChangeDropdown && (
+                          <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-10 overflow-hidden">
+                            {(isUpgradeToSubscription
+                              ? ["Monthly", "Hybrid", "Annual"]
+                              : isUpgradePlan
+                                ? effectivePlan === "monthly" ? ["Hybrid", "Annual"] : ["Annual"]
+                                : effectivePlan === "annual" ? ["Hybrid", "Monthly"] : ["Monthly"]
+                            ).map((plan) => (
+                              <button
+                                key={plan}
+                                type="button"
+                                className={`w-full px-3 py-2 text-left text-sm hover:bg-primary/10 transition-colors ${planChangeTarget === plan ? "bg-primary/10 text-primary" : ""}`}
+                                onClick={() => { setPlanChangeTarget(plan); setShowPlanChangeDropdown(false); }}
+                              >
+                                {plan}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Subject — hidden for transfer, domain change, extra revisions, cancellation */}
                   {showSubject && emailReady && (
                     <div>
@@ -578,39 +647,56 @@ export default function TicketsPage() {
 
                       <div>
                         <label className="block text-sm font-medium mb-2">
-                          Attachment <span className="text-xs text-muted-foreground font-normal">(optional)</span>
+                          Attachments <span className="text-xs text-muted-foreground font-normal">(optional)</span>
                         </label>
-                        {attachment ? (
-                          <div className="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg px-3 py-2.5">
-                            <Paperclip className="w-4 h-4 text-primary flex-shrink-0" />
-                            <span className="text-sm flex-1 truncate">{attachment.name}</span>
-                            <button
-                              type="button"
-                              onClick={() => { setAttachment(null); if (fileRef.current) fileRef.current.value = ""; }}
-                              className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-                            >
-                              <X className="w-4 h-4" />
-                            </button>
+                        {attachments.length > 0 && (
+                          <div className="space-y-1.5 mb-2">
+                            {attachments.map((file, i) => (
+                              <div key={i} className="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg px-3 py-2">
+                                <Paperclip className="w-3.5 h-3.5 text-primary flex-shrink-0" />
+                                <span className="text-xs flex-1 truncate">{file.name}</span>
+                                <button type="button" onClick={() => { setAttachments(prev => prev.filter((_, j) => j !== i)); setAttachmentErrors([]); }} className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
+                              </div>
+                            ))}
                           </div>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => fileRef.current?.click()}
-                            className="w-full flex items-center gap-2 border border-dashed border-border rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
-                          >
-                            <Paperclip className="w-4 h-4" />
-                            Click to attach a file
-                          </button>
                         )}
+                        <button
+                          type="button"
+                          onClick={() => fileRef.current?.click()}
+                          className="w-full flex items-center gap-2 border border-dashed border-border rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                        >
+                          <Paperclip className="w-4 h-4" />
+                          {attachments.length > 0 ? "Add more files" : "Click to attach a file"}
+                        </button>
                         <input
                           ref={fileRef}
                           type="file"
+                          multiple
                           className="hidden"
-                          onChange={(e) => setAttachment(e.target.files?.[0] || null)}
-                          accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.pdf,.docx,.svg,.html,.css,.js,.zip"
+                          accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.pdf,.docx,.svg,.html,.css,.js,.zip,.otf"
+                          onChange={(e) => {
+                            const newFiles = Array.from(e.target.files || []);
+                            const combined = [...attachments, ...newFiles];
+                            const errs: string[] = [];
+                            if (combined.length > 10) {
+                              errs.push(`You can only attach up to 10 files. Please remove ${combined.length - 10} file(s).`);
+                              setAttachments(combined.slice(0, 10));
+                            } else {
+                              setAttachments(combined);
+                            }
+                            const oversized = combined.filter(f => f.size > 25 * 1024 * 1024);
+                            if (oversized.length > 0) {
+                              errs.push(`The following file(s) exceed 25 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
+                            }
+                            setAttachmentErrors(errs);
+                            if (fileRef.current) fileRef.current.value = "";
+                          }}
                         />
+                        {attachmentErrors.map((err, i) => (
+                          <p key={i} className="text-red-500 text-xs mt-1">{err}</p>
+                        ))}
                         <p className="text-xs text-muted-foreground mt-1.5">
-                          PNG, JPG, WEBP, GIF, MP4, PDF, DOCX, SVG, HTML, CSS, JS, or ZIP files accepted. Max file size 25 MB.
+                          PNG, JPG, WEBP, GIF, MP4, PDF, DOCX, SVG, HTML, CSS, JS, OTF, or ZIP files accepted. Max file size 25 MB.
                         </p>
                       </div>
                     </>
