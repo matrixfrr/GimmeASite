@@ -398,25 +398,25 @@ function HeroSection() {
   }, [displayed, isDeleting, phraseIndex]);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-32 overflow-hidden noise-bg">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-24 md:pt-32 overflow-hidden noise-bg">
 
-      <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
+      <div className="max-w-7xl mx-auto px-6 py-4 md:py-12 relative z-10">
         <div className="text-center max-w-6xl mx-auto">
-          <div className="flex items-center justify-center gap-8 mb-8 text-sm text-muted-foreground animate-slideIn opacity-0 stagger-1">
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-8 mb-4 md:mb-8 text-sm text-muted-foreground animate-slideIn opacity-0 stagger-1">
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Proven Results</span></div>
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Expedited Delivery</span></div>
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Quality Guaranteed</span></div>
           </div>
 
-          <h1 className="tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2 transition-none" style={{ fontFamily: "'Inter', sans-serif", fontWeight: 550, fontSize: "80px" }}>
+          <h1 className="tracking-tight leading-[1.05] mb-4 md:mb-8 animate-slideIn opacity-0 stagger-2 transition-none" style={{ fontFamily: "'Inter', sans-serif", fontWeight: 550, fontSize: "clamp(34px, 8vw, 80px)" }}>
             <span className="block">We Build</span>
-            <span className="block" style={{ minHeight: "1.1em", overflow: "hidden", whiteSpace: "nowrap" }}>
+            <span className="block" style={{ height: "1.1em", overflow: "hidden", whiteSpace: "nowrap" }}>
               <span className="gradient-text">{displayed}</span><span className="hero-cursor">|</span>
             </span>
             <span className="block">That Convert</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed animate-slideIn opacity-0 stagger-3">
+          <p className="text-lg md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-5 md:mb-10 leading-relaxed animate-slideIn opacity-0 stagger-3">
             Transform your business with a professional website that captures attention and drives results. Fast, affordable, and designed to grow with you.
           </p>
 
@@ -430,17 +430,17 @@ function HeroSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-16 mt-16 animate-slideIn opacity-0 stagger-6 max-w-5xl mx-auto">
+        <div className="grid grid-cols-3 gap-4 md:gap-16 mt-8 md:mt-16 animate-slideIn opacity-0 stagger-6 max-w-5xl mx-auto">
           {[
             { number: "250+", label: "Personal Templates" },
             { number: "97%", label: "Customer Satisfaction" },
             { number: "∞", label: "Creative Opportunities" },
           ].map((stat) => (
             <div key={stat.label} className="text-center">
-              <div className="h-16 md:h-20 flex items-center justify-center mb-2">
-                <span className={`font-bold gradient-text ${stat.number === "∞" ? "text-6xl md:text-7xl leading-none mt-3" : "text-4xl md:text-5xl"}`}>{stat.number}</span>
+              <div className="h-12 md:h-20 flex items-center justify-center mb-1 md:mb-2">
+                <span className={`font-bold gradient-text ${stat.number === "∞" ? "text-4xl md:text-6xl lg:text-7xl leading-none mt-3" : "text-2xl md:text-4xl lg:text-5xl"}`}>{stat.number}</span>
               </div>
-              <div className="text-muted-foreground">{stat.label}</div>
+              <div className="text-xs md:text-base text-muted-foreground">{stat.label}</div>
             </div>
           ))}
         </div>
