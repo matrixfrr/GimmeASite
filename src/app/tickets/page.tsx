@@ -572,7 +572,7 @@ export default function TicketsPage() {
                   {isPlanChange && emailReady && (
                     <div>
                       <label className="block text-sm font-medium mb-2">
-                        {isUpgradeToSubscription ? "Which plan would you like to upgrade to?" : isUpgradePlan ? "Which plan would you like to upgrade to?" : "Which plan would you like to downgrade to?"}{" "}
+                        {isUpgradeToSubscription ? "Which Plan would you like to upgrade to?" : isUpgradePlan ? "Which Plan would you like to upgrade to?" : "Which Plan would you like to downgrade to?"}{" "}
                         <span className="text-red-500">*</span>
                       </label>
                       <div className="relative">
@@ -585,7 +585,7 @@ export default function TicketsPage() {
                           onClick={() => setShowPlanChangeDropdown(!showPlanChangeDropdown)}
                         >
                           <span className={planChangeTarget ? "text-foreground" : "text-muted-foreground"}>
-                            {planChangeTarget || "Select a plan"}
+                            {planChangeTarget || "Select a Plan"}
                           </span>
                           <svg className={`w-4 h-4 text-muted-foreground transition-transform ${showPlanChangeDropdown ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
                         </button>
@@ -673,7 +673,7 @@ export default function TicketsPage() {
                           type="file"
                           multiple
                           className="hidden"
-                          accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.pdf,.docx,.svg,.html,.css,.js,.zip,.otf"
+                          accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.pdf,.docx,.svg,.zip,.otf"
                           onChange={(e) => {
                             const newFiles = Array.from(e.target.files || []);
                             const combined = [...attachments, ...newFiles];
@@ -684,9 +684,9 @@ export default function TicketsPage() {
                             } else {
                               setAttachments(combined);
                             }
-                            const oversized = combined.filter(f => f.size > 25 * 1024 * 1024);
+                            const oversized = combined.filter(f => f.size > 50 * 1024 * 1024);
                             if (oversized.length > 0) {
-                              errs.push(`The following file(s) exceed 25 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
+                              errs.push(`The following file(s) exceed 50 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
                             }
                             setAttachmentErrors(errs);
                             if (fileRef.current) fileRef.current.value = "";
@@ -696,7 +696,7 @@ export default function TicketsPage() {
                           <p key={i} className="text-red-500 text-xs mt-1">{err}</p>
                         ))}
                         <p className="text-xs text-muted-foreground mt-1.5">
-                          PNG, JPG, WEBP, GIF, MP4, PDF, DOCX, SVG, HTML, CSS, JS, OTF, or ZIP files accepted. Max file size 25 MB.
+                          PNG, JPG, WEBP, GIF, MP4, PDF, DOCX, SVG, OTF, or ZIP files accepted. Max file size 50 MB each.
                         </p>
                       </div>
                     </>
