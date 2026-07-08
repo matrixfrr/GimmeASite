@@ -398,7 +398,7 @@ function HeroSection() {
   }, [displayed, isDeleting, phraseIndex]);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-32 overflow-hidden grid-pattern noise-bg">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-32 overflow-hidden noise-bg">
 
       <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
         <div className="text-center max-w-6xl mx-auto">
@@ -410,7 +410,7 @@ function HeroSection() {
 
           <h1 className="tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2 transition-none" style={{ fontFamily: "'Inter', sans-serif", fontWeight: 550, fontSize: "80px" }}>
             <span className="block">We Build</span>
-            <span className="block gradient-text whitespace-nowrap" style={{ minHeight: "1.1em" }}>
+            <span className="block gradient-text whitespace-nowrap" style={{ minHeight: "1.1em", overflow: "hidden" }}>
               {displayed}<span className="hero-cursor">|</span>
             </span>
             <span className="block">That Convert</span>
@@ -1209,6 +1209,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     additionalPages: [] as string[],
     additionalPagesDetails: "",
   });
+  const [showAdditionalPagesHelp, setShowAdditionalPagesHelp] = useState(false);
+  const attachmentsRef = useRef<FileList | null>(null);
   const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | "phone" | "plan" | "domain" | "google" | "ownsDomain" | null>(null);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -1506,52 +1508,44 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     setIsSubmitting(true);
 
     try {
+      const fd = new FormData();
+      fd.append("name", formData.name);
+      fd.append("email", formData.email);
+      fd.append("phone", formData.phone);
+      fd.append("company", formData.company);
+      fd.append("domain", ownsDomain ? "" : formData.domain);
+      fd.append("paymentPlan", formData.paymentPlan);
+      fd.append("message", formData.message);
+      fd.append("instagram", formData.instagram);
+      fd.append("facebook", formData.facebook);
+      fd.append("twitter", formData.twitter);
+      fd.append("youtube", formData.youtube);
+      fd.append("tiktok", formData.tiktok);
+      fd.append("linkedin", formData.linkedin);
+      fd.append("googleBusiness", formData.googleBusiness);
+      fd.append("ownsDomain", ownsDomain ? "yes" : "no");
+      fd.append("existingDomain", ownsDomain ? existingDomain : "");
+      if (isMultiStepPlan) {
+        fd.append("Home — Value Prop", step2Data.homeValueProp);
+        fd.append("Home — CTA", step2Data.homeAction);
+        fd.append("About — Business", step2Data.aboutBusiness);
+        fd.append("About — Unique", step2Data.aboutUnique);
+        fd.append("Services — Info", step2Data.servicesInfo);
+        fd.append("Services — Offers", step2Data.servicesOffers);
+        fd.append("Contact — Methods", step2Data.contactMethods);
+        fd.append("Contact — Hours", step2Data.contactHours);
+        fd.append("Additional Pages", step2Data.additionalPages.join(", ") || "None");
+        fd.append("Additional Pages — Details", step2Data.additionalPagesDetails);
+      }
+      if (attachmentsRef.current) {
+        Array.from(attachmentsRef.current).forEach(file => fd.append("attachment", file));
+      }
+      fd.append("_replyto", formData.email);
+      fd.append("_subject", `New GimmeASite Inquiry from ${formData.name}`);
       const response = await fetch("https://formspree.io/f/xnjobyzd", {
         method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          company: formData.company,
-          domain: ownsDomain ? "" : formData.domain,
-          paymentPlan: formData.paymentPlan,
-          message: formData.message,
-          instagram: formData.instagram,
-          facebook: formData.facebook,
-          twitter: formData.twitter,
-          youtube: formData.youtube,
-          tiktok: formData.tiktok,
-          linkedin: formData.linkedin,
-          googleBusiness: formData.googleBusiness,
-          ownsDomain: ownsDomain ? "yes" : "no",
-          existingDomain: ownsDomain ? existingDomain : "",
-          ...(isMultiStepPlan ? {
-            "Home — Purpose": step2Data.homePurpose,
-            "Home — Value Prop": step2Data.homeValueProp,
-            "Home — CTA": step2Data.homeAction,
-            "Home — Details": step2Data.homeDetails,
-            "About — Business": step2Data.aboutBusiness,
-            "About — Unique": step2Data.aboutUnique,
-            "About — Feel": step2Data.aboutFeel,
-            "About — Details": step2Data.aboutDetails,
-            "Services — Info": step2Data.servicesInfo,
-            "Services — Benefits": step2Data.servicesBenefits,
-            "Services — Offers": step2Data.servicesOffers,
-            "Services — Details": step2Data.servicesDetails,
-            "Contact — Methods": step2Data.contactMethods,
-            "Contact — Hours": step2Data.contactHours,
-            "Contact — CTA": step2Data.contactCTA,
-            "Contact — Details": step2Data.contactDetails,
-            "Additional Pages": step2Data.additionalPages.join(", ") || "None",
-            "Additional Pages — Details": step2Data.additionalPagesDetails,
-          } : {}),
-          _replyto: formData.email,
-          _subject: `New GimmeASite Inquiry from ${formData.name}`,
-        }),
+        headers: { "Accept": "application/json" },
+        body: fd,
       });
 
       if (response.ok) {
@@ -2207,6 +2201,21 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </div>
                 </div>
 
+                {/* File Upload */}
+                <div>
+                  <label className="block text-sm font-medium mb-1.5">
+                    Attachments <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full ml-1">Recommended</span>
+                  </label>
+                  <p className="text-xs text-muted-foreground mb-2">Upload your logo, gallery photos, fonts, brand colors, videos, animations/GIFs, or anything else that will help us create your website.</p>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*,video/*,.gif,.pdf,.ttf,.otf,.woff,.woff2,.zip,.ai,.psd,.svg,.mp4,.mov,.webm"
+                    className="block w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer border border-input rounded-lg p-2 bg-background"
+                    onChange={e => { attachmentsRef.current = e.target.files; }}
+                  />
+                </div>
+
                 {/* Security Disclaimer */}
                 <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-xl border border-border/50">
                   <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
@@ -2275,7 +2284,14 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
 
                   {/* Additional Pages */}
                   <div className="mb-8">
-                    <h4 className="text-base font-semibold mb-2 pb-2 border-b border-border/50">Additional Pages</h4>
+                    <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border/50">
+                      <h4 className="text-base font-semibold">Additional Pages</h4>
+                      <button
+                        type="button"
+                        className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors flex-shrink-0"
+                        onClick={() => setShowAdditionalPagesHelp(true)}
+                      >?</button>
+                    </div>
                     <p className="text-xs text-muted-foreground mb-4">Select any additional pages you&apos;d like included on your website.</p>
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                       {[
@@ -2363,6 +2379,34 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           </Card>
         </div>
       </div>
+
+      {/* Additional Pages help popup */}
+      {showAdditionalPagesHelp && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowAdditionalPagesHelp(false)}
+        >
+          <div
+            className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-bold pr-2">Unsure which pages to choose?</h3>
+              <button type="button" onClick={() => setShowAdditionalPagesHelp(false)} className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 mt-0.5"><X className="w-4 h-4" /></button>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Choose what you&apos;re familiar with and what sounds relevant to your business — there&apos;s no need to overthink it. We&apos;ll review your selections and add any pages we think are necessary based on your business type and industry, so nothing important gets left out.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowAdditionalPagesHelp(false)}
+              className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Got It
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Unified Why? popup */}
       {showWhyPopup && (
