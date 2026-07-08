@@ -370,15 +370,25 @@ function HeroSection() {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [displayed, setDisplayed] = useState("Stunning Websites");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [zooming, setZooming] = useState(false);
+  const zoomingRef = useRef(false);
 
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@800;900&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap";
     document.head.appendChild(link);
-    return () => { if (document.head.contains(link)) document.head.removeChild(link); };
+    // Inject blink keyframe into head so it always applies
+    const style = document.createElement("style");
+    style.textContent = "@keyframes heroBlink{0%,49%{opacity:1}50%,100%{opacity:0}}.hero-cursor{display:inline-block;animation:heroBlink 0.9s steps(1,end) infinite;margin-left:1px}@keyframes heroZoom{0%{transform:scale(1);opacity:1}100%{transform:scale(3);opacity:0}}.hero-zoom-out{animation:heroZoom 0.65s cubic-bezier(0.4,0,1,1) forwards}";
+    document.head.appendChild(style);
+    return () => {
+      if (document.head.contains(link)) document.head.removeChild(link);
+      if (document.head.contains(style)) document.head.removeChild(style);
+    };
   }, []);
 
+  // Typewriter effect
   useEffect(() => {
     const target = phrases[phraseIndex];
     if (!isDeleting && displayed === target) {
@@ -397,9 +407,31 @@ function HeroSection() {
     return () => clearTimeout(t);
   }, [displayed, isDeleting, phraseIndex]);
 
+  // Zoom-to-services on scroll down
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (e.deltaY <= 0 || zoomingRef.current) return;
+      const hero = document.getElementById("hero");
+      if (!hero) return;
+      const rect = hero.getBoundingClientRect();
+      // Only fire when hero is the active section (top near viewport top)
+      if (rect.top > -80 && rect.top <= 10) {
+        e.preventDefault();
+        zoomingRef.current = true;
+        setZooming(true);
+        setTimeout(() => {
+          setZooming(false);
+          zoomingRef.current = false;
+          scrollToSection("services");
+        }, 650);
+      }
+    };
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, []);
+
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden grid-pattern noise-bg">
-      <style>{`@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}.cursor-blink{animation:blink 1s step-end infinite}`}</style>
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
 
@@ -411,10 +443,10 @@ function HeroSection() {
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Quality Guaranteed</span></div>
           </div>
 
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[1.0] mb-8 animate-slideIn opacity-0 stagger-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <h1 className={`text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2 transition-none ${zooming ? "hero-zoom-out" : ""}`} style={{ fontFamily: "'DM Sans', sans-serif" }}>
             <span className="block">We Build</span>
-            <span className="block gradient-text" style={{ minHeight: "1.1em" }}>
-              {displayed}<span className="cursor-blink">|</span>
+            <span className="block gradient-text whitespace-nowrap" style={{ minHeight: "1.1em" }}>
+              {displayed}<span className="hero-cursor">|</span>
             </span>
             <span className="block">That Convert</span>
           </h1>
@@ -2749,40 +2781,6 @@ export default function Home() {
       return () => window.removeEventListener('beforeunload', handler);
     }
   }, [showThanksPopup, bookCallClicked]);
-
-  // Section-scroll navigation
-  useEffect(() => {
-    const sectionIds = ["hero", "services", "process", "about", "pricing", "comparison", "contact", "footer"];
-    let lastSnap = 0;
-    const COOLDOWN = 1400;
-    const NAV_H = 72;
-    const handleWheel = (e: WheelEvent) => {
-      const now = Date.now();
-      if (now - lastSnap < COOLDOWN) return;
-      let currentIdx = 0;
-      let closestDist = Infinity;
-      for (let i = 0; i < sectionIds.length; i++) {
-        const el = document.getElementById(sectionIds[i]);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= NAV_H + 10) {
-          const dist = NAV_H - rect.top;
-          if (dist < closestDist) { closestDist = dist; currentIdx = i; }
-        }
-      }
-      const scrollingDown = e.deltaY > 0;
-      const nextIdx = scrollingDown
-        ? Math.min(currentIdx + 1, sectionIds.length - 1)
-        : Math.max(currentIdx - 1, 0);
-      if (nextIdx !== currentIdx) {
-        lastSnap = now;
-        e.preventDefault();
-        scrollToSection(sectionIds[nextIdx]);
-      }
-    };
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    return () => window.removeEventListener("wheel", handleWheel);
-  }, []);
 
   // Handle URL parameters for payment status and modals
   useEffect(() => {
