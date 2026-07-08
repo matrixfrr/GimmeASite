@@ -27,7 +27,7 @@ import {
   CreditCard,
   TicketCheck,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { PaymentModal } from "@/components/PaymentModal";
 
@@ -35,7 +35,9 @@ import { PaymentModal } from "@/components/PaymentModal";
 const scrollToSection = (sectionId: string) => {
   const element = document.getElementById(sectionId);
   if (element) {
-    element.scrollIntoView({ behavior: "smooth", block: "start" });
+    const navHeight = 72;
+    const top = element.getBoundingClientRect().top + window.scrollY - navHeight;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
   }
 };
 
@@ -45,16 +47,24 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
     question: "How long does it take for my site to be built?",
     answer: "We value expedited services at GimmeASite. All sites are completed in up to five business days depending on complexity. However, some sites can even be delivered the next day!",
   },  {
-    question: "How does temporary support work?",
+    question: 'How does "temporary support" work?',
     answer: <>In the Upfront Plan, there is a temporary support period included that lasts 6 months beginning from the billing date. Within that timeframe, you have access to accelerated response time for support questions, 3 revision credits, reports from regular security scans and performance monitoring, and more. Following the conclusion of this period, your site will remain online, but we will no longer maintain its full-stack unless you renew your support period at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. However, you can still reach out to us via email with questions or concerns, as we are always available.</>,
   },
   {
     question: "What are revisions?",
-    answer: (<><span>A different allowance of revisions are included in each Plan. You can request revisions at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. Opening a &ldquo;Revision Request&rdquo; ticket counts toward one (1) revision, in which you can request multiple reasonable edits (No redesigns). Requesting extra revisions (&ldquo;Revision Refill&rdquo;) or redesigns may incur additional fees depending on the conditions of your Plan. If we incorrectly revise your site following a request, we may waive a revision at our discretion.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, "revisions" are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
+    answer: (<><span>Revisions are updates and edits to your site that you can request. A different allowance of revisions are included in each Plan. You can request revisions at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. Opening a &ldquo;Revision Request&rdquo; ticket counts towards one (1) revision, in which you can request multiple reasonable edits in the ticket. Requesting extra revisions (&ldquo;Revision Refill&rdquo;) beyond what your Plan includes, or redesigns (total makeovers of your site) may incur additional fees. If we incorrectly revise your site following a request, let support know and we may waive a revision at our discretion.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, &ldquo;revisions&rdquo; are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
   },
   {
     question: "Where do I manage my subscription?",
     answer: <>You can manage your subscription, update payment methods, and view invoices at <a href="https://gimmeasite.com/billing" className="text-primary hover:underline font-medium">https://gimmeasite.com/billing</a>.</>,
+  },
+  {
+    question: "Where do I open a ticket?",
+    answer: <>You can open a ticket at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>.</>,
+  },
+  {
+    question: "How do I access my account?",
+    answer: <>You can access your account at <a href="https://gimmeasite.com/account" className="text-primary hover:underline font-medium">https://gimmeasite.com/account</a>. There are no login credentials; only a Billing Portal for managing subscriptions and a Ticket page for opening tickets. Be mindful that your account is only created for you following your first payment.</>,
   },
 ];
 
@@ -171,6 +181,10 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showAccountPopup, setShowAccountPopup] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const openDrop = (id: string) => { if (leaveTimer.current) clearTimeout(leaveTimer.current); setOpenDropdown(id); };
+  const closeDrop = () => { leaveTimer.current = setTimeout(() => setOpenDropdown(null), 180); };
 
   const handleNavClick = (sectionId: string) => {
     scrollToSection(sectionId);
@@ -188,12 +202,12 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
             </Link>
 
             <div className="hidden md:flex items-center gap-8">
-              <div className="relative" onMouseEnter={() => setOpenDropdown("services")} onMouseLeave={() => setOpenDropdown(null)}>
+              <div className="relative" onMouseEnter={() => openDrop("services")} onMouseLeave={closeDrop}>
                 <button type="button" onClick={() => handleNavClick("services")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
                   Services <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "services" ? "rotate-180" : ""}`} />
                 </button>
                 {openDropdown === "services" && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden">
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden" onMouseEnter={() => openDrop("services")} onMouseLeave={closeDrop}>
                     {(["Website Design", "Hosting", "Maintenance"] as const).map(item => (
                       <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                         onClick={() => { handleNavClick("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: item })), 600); }}
@@ -202,12 +216,12 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
                   </div>
                 )}
               </div>
-              <div className="relative" onMouseEnter={() => setOpenDropdown("process")} onMouseLeave={() => setOpenDropdown(null)}>
+              <div className="relative" onMouseEnter={() => openDrop("process")} onMouseLeave={closeDrop}>
                 <button type="button" onClick={() => handleNavClick("process")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
                   Process <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "process" ? "rotate-180" : ""}`} />
                 </button>
                 {openDropdown === "process" && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden">
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden" onMouseEnter={() => openDrop("process")} onMouseLeave={closeDrop}>
                     {(["Discovery", "Design", "Development", "Deployment"] as const).map(item => (
                       <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                         onClick={() => { handleNavClick("process"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightProcess", { detail: item })), 600); }}
@@ -217,12 +231,12 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
                 )}
               </div>
               <button type="button" onClick={() => handleNavClick("about")} className="text-muted-foreground hover:text-foreground transition-colors">About</button>
-              <div className="relative" onMouseEnter={() => setOpenDropdown("pricing")} onMouseLeave={() => setOpenDropdown(null)}>
+              <div className="relative" onMouseEnter={() => openDrop("pricing")} onMouseLeave={closeDrop}>
                 <button type="button" onClick={() => handleNavClick("pricing")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
                   Pricing <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "pricing" ? "rotate-180" : ""}`} />
                 </button>
                 {openDropdown === "pricing" && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden">
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden" onMouseEnter={() => openDrop("pricing")} onMouseLeave={closeDrop}>
                     {(["Upfront", "Monthly", "Hybrid", "Annual"] as const).map(item => (
                       <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                         onClick={() => { handleNavClick("pricing"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightPlan", { detail: item })), 600); }}
@@ -360,7 +374,7 @@ function HeroSection() {
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap";
+    link.href = "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@800;900&display=swap";
     document.head.appendChild(link);
     return () => { if (document.head.contains(link)) document.head.removeChild(link); };
   }, []);
@@ -385,20 +399,27 @@ function HeroSection() {
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden grid-pattern noise-bg">
+      <style>{`@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}.cursor-blink{animation:blink 1s step-end infinite}`}</style>
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
 
       <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
-        <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2" style={{ fontFamily: "'Instrument Serif', serif" }}>
+        <div className="text-center max-w-6xl mx-auto">
+          <div className="flex items-center justify-center gap-8 mb-8 text-sm text-muted-foreground animate-slideIn opacity-0 stagger-1">
+            <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Proven Results</span></div>
+            <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Expedited Delivery</span></div>
+            <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Quality Guaranteed</span></div>
+          </div>
+
+          <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tight leading-[1.0] mb-8 animate-slideIn opacity-0 stagger-2" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
             <span className="block">We Build</span>
-            <span className="block gradient-text italic" style={{ minHeight: "1.1em" }}>
-              {displayed}<span className="not-italic animate-pulse">|</span>
+            <span className="block gradient-text" style={{ minHeight: "1.1em" }}>
+              {displayed}<span className="cursor-blink">|</span>
             </span>
             <span className="block">That Convert</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-slideIn opacity-0 stagger-3">
+          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed animate-slideIn opacity-0 stagger-3">
             Transform your business with a professional website that captures attention and drives results. Fast, affordable, and designed to grow with you.
           </p>
 
@@ -410,24 +431,9 @@ function HeroSection() {
               </Button>
             </div>
           </div>
-
-          <div className="flex items-center justify-center gap-8 mt-12 text-sm text-muted-foreground animate-slideIn opacity-0 stagger-5">
-            <div className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-primary" />
-              <span>Proven Results</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-primary" />
-              <span>Expedited Delivery</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Check className="w-5 h-5 text-primary" />
-              <span>Quality Guaranteed</span>
-            </div>
-          </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-8 mt-12 animate-slideIn opacity-0 stagger-6">
+        <div className="grid grid-cols-3 gap-16 mt-16 animate-slideIn opacity-0 stagger-6 max-w-5xl mx-auto">
           {[
             { number: "250+", label: "Personal Templates" },
             { number: "97%", label: "Customer Satisfaction" },
@@ -2748,32 +2754,30 @@ export default function Home() {
   useEffect(() => {
     const sectionIds = ["hero", "services", "process", "about", "pricing", "comparison", "contact", "footer"];
     let lastSnap = 0;
-    const COOLDOWN = 1000;
+    const COOLDOWN = 1400;
+    const NAV_H = 72;
     const handleWheel = (e: WheelEvent) => {
       const now = Date.now();
       if (now - lastSnap < COOLDOWN) return;
       let currentIdx = 0;
+      let closestDist = Infinity;
       for (let i = 0; i < sectionIds.length; i++) {
         const el = document.getElementById(sectionIds[i]);
         if (!el) continue;
         const rect = el.getBoundingClientRect();
-        if (rect.top <= window.innerHeight * 0.5) currentIdx = i;
-      }
-      const el = document.getElementById(sectionIds[currentIdx]);
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const scrollingDown = e.deltaY > 0;
-      const atBottom = rect.bottom <= window.innerHeight + 60;
-      const atTop = rect.top >= -60;
-      if ((scrollingDown && atBottom) || (!scrollingDown && atTop)) {
-        const nextIdx = scrollingDown
-          ? Math.min(currentIdx + 1, sectionIds.length - 1)
-          : Math.max(currentIdx - 1, 0);
-        if (nextIdx !== currentIdx) {
-          lastSnap = now;
-          e.preventDefault();
-          scrollToSection(sectionIds[nextIdx]);
+        if (rect.top <= NAV_H + 10) {
+          const dist = NAV_H - rect.top;
+          if (dist < closestDist) { closestDist = dist; currentIdx = i; }
         }
+      }
+      const scrollingDown = e.deltaY > 0;
+      const nextIdx = scrollingDown
+        ? Math.min(currentIdx + 1, sectionIds.length - 1)
+        : Math.max(currentIdx - 1, 0);
+      if (nextIdx !== currentIdx) {
+        lastSnap = now;
+        e.preventDefault();
+        scrollToSection(sectionIds[nextIdx]);
       }
     };
     window.addEventListener("wheel", handleWheel, { passive: false });
