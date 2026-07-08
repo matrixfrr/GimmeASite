@@ -178,6 +178,12 @@ export default function TicketsPage() {
     else document.title = "Open a Ticket";
   }, [submitted]);
 
+  useEffect(() => {
+    const hasData = !!(clientName || email || subject || description || ticketType);
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    if (hasData && !submitted) { window.addEventListener("beforeunload", handler); return () => window.removeEventListener("beforeunload", handler); }
+  }, [clientName, email, subject, description, ticketType, submitted]);
+
   const resetTypeState = () => {
     setSubject("");
     setDescription("");
