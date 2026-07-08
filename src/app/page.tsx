@@ -379,6 +379,7 @@ function HeroSection() {
   }, []);
 
   // Typewriter effect
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const target = phrases[phraseIndex];
     if (!isDeleting && displayed === target) {
