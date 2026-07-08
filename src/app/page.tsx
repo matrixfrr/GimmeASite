@@ -2218,10 +2218,11 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   <input
                     type="file"
                     multiple
-                    accept="image/*,video/*,.gif,.pdf,.ttf,.otf,.woff,.woff2,.zip,.ai,.psd,.svg,.mp4,.mov,.webm"
+                    accept=".png,.jpg,.jpeg,.gif,.mp4,.svg,.zip"
                     className="block w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer border border-input rounded-lg p-2 bg-background"
                     onChange={e => { attachmentsRef.current = e.target.files; }}
                   />
+                  <p className="text-xs text-muted-foreground mt-1.5">PNG, JPG, GIF, MP4, SVG, or ZIP files accepted. Max 10 files, 25 MB each.</p>
                 </div>
 
                 {/* Security Disclaimer */}
@@ -2426,7 +2427,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
               <button type="button" onClick={() => setShowAttachmentsHelp(false)} className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 mt-0.5"><X className="w-4 h-4" /></button>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Uploading your logo, gallery photos / videos, fonts, brand colors, animations/GIFs, etc. will help our team design the best website possible for your brand.
+              Uploading your logo, gallery media, fonts, brand colors, animations, etc. will help our team design the best website possible for your brand.
             </p>
             <button type="button" onClick={() => setShowAttachmentsHelp(false)}
               className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
