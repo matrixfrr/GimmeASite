@@ -110,7 +110,8 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     let email: string, ticket_type: string, subject: string, description: string;
-    let attachmentUrl: string | null = null;
+    let attachmentUrls: string[] = [];
+    let planChangeTarget: string | null = null;
 
     const contentType = request.headers.get("content-type") || "";
 
@@ -120,25 +121,28 @@ export async function POST(request: Request) {
       ticket_type = (formData.get("ticket_type") as string) || "revision";
       subject = (formData.get("subject") as string) || "";
       description = (formData.get("description") as string) || "";
+      planChangeTarget = (formData.get("plan_change_target") as string) || null;
 
-      const file = formData.get("attachment") as File | null;
-      if (file && file.size > 0) {
+      const files = formData.getAll("attachment") as File[];
+      if (files.length > 0) {
         const supabaseAdmin = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           process.env.SUPABASE_SERVICE_ROLE_KEY!
         );
-        const ext = file.name.split(".").pop() || "bin";
-        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-        const arrayBuffer = await file.arrayBuffer();
-        const { error: uploadError } = await supabaseAdmin.storage
-          .from("ticket-attachments")
-          .upload(fileName, arrayBuffer, { contentType: file.type });
-
-        if (!uploadError) {
-          const { data: urlData } = supabaseAdmin.storage
+        for (const file of files) {
+          if (!file || file.size === 0) continue;
+          const ext = file.name.split(".").pop() || "bin";
+          const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const arrayBuffer = await file.arrayBuffer();
+          const { error: uploadError } = await supabaseAdmin.storage
             .from("ticket-attachments")
-            .getPublicUrl(fileName);
-          attachmentUrl = urlData?.publicUrl || null;
+            .upload(fileName, arrayBuffer, { contentType: file.type });
+          if (!uploadError) {
+            const { data: urlData } = supabaseAdmin.storage
+              .from("ticket-attachments")
+              .getPublicUrl(fileName);
+            if (urlData?.publicUrl) attachmentUrls.push(urlData.publicUrl);
+          }
         }
       }
     } else {
@@ -147,9 +151,12 @@ export async function POST(request: Request) {
       ticket_type = body.ticket_type || "revision";
       subject = body.subject || "";
       description = body.description || "";
+      planChangeTarget = body.plan_change_target || null;
     }
 
-    if (!email || !subject?.trim() || !description?.trim()) {
+    const isPlanChange = ["upgrade_to_subscription", "upgrade_plan", "downgrade_plan"].includes(ticket_type);
+
+    if (!email || !subject?.trim() || (!description?.trim() && !isPlanChange)) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -215,8 +222,10 @@ export async function POST(request: Request) {
         plan_type: quote.plan_type,
         ticket_type,
         subject: subject.trim(),
-        description: description.trim(),
-        attachment_url: attachmentUrl,
+        description: (description || "").trim(),
+        attachment_url: attachmentUrls.length > 0 ? attachmentUrls[0] : null,
+        attachment_urls: attachmentUrls,
+        plan_change_target: planChangeTarget || null,
         status: "open",
       }])
       .select()
@@ -262,3 +271,4 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Failed to update ticket" }, { status: 500 });
   }
 }
+
