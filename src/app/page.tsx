@@ -376,11 +376,11 @@ function HeroSection() {
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap";
+    link.href = "https://api.fontshare.com/v2/css?f[]=switzer@400,500,600,700&display=swap";
     document.head.appendChild(link);
     // Inject blink keyframe into head so it always applies
     const style = document.createElement("style");
-    style.textContent = "@keyframes heroBlink{0%,49%{opacity:1}50%,100%{opacity:0}}.hero-cursor{display:inline-block;animation:heroBlink 0.9s steps(1,end) infinite;margin-left:1px}@keyframes heroZoom{0%{transform:scale(1);opacity:1}100%{transform:scale(3);opacity:0}}.hero-zoom-out{animation:heroZoom 0.65s cubic-bezier(0.4,0,1,1) forwards}";
+    style.textContent = "@keyframes heroBlink{0%,49%{opacity:1}50%,100%{opacity:0}}.hero-cursor{display:inline-block;animation:heroBlink 0.9s steps(1,end) infinite;margin-left:1px;color:#f97316}@keyframes heroOverlayZoom{0%{transform:scale(1);opacity:1}70%{opacity:1}100%{transform:scale(6);opacity:0}}.hero-zoom-overlay-text{animation:heroOverlayZoom 0.65s cubic-bezier(0.4,0,1,1) forwards}";
     document.head.appendChild(style);
     return () => {
       if (document.head.contains(link)) document.head.removeChild(link);
@@ -409,8 +409,10 @@ function HeroSection() {
 
   // Zoom-to-services on scroll down
   useEffect(() => {
+    const blockScroll = (e: Event) => { if (zoomingRef.current) e.preventDefault(); };
     const handleWheel = (e: WheelEvent) => {
-      if (e.deltaY <= 0 || zoomingRef.current) return;
+      if (zoomingRef.current) { e.preventDefault(); return; }
+      if (e.deltaY <= 0) return;
       const hero = document.getElementById("hero");
       if (!hero) return;
       const rect = hero.getBoundingClientRect();
@@ -427,7 +429,11 @@ function HeroSection() {
       }
     };
     window.addEventListener("wheel", handleWheel, { passive: false });
-    return () => window.removeEventListener("wheel", handleWheel);
+    window.addEventListener("touchmove", blockScroll, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchmove", blockScroll);
+    };
   }, []);
 
   return (
@@ -443,7 +449,7 @@ function HeroSection() {
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Quality Guaranteed</span></div>
           </div>
 
-          <h1 className={`text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2 transition-none ${zooming ? "hero-zoom-out" : ""}`} style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2 transition-none" style={{ fontFamily: "'Switzer', sans-serif", ...(zooming ? { opacity: 0 } : {}) }}>
             <span className="block">We Build</span>
             <span className="block gradient-text whitespace-nowrap" style={{ minHeight: "1.1em" }}>
               {displayed}<span className="hero-cursor">|</span>
@@ -480,6 +486,16 @@ function HeroSection() {
           ))}
         </div>
       </div>
+
+      {zooming && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "var(--background)", overflow: "hidden", pointerEvents: "none" }}>
+          <h1 className="hero-zoom-overlay-text text-5xl md:text-7xl lg:text-8xl font-semibold tracking-tight leading-[1.05] text-center" style={{ fontFamily: "'Switzer', sans-serif" }}>
+            <span className="block">We Build</span>
+            <span className="block gradient-text whitespace-nowrap" style={{ minHeight: "1.1em" }}>{displayed}<span style={{ color: "#f97316", display: "inline-block" }}>|</span></span>
+            <span className="block">That Convert</span>
+          </h1>
+        </div>
+      )}
     </section>
   );
 }
@@ -1234,6 +1250,15 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     linkedin: "",
     googleBusiness: "",
   });
+  const [formStep, setFormStep] = useState(1);
+  const [step2Data, setStep2Data] = useState({
+    homePurpose: "", homeValueProp: "", homeAction: "", homeDetails: "",
+    aboutBusiness: "", aboutUnique: "", aboutFeel: "", aboutDetails: "",
+    servicesInfo: "", servicesBenefits: "", servicesOffers: "", servicesDetails: "",
+    contactMethods: "", contactHours: "", contactCTA: "", contactDetails: "",
+    additionalPages: [] as string[],
+    additionalPagesDetails: "",
+  });
   const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | "phone" | "plan" | "domain" | "google" | "ownsDomain" | null>(null);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -1266,6 +1291,13 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       return () => clearTimeout(timer);
     }
   }, [submitSuccess]);
+
+  // Leave-site prompt when any field has data
+  useEffect(() => {
+    const hasData = Object.values(formData).some(v => typeof v === "string" && v.trim()) || ownsDomain || existingDomain.trim();
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ""; };
+    if (hasData) { window.addEventListener("beforeunload", handler); return () => window.removeEventListener("beforeunload", handler); }
+  }, [formData, ownsDomain, existingDomain]);
 
   // Domain validation regex
   const validateDomainFormat = (domain: string): boolean => {
@@ -1491,10 +1523,33 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     return Object.keys(newErrors).length === 0;
   };
 
+  const isMultiStepPlan = ["Monthly", "Hybrid", "Annual"].includes(formData.paymentPlan);
+
+  const validateStep2 = () => {
+    const required = [
+      "homePurpose","homeValueProp","homeAction","homeDetails",
+      "aboutBusiness","aboutUnique","aboutFeel","aboutDetails",
+      "servicesInfo","servicesBenefits","servicesOffers","servicesDetails",
+      "contactMethods","contactHours","contactCTA","contactDetails",
+    ] as const;
+    return required.every(k => step2Data[k].trim());
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isMultiStepPlan && formStep === 1) {
+      if (!validateForm()) return;
+      setFormStep(2);
+      return;
+    }
+
     if (!validateForm()) {
+      return;
+    }
+
+    if (isMultiStepPlan && !validateStep2()) {
+      setErrors(prev => ({ ...prev, submit: "Please fill out all required fields in Step 2." }));
       return;
     }
 
@@ -1524,6 +1579,26 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           googleBusiness: formData.googleBusiness,
           ownsDomain: ownsDomain ? "yes" : "no",
           existingDomain: ownsDomain ? existingDomain : "",
+          ...(isMultiStepPlan ? {
+            "Home — Purpose": step2Data.homePurpose,
+            "Home — Value Prop": step2Data.homeValueProp,
+            "Home — CTA": step2Data.homeAction,
+            "Home — Details": step2Data.homeDetails,
+            "About — Business": step2Data.aboutBusiness,
+            "About — Unique": step2Data.aboutUnique,
+            "About — Feel": step2Data.aboutFeel,
+            "About — Details": step2Data.aboutDetails,
+            "Services — Info": step2Data.servicesInfo,
+            "Services — Benefits": step2Data.servicesBenefits,
+            "Services — Offers": step2Data.servicesOffers,
+            "Services — Details": step2Data.servicesDetails,
+            "Contact — Methods": step2Data.contactMethods,
+            "Contact — Hours": step2Data.contactHours,
+            "Contact — CTA": step2Data.contactCTA,
+            "Contact — Details": step2Data.contactDetails,
+            "Additional Pages": step2Data.additionalPages.join(", ") || "None",
+            "Additional Pages — Details": step2Data.additionalPagesDetails,
+          } : {}),
           _replyto: formData.email,
           _subject: `New GimmeASite Inquiry from ${formData.name}`,
         }),
@@ -1562,6 +1637,14 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         setExistingDomain("");
         setSocialValidated({});
         setErrors({});
+        setFormStep(1);
+        setStep2Data({
+          homePurpose: "", homeValueProp: "", homeAction: "", homeDetails: "",
+          aboutBusiness: "", aboutUnique: "", aboutFeel: "", aboutDetails: "",
+          servicesInfo: "", servicesBenefits: "", servicesOffers: "", servicesDetails: "",
+          contactMethods: "", contactHours: "", contactCTA: "", contactDetails: "",
+          additionalPages: [], additionalPagesDetails: "",
+        });
       } else {
         setErrors(prev => ({ ...prev, submit: "Something went wrong. Please try again or email us at hello@gimmeasite.com." }));
       }
@@ -1685,8 +1768,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <h3 className="text-2xl font-bold mb-2">Message Sent!</h3>
                 <p className="text-muted-foreground">We'll get back to you within 24 hours.</p>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+            ) : (<>
+              <form onSubmit={handleSubmit} className="space-y-6" style={{ display: formStep === 1 ? undefined : "none" }}>
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium mb-2">
@@ -2194,11 +2277,149 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   className="w-full bg-primary hover:bg-primary/90 text-lg py-6"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? "Sending..." : "Send Message"}
+                  {isSubmitting ? "Sending..." : isMultiStepPlan ? "Next" : "Send Message"}
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </form>
-            )}
+
+              {/* ── Step 2: Page Content ── */}
+              {formStep === 2 && (
+                <div className="mt-0">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-bold">2</div>
+                    <h3 className="text-xl font-bold">Page Content</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-6">Answer the prompts below so we can write the copy for each page on your site. All fields are required.</p>
+
+                  {([
+                    { title: "Home", fields: [
+                      { k: "homePurpose" as const, label: "What is the main purpose of your homepage?", ph: "e.g., drive sales, generate leads, showcase portfolio" },
+                      { k: "homeValueProp" as const, label: "What is your key message or value proposition?", ph: "What you want visitors to see/feel first" },
+                      { k: "homeAction" as const, label: "What action do you want visitors to take on this page?", ph: "e.g., call, book, buy, sign up" },
+                      { k: "homeDetails" as const, label: "Any additional details for the Home page?", ph: "Optional — specific content, layout ideas, etc.", optional: true },
+                    ]},
+                    { title: "About", fields: [
+                      { k: "aboutBusiness" as const, label: "Describe your business — how it started, what you do, and who you serve.", ph: "Your story and mission" },
+                      { k: "aboutUnique" as const, label: "What sets you apart from competitors? What's your unique story?", ph: "Your differentiators" },
+                      { k: "aboutFeel" as const, label: "What do you want visitors to feel or think after reading this page?", ph: "e.g., trustworthy, innovative, approachable" },
+                      { k: "aboutDetails" as const, label: "Any additional details for the About page?", ph: "Optional — awards, milestones, team info, etc.", optional: true },
+                    ]},
+                    { title: "Services / Products", fields: [
+                      { k: "servicesInfo" as const, label: "List all your services or products — names, descriptions, and pricing if applicable.", ph: "Include all offerings" },
+                      { k: "servicesBenefits" as const, label: "What are the main benefits of each service/product for your customers?", ph: "Focus on customer outcomes" },
+                      { k: "servicesOffers" as const, label: "Any special offers, packages, or promotions you want highlighted?", ph: "Discounts, bundles, limited-time deals" },
+                      { k: "servicesDetails" as const, label: "Any additional details for the Services / Products page?", ph: "Optional — certifications, process steps, guarantees, etc.", optional: true },
+                    ]},
+                    { title: "Contact", fields: [
+                      { k: "contactMethods" as const, label: "What contact methods do you want available?", ph: "e.g., phone, email, contact form, live chat" },
+                      { k: "contactHours" as const, label: "What are your business hours and preferred response time?", ph: "e.g., Mon–Fri 9AM–5PM EST, reply within 24hrs" },
+                      { k: "contactCTA" as const, label: "What's the main reason you want visitors to contact you?", ph: "Your call-to-action for this page" },
+                      { k: "contactDetails" as const, label: "Any additional details for the Contact page?", ph: "Optional — locations, social links, map embed, etc.", optional: true },
+                    ]},
+                  ] as Array<{ title: string; fields: Array<{ k: keyof typeof step2Data; label: string; ph: string; optional?: boolean }> }>).map(({ title, fields }) => (
+                    <div key={title} className="mb-8">
+                      <h4 className="text-base font-semibold mb-4 pb-2 border-b border-border/50">{title} Page</h4>
+                      <div className="space-y-4">
+                        {fields.map(({ k, label, ph, optional }) => (
+                          <div key={k}>
+                            <label className="block text-sm font-medium mb-1.5">
+                              {label} {!optional && <span className="text-red-500">*</span>}
+                            </label>
+                            <Textarea
+                              className="bg-background min-h-[80px]"
+                              placeholder={ph}
+                              value={(step2Data[k] as string) || ""}
+                              onChange={e => setStep2Data(prev => ({ ...prev, [k]: e.target.value }))}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Additional Pages */}
+                  <div className="mb-8">
+                    <h4 className="text-base font-semibold mb-2 pb-2 border-b border-border/50">Additional Pages</h4>
+                    <p className="text-xs text-muted-foreground mb-4">Select any additional pages you&apos;d like included on your website.</p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                      {[
+                        "Blog","FAQ","Testimonials / Reviews","Portfolio / Gallery",
+                        "Team / Staff","Careers / Jobs","Press / Media Kit","Events",
+                        "Newsletter / Email Signup","Online Store / Shop","Product Catalog",
+                        "Booking / Appointments","Login / Member Portal","Dashboard / Client Portal",
+                        "Terms of Service","Privacy Policy","Cookie Policy","Sitemap",
+                        "404 / Error Page","Coming Soon / Under Construction","Thank You Page",
+                        "Confirmation Page","Affiliates / Partners","Case Studies",
+                        "Resources / Downloads","Video Gallery","Photo Gallery","Virtual Tour",
+                        "Podcast / Audio","Locations / Branches","Delivery / Shipping Info",
+                        "Return Policy","Warranty Info","Support / Help Center","Live Chat",
+                        "Community / Forum","Investor Relations","Franchise Info",
+                        "Wholesale Inquiry","Donation / Fundraising",
+                      ].map((page) => (
+                        <label key={page} className="flex items-center gap-2 text-sm cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 accent-primary rounded"
+                            checked={step2Data.additionalPages.includes(page)}
+                            onChange={e => {
+                              setStep2Data(prev => ({
+                                ...prev,
+                                additionalPages: e.target.checked
+                                  ? [...prev.additionalPages, page]
+                                  : prev.additionalPages.filter(p => p !== page),
+                              }));
+                            }}
+                          />
+                          <span className="text-muted-foreground">{page}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="mt-4">
+                      <label className="block text-sm font-medium mb-1.5">Additional details for these pages</label>
+                      <Textarea
+                        className="bg-background min-h-[80px]"
+                        placeholder="Describe what you need on any of the pages selected above, or specify any pages not listed."
+                        value={step2Data.additionalPagesDetails}
+                        onChange={e => setStep2Data(prev => ({ ...prev, additionalPagesDetails: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Security box */}
+                  <div className="flex items-start gap-3 p-4 bg-secondary/50 rounded-xl border border-border/50 mb-6">
+                    <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">
+                        <span className="font-medium text-foreground">Your information is secure with us.</span>{" "}
+                        We use industry-standard encryption and never share your data with third parties.
+                      </p>
+                    </div>
+                  </div>
+
+                  {errors.submit && (
+                    <p className="text-sm text-red-500 text-center mb-4">{errors.submit}</p>
+                  )}
+
+                  <Button
+                    type="button"
+                    className="w-full bg-primary hover:bg-primary/90 text-lg py-6 mb-3"
+                    disabled={isSubmitting}
+                    onClick={handleSubmit as unknown as React.MouseEventHandler}
+                  >
+                    {isSubmitting ? "Sending..." : "Send Message"}
+                    <ArrowRight className="w-5 h-5 ml-2" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full py-6 text-base"
+                    onClick={() => setFormStep(1)}
+                  >
+                    Back
+                  </Button>
+                </div>
+              )}
+            </>)}
           </Card>
         </div>
       </div>
