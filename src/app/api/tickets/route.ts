@@ -110,7 +110,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     let email: string, ticket_type: string, subject: string, description: string;
-    let attachmentUrls: string[] = [];
+    const attachmentUrls: string[] = [];
     let planChangeTarget: string | null = null;
 
     const contentType = request.headers.get("content-type") || "";
