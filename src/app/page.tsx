@@ -1211,7 +1211,9 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
   });
   const [showAdditionalPagesHelp, setShowAdditionalPagesHelp] = useState(false);
   const [showAttachmentsHelp, setShowAttachmentsHelp] = useState(false);
-  const attachmentsRef = useRef<FileList | null>(null);
+  const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
+  const [fileErrors, setFileErrors] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | "phone" | "plan" | "domain" | "google" | "ownsDomain" | null>(null);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -1260,7 +1262,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     return domainPattern.test(domain);
   };
 
-  // Check domain availability using DNS lookup simulation
+  // Check domain availability — checks both A and NS records so registered-but-unhosted domains show as taken
   const checkDomainAvailability = async (domain: string) => {
     if (!domain.trim() || !validateDomainFormat(domain)) {
       setDomainAvailability(null);
@@ -1271,37 +1273,52 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     setDomainAvailability(null);
 
     try {
-      // Use a DNS-over-HTTPS service to check if domain resolves
-      // This is a simple heuristic - if it resolves, it's likely taken
-      const response = await fetch(
-        `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`,
-        { method: "GET" }
-      );
+      const [aRes, nsRes] = await Promise.all([
+        fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=A`),
+        fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=NS`),
+      ]);
 
-      if (response.ok) {
-        const data = await response.json();
-        // If there are Answer records, the domain likely exists (taken)
-        if (data.Answer && data.Answer.length > 0) {
+      if (aRes.ok && nsRes.ok) {
+        const [aData, nsData] = await Promise.all([aRes.json(), nsRes.json()]);
+        const hasA = aData.Answer && aData.Answer.length > 0;
+        const hasNS = nsData.Answer && nsData.Answer.length > 0;
+        if (hasA || hasNS) {
           setDomainAvailability("unavailable");
-        } else if (data.Status === 3) {
-          // NXDOMAIN - domain doesn't exist, might be available
+        } else if (aData.Status === 3 && nsData.Status === 3) {
           setDomainAvailability("available");
         } else {
-          // Other statuses - check WHOIS for more accuracy
-          // For now, we'll suggest it might be available but recommend verification
           setDomainAvailability("available");
         }
       } else {
-        // On error, suggest checking manually
         setDomainAvailability(null);
       }
     } catch (error) {
-      // On network error, suggest checking manually
       console.error("Domain check error:", error);
       setDomainAvailability(null);
     } finally {
       setCheckingDomain(false);
     }
+  };
+
+  // Detect common email domain typos
+  const getSuspiciousEmailDomainError = (email: string): string | null => {
+    const domain = email.split("@")[1]?.toLowerCase();
+    if (!domain) return null;
+    const typos: Record<string, string> = {
+      "gmail.co": "gmail.com", "gmial.com": "gmail.com", "gmai.com": "gmail.com",
+      "gamil.com": "gmail.com", "gmail.con": "gmail.com", "gnail.com": "gmail.com",
+      "hotmail.co": "hotmail.com", "hotmial.com": "hotmail.com", "hotamil.com": "hotmail.com",
+      "hotmal.com": "hotmail.com", "hotmaill.com": "hotmail.com",
+      "yahoo.co": "yahoo.com", "yahooo.com": "yahoo.com", "yaho.com": "yahoo.com",
+      "outlok.com": "outlook.com", "outloook.com": "outlook.com", "outloo.com": "outlook.com",
+      "icloud.co": "icloud.com", "aol.co": "aol.com", "protonmail.co": "protonmail.com",
+      "googlemail.co": "googlemail.com",
+    };
+    if (typos[domain]) {
+      const local = email.split("@")[0];
+      return `Did you mean ${local}@${typos[domain]}?`;
+    }
+    return null;
   };
 
   // Social media URL validation
@@ -1317,12 +1334,10 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       linkedin: `https://linkedin.com/company/${username}`,
     };
 
-    // For Google Business, validate it's a valid Google URL
+    // For Google Business, accept any URL-like input (the full URL is now entered directly)
     if (platform === 'googleBusiness') {
-      const googleUrlPattern = /^https?:\/\/(www\.)?google\.(com|[a-z]{2,3})\/maps\//i;
-      const googleSearchPattern = /^https?:\/\/(www\.)?google\.(com|[a-z]{2,3})\/search\?/i;
-      const isValidGoogleUrl = googleUrlPattern.test(username) || googleSearchPattern.test(username) || username.includes('maps.app.goo.gl') || username.includes('g.page') || username.includes('business.google');
-      return isValidGoogleUrl;
+      const isUrl = /^https?:\/\//i.test(username) || username.includes('share.google') || username.includes('maps.app.goo.gl') || username.includes('g.page') || username.includes('business.google') || username.includes('google.com');
+      return isUrl;
     }
 
     // Basic username format validation
@@ -1344,6 +1359,13 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       return;
     }
 
+    const atPlatforms = ["instagram", "twitter", "tiktok", "linkedin", "facebook"];
+    if (atPlatforms.includes(platform) && value.startsWith("@")) {
+      setErrors(prev => ({ ...prev, [platform]: "Please remove the @ symbol — just enter your username." }));
+      setSocialValidated(prev => ({ ...prev, [platform]: false }));
+      return;
+    }
+
     setValidatingSocial(prev => ({ ...prev, [platform]: true }));
 
     const isValid = await validateSocialMediaUrl(platform, value);
@@ -1352,7 +1374,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
 
     if (!isValid) {
       if (platform === 'googleBusiness') {
-        setErrors(prev => ({ ...prev, [platform]: "Please enter a valid Google Business URL" }));
+        setErrors(prev => ({ ...prev, [platform]: "Please enter a valid Google Business URL (e.g., https://share.google/...)" }));
       } else {
         setErrors(prev => ({ ...prev, [platform]: "This username format appears to be invalid" }));
       }
@@ -1403,6 +1425,9 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email";
+    } else {
+      const domainHint = getSuspiciousEmailDomainError(formData.email);
+      if (domainHint) newErrors.email = domainHint;
     }
     if (!formData.phone.trim()) {
       newErrors.phone = "Phone number is required";
@@ -1452,7 +1477,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     if (!formData.paymentPlan) {
       newErrors.paymentPlan = "Payment plan is required";
     }
-    if (!formData.message.trim()) {
+    const isUpfrontPlan = !formData.paymentPlan || formData.paymentPlan === "Upfront";
+    if (isUpfrontPlan && !formData.message.trim()) {
       newErrors.message = "Project description is required";
     }
 
@@ -1538,9 +1564,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         fd.append("additionalPages", step2Data.additionalPages.join(", ") || "None");
         fd.append("additionalDetails", step2Data.additionalPagesDetails);
       }
-      if (attachmentsRef.current) {
-        Array.from(attachmentsRef.current).forEach(file => fd.append("attachment", file));
-      }
+      attachedFiles.forEach(file => fd.append("attachment", file));
       fd.append("_replyto", formData.email);
       fd.append("_subject", `New GimmeASite Inquiry from ${formData.name}`);
       const response = await fetch("https://formspree.io/f/xnjobyzd", {
@@ -1582,6 +1606,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         setExistingDomain("");
         setSocialValidated({});
         setErrors({});
+        setAttachedFiles([]);
+        setFileErrors([]);
         setFormStep(1);
         setStep2Data({
           homePurpose: "", homeValueProp: "", homeAction: "", homeDetails: "",
@@ -1602,12 +1628,16 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
+    const { id } = e.target;
+    let value = e.target.value;
+    // Strip full URL if user pastes facebook.com/... into the username-only field
+    if (id === "facebook") {
+      value = value.replace(/^https?:\/\/(www\.)?facebook\.com\//i, "");
+    }
     setFormData(prev => ({ ...prev, [id]: value }));
     if (errors[id]) {
       setErrors(prev => ({ ...prev, [id]: "" }));
     }
-    // Reset domain availability when typing
     if (id === "domain") {
       setDomainAvailability(null);
     }
@@ -1718,7 +1748,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium mb-2">
-                      Name <span className="text-red-500 cursor-help" title="Required field">*</span>
+                      Full Name <span className="text-red-500 cursor-help" title="Required field">*</span>
                     </label>
                     <Input
                       id="name"
@@ -1993,20 +2023,22 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </div>
                   {errors.paymentPlan && <p className="text-red-500 text-xs mt-1">{errors.paymentPlan}</p>}
                 </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium mb-2">
-                    Tell us about your project <span className="text-red-500 cursor-help" title="Required field">*</span>
-                  </label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    placeholder="Be as detailed as possible. Describe your business, design vision and ideas, site features, and any other specific requirements..."
-                    className={`bg-background min-h-[150px] ${errors.message ? "border-red-500" : ""}`}
-                    value={formData.message}
-                    onChange={handleChange}
-                  />
-                  {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
-                </div>
+                {(!formData.paymentPlan || formData.paymentPlan === "Upfront") && (
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium mb-2">
+                      Tell us about your project <span className="text-red-500 cursor-help" title="Required field">*</span>
+                    </label>
+                    <Textarea
+                      id="message"
+                      name="message"
+                      placeholder="Be as detailed as possible. Describe your business, design vision and ideas, site features, and any other specific requirements..."
+                      className={`bg-background min-h-[150px] ${errors.message ? "border-red-500" : ""}`}
+                      value={formData.message}
+                      onChange={handleChange}
+                    />
+                    {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message}</p>}
+                  </div>
+                )}
 
                 {/* Social Media Section */}
                 <div>
@@ -2199,19 +2231,16 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         <Check className="w-3 h-3 text-green-500" />
                       )}
                     </div>
-                    <div className="flex">
-                      <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-input bg-muted text-muted-foreground text-xs">share.google/</span>
-                      <Input
-                        id="googleBusiness"
-                        name="googleBusiness"
-                        type="text"
-                        placeholder="ID"
-                        className={`bg-background rounded-l-none ${errors.googleBusiness ? "border-red-500" : ""}`}
-                        value={formData.googleBusiness}
-                        onChange={handleChange}
-                        onBlur={e => handleSocialBlur("googleBusiness", e.target.value)}
-                      />
-                    </div>
+                    <Input
+                      id="googleBusiness"
+                      name="googleBusiness"
+                      type="text"
+                      placeholder="https://share.google/..."
+                      className={`bg-background ${errors.googleBusiness ? "border-red-500" : ""}`}
+                      value={formData.googleBusiness}
+                      onChange={handleChange}
+                      onBlur={e => handleSocialBlur("googleBusiness", e.target.value)}
+                    />
                     {errors.googleBusiness && <p className="text-red-500 text-xs mt-1">{errors.googleBusiness}</p>}
                   </div>
                 </div>
@@ -2229,15 +2258,53 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       >?</button>
                     </span>
                   </label>
+                  {attachedFiles.length > 0 && (
+                    <div className="space-y-1.5 mb-2">
+                      {attachedFiles.map((file, i) => (
+                        <div key={i} className="flex items-center gap-2 bg-primary/5 border border-primary/20 rounded-lg px-3 py-2">
+                          <svg className="w-3.5 h-3.5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                          <span className="text-xs flex-1 truncate">{file.name}</span>
+                          <button type="button" onClick={() => { setAttachedFiles(prev => prev.filter((_, j) => j !== i)); setFileErrors([]); }} className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"><X className="w-3.5 h-3.5" /></button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full flex items-center gap-2 border border-dashed border-border rounded-lg px-3 py-2.5 text-sm text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors"
+                  >
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                    {attachedFiles.length > 0 ? "Add more files" : "Click to attach files"}
+                  </button>
                   <input
+                    ref={fileInputRef}
                     type="file"
-                    name="files"
                     multiple
-                    accept=".png,.jpg,.jpeg,.gif,.mp4,.svg,.zip"
-                    className="block w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer border border-input rounded-lg p-2 bg-background"
-                    onChange={e => { attachmentsRef.current = e.target.files; }}
+                    accept=".png,.jpg,.jpeg,.gif,.mp4,.svg,.zip,.otf"
+                    className="hidden"
+                    onChange={e => {
+                      const newFiles = Array.from(e.target.files || []);
+                      const combined = [...attachedFiles, ...newFiles];
+                      const errs: string[] = [];
+                      if (combined.length > 10) {
+                        errs.push(`You can only attach up to 10 files. Please remove ${combined.length - 10} file(s).`);
+                        setAttachedFiles(combined.slice(0, 10));
+                      } else {
+                        setAttachedFiles(combined);
+                      }
+                      const oversized = combined.filter(f => f.size > 25 * 1024 * 1024);
+                      if (oversized.length > 0) {
+                        errs.push(`The following file(s) exceed 25 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
+                      }
+                      setFileErrors(errs);
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
                   />
-                  <p className="text-xs text-muted-foreground mt-1.5">PNG, JPG, GIF, MP4, SVG, or ZIP files accepted. Max 10 files, 25 MB each.</p>
+                  {fileErrors.map((err, i) => (
+                    <p key={i} className="text-red-500 text-xs mt-1">{err}</p>
+                  ))}
+                  <p className="text-xs text-muted-foreground mt-1.5">PNG, JPG, GIF, MP4, SVG, OTF, or ZIP files accepted. Max 10 files, 25 MB each.</p>
                 </div>
 
                 {/* Security Disclaimer */}
@@ -2525,7 +2592,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   <li>Search for your business name on Google</li>
                   <li>Locate your Business Profile in the Knowledge Panel</li>
                   <li>Click the Share button beneath your business name</li>
-                  <li>Copy and paste the ID here (delete &quot;https://share.google/&quot;)</li>
+                  <li>Click to copy link, and paste it in the textbox.</li>
                 </ol>
               )}
             </div>
