@@ -607,10 +607,10 @@ export default function TicketsPage() {
                           type="file"
                           className="hidden"
                           onChange={(e) => setAttachment(e.target.files?.[0] || null)}
-                          accept=".png,.jpg,.jpeg,.pdf,.docx,.zip"
+                          accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.pdf,.docx,.svg,.html,.css,.js,.zip"
                         />
                         <p className="text-xs text-muted-foreground mt-1.5">
-                          PNG, JPG, PDF, DOCX, or ZIP files accepted.
+                          PNG, JPG, WEBP, GIF, MP4, PDF, DOCX, SVG, HTML, CSS, JS, or ZIP files accepted. Max file size 25 MB.
                         </p>
                       </div>
                     </>
