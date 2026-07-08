@@ -170,6 +170,7 @@ function FaqPopup({ isOpen, onClose, openToIndex }: { isOpen: boolean; onClose: 
 function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showAccountPopup, setShowAccountPopup] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const handleNavClick = (sectionId: string) => {
     scrollToSection(sectionId);
@@ -187,10 +188,49 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
             </Link>
 
             <div className="hidden md:flex items-center gap-8">
-              <button type="button" onClick={() => handleNavClick("services")} className="text-muted-foreground hover:text-foreground transition-colors">Services</button>
-              <button type="button" onClick={() => handleNavClick("process")} className="text-muted-foreground hover:text-foreground transition-colors">Process</button>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("services")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button type="button" onClick={() => handleNavClick("services")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
+                  Services <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "services" ? "rotate-180" : ""}`} />
+                </button>
+                {openDropdown === "services" && (
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden">
+                    {(["Website Design", "Hosting", "Maintenance"] as const).map(item => (
+                      <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                        onClick={() => { handleNavClick("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: item })), 600); }}
+                      >{item}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("process")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button type="button" onClick={() => handleNavClick("process")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
+                  Process <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "process" ? "rotate-180" : ""}`} />
+                </button>
+                {openDropdown === "process" && (
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden">
+                    {(["Discovery", "Design", "Development", "Deployment"] as const).map(item => (
+                      <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                        onClick={() => { handleNavClick("process"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightProcess", { detail: item })), 600); }}
+                      >{item}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <button type="button" onClick={() => handleNavClick("about")} className="text-muted-foreground hover:text-foreground transition-colors">About</button>
-              <button type="button" onClick={() => handleNavClick("pricing")} className="text-muted-foreground hover:text-foreground transition-colors">Pricing</button>
+              <div className="relative" onMouseEnter={() => setOpenDropdown("pricing")} onMouseLeave={() => setOpenDropdown(null)}>
+                <button type="button" onClick={() => handleNavClick("pricing")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
+                  Pricing <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "pricing" ? "rotate-180" : ""}`} />
+                </button>
+                {openDropdown === "pricing" && (
+                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden">
+                    {(["Upfront", "Monthly", "Hybrid", "Annual"] as const).map(item => (
+                      <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                        onClick={() => { handleNavClick("pricing"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightPlan", { detail: item })), 600); }}
+                      >{item}</button>
+                    ))}
+                  </div>
+                )}
+              </div>
               <button type="button" onClick={() => handleNavClick("contact")} className="text-muted-foreground hover:text-foreground transition-colors">Contact</button>
             </div>
 
@@ -312,19 +352,50 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
 
 // Hero Section
 function HeroSection() {
+  const phrases = ["Stunning Websites", "Online Presences", "Brand Identities", "Project Designs"];
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [displayed, setDisplayed] = useState("Stunning Websites");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap";
+    document.head.appendChild(link);
+    return () => { if (document.head.contains(link)) document.head.removeChild(link); };
+  }, []);
+
+  useEffect(() => {
+    const target = phrases[phraseIndex];
+    if (!isDeleting && displayed === target) {
+      const t = setTimeout(() => setIsDeleting(true), 1800);
+      return () => clearTimeout(t);
+    }
+    if (isDeleting && displayed === "") {
+      setPhraseIndex((phraseIndex + 1) % phrases.length);
+      setIsDeleting(false);
+      return;
+    }
+    const speed = isDeleting ? 45 : 85;
+    const t = setTimeout(() => {
+      setDisplayed(isDeleting ? displayed.slice(0, -1) : target.slice(0, displayed.length + 1));
+    }, speed);
+    return () => clearTimeout(t);
+  }, [displayed, isDeleting, phraseIndex]);
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden grid-pattern noise-bg">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden grid-pattern noise-bg">
       <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
 
       <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-extrabold tracking-tight leading-[0.9] mb-8 animate-slideIn opacity-0 stagger-2">
-            We Build
-            <br />
-            <span className="gradient-text">Stunning Websites</span>
-            <br />
-            That Convert
+          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2" style={{ fontFamily: "'Instrument Serif', serif" }}>
+            <span className="block">We Build</span>
+            <span className="block gradient-text italic" style={{ minHeight: "1.1em" }}>
+              {displayed}<span className="not-italic animate-pulse">|</span>
+            </span>
+            <span className="block">That Convert</span>
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-slideIn opacity-0 stagger-3">
@@ -454,6 +525,17 @@ function ServicesSection() {
 
 // Process Section
 function ProcessSection() {
+  const [stepAnimKeys, setStepAnimKeys] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const title = (e as CustomEvent).detail as string;
+      setStepAnimKeys(prev => ({ ...prev, [title]: Date.now() }));
+    };
+    window.addEventListener("highlightProcess", handler);
+    return () => window.removeEventListener("highlightProcess", handler);
+  }, []);
+
   const steps = [
     {
       number: "01",
@@ -479,6 +561,7 @@ function ProcessSection() {
 
   return (
     <section id="process" className="py-32 relative noise-bg">
+      <style>{`@keyframes stepPop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.06);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.97);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.03);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .step-pop{border-radius:0.75rem;animation:stepPop 15s ease-out forwards}`}</style>
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Process</Badge>
@@ -494,7 +577,7 @@ function ProcessSection() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, index) => (
-            <div key={step.number} className="relative">
+            <div key={step.number} className={`relative ${stepAnimKeys[step.title] ? "step-pop" : ""}`}>
               {index < steps.length - 1 && (
                 <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent -translate-x-1/2" />
               )}
@@ -560,6 +643,17 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   const [showHybridPopup, setShowHybridPopup] = useState(false);
   const [showEquityBubble, setShowEquityBubble] = useState(false);
   const [equityVote, setEquityVote] = useState<'up' | 'down' | null>(null);
+  const [planAnimKeys, setPlanAnimKeys] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const name = (e as CustomEvent).detail as string;
+      setPlanAnimKeys(prev => ({ ...prev, [name]: Date.now() }));
+    };
+    window.addEventListener("highlightPlan", handler);
+    return () => window.removeEventListener("highlightPlan", handler);
+  }, []);
+
   useEffect(() => {
     const t = setTimeout(() => { setShowUpfrontBubble(true); setShowMonthlyBubble(true); setShowHybridBubble(true); setShowAnnualBubble(true); setShowEquityBubble(true); }, 10000);
     return () => clearTimeout(t);
@@ -575,7 +669,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       features: [
         "Custom Design",
         "Domain",
-        "SSL + Security",
+        "SSL Certificate",
         "Performance Optimization",
         "3 Revisions Total",
         "Temporary Support",
@@ -590,6 +684,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       features: [
         "Advanced Security",
         "Analytics Reports",
+        "Copywriting",
+        "Content Strategy",
         "2 Revisions / Month",
         "Continued Support",
       ],
@@ -603,6 +699,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       features: [
         "Advanced Security",
         "Analytics Reports",
+        "Copywriting",
+        "Content Strategy",
         "4 Revisions / Month",
         "Continued Support",
         "__green__10% Off / Month",
@@ -637,6 +735,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   return (
     <>
       <section id="pricing" className="pt-32 pb-32 relative overflow-x-hidden">
+      <style>{`@keyframes planPop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.05);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.98);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.02);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .plan-pop{animation:planPop 15s ease-out forwards}`}</style>
       <div className="max-w-[1600px] mx-auto px-4">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Pricing</Badge>
@@ -654,7 +753,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={`p-6 relative group h-full flex flex-col ${
+              className={`p-6 relative group h-full flex flex-col ${planAnimKeys[plan.name] ? "plan-pop" : ""} ${
                 plan.popular
                   ? "bg-primary/5 border-primary/30 animate-attention-bounce"
                   : (plan.name === "Hybrid" || plan.name === "Annual")
@@ -890,7 +989,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       </div>
 
       {/* Plan Comparison Table — inline between pricing cards and contact form */}
-      <div className="max-w-[96rem] mx-auto px-6 mt-16">
+      <div id="comparison" className="max-w-[96rem] mx-auto px-6 mt-16">
         <div className="bg-card/50 border border-border/50 rounded-2xl p-6">
           <h3 className="text-lg font-bold mb-5">Plan Comparison</h3>
           <div className="overflow-x-auto">
@@ -908,12 +1007,14 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 {([
                   { perk: "Custom Design", up: true, mo: true, hy: true, an: true },
                   { perk: "Domain", up: true, mo: true, hy: true, an: true },
-                  { perk: "SSL Certified", up: true, mo: true, hy: true, an: true },
+                  { perk: "SSL Certificate", up: true, mo: true, hy: true, an: true },
                   { perk: "Performance", up: true, mo: true, hy: true, an: true },
                   { perk: "Security", up: true, mo: true, hy: true, an: true },
                   { perk: "Revisions", up: "3", mo: "2/month", hy: "4/month", an: "∞" },
                   { perk: "Support", up: "6 Months", mo: "∞", hy: "∞", an: "∞⚡" },
                   { perk: "Analytics", up: false, mo: true, hy: true, an: true },
+                  { perk: "Copywriting", up: false, mo: true, hy: true, an: true },
+                  { perk: "Content Strategy", up: false, mo: true, hy: true, an: true },
                   { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "15%" },
                   { perk: "Redesigns", up: false, mo: false, hy: false, an: true },
                   { perk: "Subdomains", up: false, mo: false, hy: false, an: true },
@@ -2193,7 +2294,7 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
             <div>
               <h4 className="font-semibold mb-4">Services</h4>
               <ul className="space-y-3 text-muted-foreground">
-                <li><button type="button" onClick={() => { scrollToSection("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: "Website Design" })), 600); }} className="hover:text-foreground transition-colors">Web Design</button></li>
+                <li><button type="button" onClick={() => { scrollToSection("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: "Website Design" })), 600); }} className="hover:text-foreground transition-colors">Website Design</button></li>
                 <li><button type="button" onClick={() => { scrollToSection("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: "Hosting" })), 600); }} className="hover:text-foreground transition-colors">Hosting</button></li>
                 <li><button type="button" onClick={() => { scrollToSection("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: "Maintenance" })), 600); }} className="hover:text-foreground transition-colors">Maintenance</button></li>
               </ul>
@@ -2642,6 +2743,42 @@ export default function Home() {
       return () => window.removeEventListener('beforeunload', handler);
     }
   }, [showThanksPopup, bookCallClicked]);
+
+  // Section-scroll navigation
+  useEffect(() => {
+    const sectionIds = ["hero", "services", "process", "about", "pricing", "comparison", "contact", "footer"];
+    let lastSnap = 0;
+    const COOLDOWN = 1000;
+    const handleWheel = (e: WheelEvent) => {
+      const now = Date.now();
+      if (now - lastSnap < COOLDOWN) return;
+      let currentIdx = 0;
+      for (let i = 0; i < sectionIds.length; i++) {
+        const el = document.getElementById(sectionIds[i]);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * 0.5) currentIdx = i;
+      }
+      const el = document.getElementById(sectionIds[currentIdx]);
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const scrollingDown = e.deltaY > 0;
+      const atBottom = rect.bottom <= window.innerHeight + 60;
+      const atTop = rect.top >= -60;
+      if ((scrollingDown && atBottom) || (!scrollingDown && atTop)) {
+        const nextIdx = scrollingDown
+          ? Math.min(currentIdx + 1, sectionIds.length - 1)
+          : Math.max(currentIdx - 1, 0);
+        if (nextIdx !== currentIdx) {
+          lastSnap = now;
+          e.preventDefault();
+          scrollToSection(sectionIds[nextIdx]);
+        }
+      }
+    };
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
+  }, []);
 
   // Handle URL parameters for payment status and modals
   useEffect(() => {
