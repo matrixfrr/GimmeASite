@@ -2237,24 +2237,20 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <div className="mt-0">
                   {([
                     { title: "Home", fields: [
-                      { k: "homePurpose" as const, label: "What is the main purpose of your homepage?", ph: "e.g., drive sales, generate leads, showcase portfolio" },
-                      { k: "homeValueProp" as const, label: "What is your key message or value proposition?", ph: "What you want visitors to see/feel first" },
+                      { k: "homeValueProp" as const, label: "What is your key message or value proposition?", ph: "The text you want visitors to see first" },
                       { k: "homeAction" as const, label: "What action do you want visitors to take on this page?", ph: "e.g., call, book, buy, sign up" },
                     ]},
                     { title: "About", fields: [
-                      { k: "aboutBusiness" as const, label: "Describe your business — how it started, what you do, and who you serve.", ph: "Your story and mission" },
-                      { k: "aboutUnique" as const, label: "What sets you apart from competitors? What's your unique story?", ph: "Your differentiators" },
-                      { k: "aboutFeel" as const, label: "What do you want visitors to feel or think after reading this page?", ph: "e.g., trustworthy, innovative, approachable" },
+                      { k: "aboutBusiness" as const, label: "How did your business start, what do you do, and who do you serve?", ph: "e.g. origins, year of establishment, mission statement" },
+                      { k: "aboutUnique" as const, label: "What sets you apart from competitors? What's your unique story?", ph: "Why visitors should choose you over competitors" },
                     ]},
                     { title: "Services / Products", fields: [
-                      { k: "servicesInfo" as const, label: "List a general overview of your services or products — names, descriptions, and pricing if applicable.", ph: "Include all offerings" },
-                      { k: "servicesBenefits" as const, label: "What are the main benefits of each service/product for your customers?", ph: "Focus on customer outcomes" },
-                      { k: "servicesOffers" as const, label: "Any special offers, packages, or promotions you want highlighted?", ph: "Discounts, bundles, limited-time deals" },
+                      { k: "servicesInfo" as const, label: "What are your services or products?", ph: "e.g. names, descriptions, pricing" },
+                      { k: "servicesOffers" as const, label: "Any special offers, packages, or promotions you want highlighted?", ph: "e.g. discounts, bundles, limited-time deals" },
                     ]},
                     { title: "Contact", fields: [
                       { k: "contactMethods" as const, label: "What contact methods do you want available?", ph: "e.g., phone, email, contact form, live chat" },
                       { k: "contactHours" as const, label: "What are your business hours and preferred response time?", ph: "e.g., Mon–Fri 9AM–5PM EST, reply within 24hrs" },
-                      { k: "contactCTA" as const, label: "What's the main reason you want visitors to contact you?", ph: "Your call-to-action for this page" },
                     ]},
                   ] as Array<{ title: string; fields: Array<{ k: keyof typeof step2Data; label: string; ph: string; optional?: boolean }> }>).map(({ title, fields }) => (
                     <div key={title} className="mb-6">
