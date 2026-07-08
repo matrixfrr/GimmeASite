@@ -1527,16 +1527,16 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       fd.append("ownsDomain", ownsDomain ? "yes" : "no");
       fd.append("existingDomain", ownsDomain ? existingDomain : "");
       if (isMultiStepPlan) {
-        fd.append("Home — Value Prop", step2Data.homeValueProp);
-        fd.append("Home — CTA", step2Data.homeAction);
-        fd.append("About — Business", step2Data.aboutBusiness);
-        fd.append("About — Unique", step2Data.aboutUnique);
-        fd.append("Services — Info", step2Data.servicesInfo);
-        fd.append("Services — Offers", step2Data.servicesOffers);
-        fd.append("Contact — Methods", step2Data.contactMethods);
-        fd.append("Contact — Hours", step2Data.contactHours);
-        fd.append("Additional Pages", step2Data.additionalPages.join(", ") || "None");
-        fd.append("Additional Pages — Details", step2Data.additionalPagesDetails);
+        fd.append("homeKeyMessage", step2Data.homeValueProp);
+        fd.append("homeAction", step2Data.homeAction);
+        fd.append("aboutStory", step2Data.aboutBusiness);
+        fd.append("aboutUnique", step2Data.aboutUnique);
+        fd.append("servicesProducts", step2Data.servicesInfo);
+        fd.append("specialOffers", step2Data.servicesOffers);
+        fd.append("contactMethods", step2Data.contactMethods);
+        fd.append("businessHours", step2Data.contactHours);
+        fd.append("additionalPages", step2Data.additionalPages.join(", ") || "None");
+        fd.append("additionalDetails", step2Data.additionalPagesDetails);
       }
       if (attachmentsRef.current) {
         Array.from(attachmentsRef.current).forEach(file => fd.append("attachment", file));
@@ -1722,6 +1722,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     </label>
                     <Input
                       id="name"
+                      name="name"
                       type="text"
                       placeholder="First Last"
                       className={`bg-background ${errors.name ? "border-red-500" : ""}`}
@@ -1736,6 +1737,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     </label>
                     <Input
                       id="email"
+                      name="email"
                       type="email"
                       placeholder="you@example.com"
                       className={`bg-background ${errors.email ? "border-red-500" : ""}`}
@@ -1757,6 +1759,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     </div>
                     <Input
                       id="phone"
+                      name="phone"
                       type="tel"
                       placeholder="+1 (555) 123-4567"
                       className={`bg-background ${errors.phone ? "border-red-500" : ""}`}
@@ -1778,6 +1781,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     </div>
                     <Input
                       id="company"
+                      name="company"
                       type="text"
                       placeholder="Example, Inc."
                       className="bg-background"
@@ -1790,6 +1794,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <label className="flex items-center gap-2.5 cursor-pointer select-none">
                   <input
                     type="checkbox"
+                    name="ownsDomain"
                     checked={ownsDomain}
                     onChange={(e) => {
                       setOwnsDomain(e.target.checked);
@@ -1848,6 +1853,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   <div className="relative flex gap-2">
                     <Input
                       id="domain"
+                      name="domain"
                       type="text"
                       placeholder="example.com"
                       className={`bg-background flex-1 ${errors.domain ? "border-red-500" : ""} ${
@@ -1993,6 +1999,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </label>
                   <Textarea
                     id="message"
+                    name="message"
                     placeholder="Be as detailed as possible. Describe your business, design vision and ideas, site features, and any other specific requirements..."
                     className={`bg-background min-h-[150px] ${errors.message ? "border-red-500" : ""}`}
                     value={formData.message}
@@ -2030,6 +2037,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         </span>
                         <Input
                           id="instagram"
+                          name="instagram"
                           type="text"
                           placeholder="username"
                           className={`bg-background rounded-l-none ${errors.instagram ? "border-red-500" : ""}`}
@@ -2056,6 +2064,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         </span>
                         <Input
                           id="facebook"
+                          name="facebook"
                           type="text"
                           placeholder="username"
                           className={`bg-background rounded-l-none ${errors.facebook ? "border-red-500" : ""}`}
@@ -2082,6 +2091,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         </span>
                         <Input
                           id="twitter"
+                          name="twitter"
                           type="text"
                           placeholder="username"
                           className={`bg-background rounded-l-none ${errors.twitter ? "border-red-500" : ""}`}
@@ -2108,6 +2118,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         </span>
                         <Input
                           id="youtube"
+                          name="youtube"
                           type="text"
                           placeholder="username"
                           className={`bg-background rounded-l-none ${errors.youtube ? "border-red-500" : ""}`}
@@ -2134,6 +2145,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         </span>
                         <Input
                           id="tiktok"
+                          name="tiktok"
                           type="text"
                           placeholder="username"
                           className={`bg-background rounded-l-none ${errors.tiktok ? "border-red-500" : ""}`}
@@ -2160,6 +2172,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         </span>
                         <Input
                           id="linkedin"
+                          name="linkedin"
                           type="text"
                           placeholder="company"
                           className={`bg-background rounded-l-none ${errors.linkedin ? "border-red-500" : ""}`}
@@ -2190,6 +2203,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       <span className="inline-flex items-center px-2 rounded-l-md border border-r-0 border-input bg-muted text-muted-foreground text-xs">share.google/</span>
                       <Input
                         id="googleBusiness"
+                        name="googleBusiness"
                         type="text"
                         placeholder="ID"
                         className={`bg-background rounded-l-none ${errors.googleBusiness ? "border-red-500" : ""}`}
@@ -2217,6 +2231,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </label>
                   <input
                     type="file"
+                    name="files"
                     multiple
                     accept=".png,.jpg,.jpeg,.gif,.mp4,.svg,.zip"
                     className="block w-full text-sm text-muted-foreground file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer cursor-pointer border border-input rounded-lg p-2 bg-background"
@@ -2255,31 +2270,32 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <div className="mt-0">
                   {([
                     { title: "Home", fields: [
-                      { k: "homeValueProp" as const, label: "What is your key message or value proposition?", ph: "The text you want visitors to see first" },
-                      { k: "homeAction" as const, label: "What action do you want visitors to take on this page?", ph: "e.g., call, book, buy, sign up" },
+                      { k: "homeValueProp" as const, n: "homeKeyMessage", label: "What is your key message or value proposition?", ph: "The text you want visitors to see first" },
+                      { k: "homeAction" as const, n: "homeAction", label: "What action do you want visitors to take on this page?", ph: "e.g., call, book, buy, sign up" },
                     ]},
                     { title: "About", fields: [
-                      { k: "aboutBusiness" as const, label: "How did your business start, what do you do, and who do you serve?", ph: "e.g. origins, year of establishment, mission statement" },
-                      { k: "aboutUnique" as const, label: "What sets you apart from competitors? What's your unique story?", ph: "Why visitors should choose you over competitors" },
+                      { k: "aboutBusiness" as const, n: "aboutStory", label: "How did your business start, what do you do, and who do you serve?", ph: "e.g. origins, year of establishment, mission statement" },
+                      { k: "aboutUnique" as const, n: "aboutUnique", label: "What sets you apart from competitors? What's your unique story?", ph: "Why visitors should choose you over competitors" },
                     ]},
                     { title: "Services / Products", fields: [
-                      { k: "servicesInfo" as const, label: "What are your services or products?", ph: "e.g. names, descriptions, pricing" },
-                      { k: "servicesOffers" as const, label: "Any special offers, packages, or promotions you want highlighted?", ph: "e.g. discounts, bundles, limited-time deals" },
+                      { k: "servicesInfo" as const, n: "servicesProducts", label: "What are your services or products?", ph: "e.g. names, descriptions, pricing" },
+                      { k: "servicesOffers" as const, n: "specialOffers", label: "Any special offers, packages, or promotions you want highlighted?", ph: "e.g. discounts, bundles, limited-time deals" },
                     ]},
                     { title: "Contact", fields: [
-                      { k: "contactMethods" as const, label: "What contact methods do you want available?", ph: "e.g., phone, email, contact form, live chat" },
-                      { k: "contactHours" as const, label: "What are your business hours and preferred response time?", ph: "e.g., Mon–Fri 9AM–5PM EST, reply within 24hrs" },
+                      { k: "contactMethods" as const, n: "contactMethods", label: "What contact methods do you want available?", ph: "e.g., phone, email, contact form, live chat" },
+                      { k: "contactHours" as const, n: "businessHours", label: "What are your business hours and preferred response time?", ph: "e.g., Mon–Fri 9AM–5PM EST, reply within 24hrs" },
                     ]},
-                  ] as Array<{ title: string; fields: Array<{ k: keyof typeof step2Data; label: string; ph: string; optional?: boolean }> }>).map(({ title, fields }) => (
+                  ] as Array<{ title: string; fields: Array<{ k: keyof typeof step2Data; n: string; label: string; ph: string; optional?: boolean }> }>).map(({ title, fields }) => (
                     <div key={title} className="mb-6">
                       <h4 className="text-base font-semibold mb-3 pb-2 border-b border-border/50">{title}</h4>
                       <div className="space-y-3">
-                        {fields.map(({ k, label, ph, optional }) => (
+                        {fields.map(({ k, n, label, ph, optional }) => (
                           <div key={k}>
                             <label className="block text-sm font-medium mb-1">
                               {label} {!optional && <span className="text-red-500">*</span>}
                             </label>
                             <Textarea
+                              name={n}
                               className="bg-background min-h-[60px] text-sm"
                               placeholder={ph}
                               value={(step2Data[k] as string) || ""}
@@ -2323,6 +2339,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                         <label key={page} className="flex items-start gap-2 text-sm cursor-pointer select-none">
                           <input
                             type="checkbox"
+                            name="additionalPages"
                             className="w-4 h-4 mt-0.5 flex-shrink-0 accent-primary"
                             checked={step2Data.additionalPages.includes(page)}
                             onChange={e => {
@@ -2341,6 +2358,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <div className="mt-4">
                       <label className="block text-sm font-medium mb-1.5">Additional Details</label>
                       <Textarea
+                        name="additionalDetails"
                         className="bg-background min-h-[80px]"
                         placeholder="Describe what you need on any of the pages selected above, or specify any pages not listed."
                         value={step2Data.additionalPagesDetails}
