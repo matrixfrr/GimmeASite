@@ -56,7 +56,15 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "Where do I manage my subscription?",
-    answer: <>You can manage your subscription, update payment methods, and view invoices at <a href="https://gimmeasite.com/billing" className="text-primary hover:underline font-medium">https://gimmeasite.com/billing</a>.</>,
+    answer: (
+      <div className="space-y-3">
+        <p>You can manage your subscription, update payment methods, and view invoices at <a href="https://gimmeasite.com/billing" className="text-primary hover:underline font-medium">https://gimmeasite.com/billing</a>.</p>
+        <div className="pl-4 border-l-2 border-border/50">
+          <p className="font-semibold text-foreground mb-1">How do I upgrade or downgrade my Plan?</p>
+          <p>You cannot upgrade or downgrade your Plan in the Billing Portal, as GimmeASite does not offer fixed rates. You must do so by opening a ticket at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>.</p>
+        </div>
+      </div>
+    ),
   },
   {
     question: "Where do I open a ticket?",
