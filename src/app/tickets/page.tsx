@@ -58,6 +58,7 @@ export default function TicketsPage() {
   const [attachmentErrors, setAttachmentErrors] = useState<string[]>([]);
   const [planChangeTarget, setPlanChangeTarget] = useState("");
   const [showPlanChangeDropdown, setShowPlanChangeDropdown] = useState(false);
+  const [planChangeConfirmed, setPlanChangeConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [revisionCheck, setRevisionCheck] = useState<RevisionCheck | null>(null);
@@ -214,6 +215,7 @@ export default function TicketsPage() {
     setDomainChangeChecking(false);
     setPlanChangeTarget("");
     setShowPlanChangeDropdown(false);
+    setPlanChangeConfirmed(false);
   };
 
   const handleTypeSelect = (value: string) => {
@@ -231,7 +233,8 @@ export default function TicketsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ticketType) { setError("Please select a ticket type."); return; }
-    if (isPlanChange && !planChangeTarget) { setError("Please select a target plan."); return; }
+    if (isPlanChange && !planChangeTarget) { setError("Please select a target Plan."); return; }
+    if ((isUpgradePlan || isDowngradePlan) && !planChangeConfirmed) { setError("Please confirm that you understand the billing terms before submitting."); return; }
     if (isTransfer && !transferDomain && !transferFiles) {
       setError("Please select at least one option for what you would like transferred.");
       return;
@@ -700,6 +703,32 @@ export default function TicketsPage() {
                         </p>
                       </div>
                     </>
+                  )}
+
+                  {/* Upgrade Plan confirmation */}
+                  {isUpgradePlan && emailReady && (
+                    <label className="flex items-start gap-3 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={planChangeConfirmed}
+                        onChange={(e) => setPlanChangeConfirmed(e.target.checked)}
+                        className="w-4 h-4 mt-0.5 accent-primary flex-shrink-0"
+                      />
+                      <span className="text-sm text-red-400">I understand that once I submit this ticket, I will receive an invoice for a higher rate than of my current payment terms, and if this ticket is submitted near the end of my current billing cycle, my Upgrade request may not be processed in time, meaning I could be automatically charged for my current Plan.</span>
+                    </label>
+                  )}
+
+                  {/* Downgrade Plan confirmation */}
+                  {isDowngradePlan && emailReady && (
+                    <label className="flex items-start gap-3 cursor-pointer select-none">
+                      <input
+                        type="checkbox"
+                        checked={planChangeConfirmed}
+                        onChange={(e) => setPlanChangeConfirmed(e.target.checked)}
+                        className="w-4 h-4 mt-0.5 accent-primary flex-shrink-0"
+                      />
+                      <span className="text-sm text-red-400">I understand that once I submit this ticket, I will receive an invoice for a lower rate than of my current payment terms (which once confirmed, will be charged at the end of my current billing cycle), and if this ticket is submitted near the end of my current billing cycle, my Downgrade request may not be processed in time, meaning I could be automatically charged for my current Plan.</span>
+                    </label>
                   )}
 
                   {/* Transfer of Ownership irreversibility confirmation */}
