@@ -373,7 +373,7 @@ function HeroSection() {
 
   useEffect(() => {
     const style = document.createElement("style");
-    style.textContent = "@font-face{font-family:'Switzer';src:url('/fonts/Switzer-Medium.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap}@keyframes heroBlink{0%,49%{opacity:1}50%,100%{opacity:0}}.hero-cursor{display:inline-block;animation:heroBlink 0.9s steps(1,end) infinite;margin-left:1px;color:#f97316!important;-webkit-text-fill-color:#f97316!important}";
+    style.textContent = "@font-face{font-family:'Switzer';src:url('/fonts/Switzer-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}@keyframes heroBlink{0%,49%{opacity:1}50%,100%{opacity:0}}.hero-cursor{display:inline-block;animation:heroBlink 0.9s steps(1,end) infinite;margin-left:1px;color:#f97316!important;-webkit-text-fill-color:#f97316!important}";
     document.head.appendChild(style);
     return () => { if (document.head.contains(style)) document.head.removeChild(style); };
   }, []);
@@ -399,7 +399,6 @@ function HeroSection() {
 
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden grid-pattern noise-bg">
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-primary/20 rounded-full blur-[120px]" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
 
       <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
@@ -410,7 +409,7 @@ function HeroSection() {
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Quality Guaranteed</span></div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2 transition-none" style={{ fontFamily: "'Switzer', sans-serif", fontWeight: 500 }}>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2 transition-none" style={{ fontFamily: "'Switzer', sans-serif", fontWeight: 400 }}>
             <span className="block">We Build</span>
             <span className="block gradient-text whitespace-nowrap" style={{ minHeight: "1.1em" }}>
               {displayed}<span className="hero-cursor">|</span>
@@ -2239,27 +2238,27 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 <div className="mt-0">
                   {([
                     { title: "Home", fields: [
-                      { k: "homePurpose" as const, label: "What Is The Main Purpose Of Your Homepage?", ph: "e.g., drive sales, generate leads, showcase portfolio" },
-                      { k: "homeValueProp" as const, label: "What Is Your Key Message Or Value Proposition?", ph: "What you want visitors to see/feel first" },
-                      { k: "homeAction" as const, label: "What Action Do You Want Visitors To Take On This Page?", ph: "e.g., call, book, buy, sign up" },
+                      { k: "homePurpose" as const, label: "What is the main purpose of your homepage?", ph: "e.g., drive sales, generate leads, showcase portfolio" },
+                      { k: "homeValueProp" as const, label: "What is your key message or value proposition?", ph: "What you want visitors to see/feel first" },
+                      { k: "homeAction" as const, label: "What action do you want visitors to take on this page?", ph: "e.g., call, book, buy, sign up" },
                       { k: "homeDetails" as const, label: "Additional Details", ph: "Specific content, layout ideas, etc.", optional: true },
                     ]},
                     { title: "About", fields: [
-                      { k: "aboutBusiness" as const, label: "Describe Your Business — How It Started, What You Do, And Who You Serve.", ph: "Your story and mission" },
-                      { k: "aboutUnique" as const, label: "What Sets You Apart From Competitors? What's Your Unique Story?", ph: "Your differentiators" },
-                      { k: "aboutFeel" as const, label: "What Do You Want Visitors To Feel Or Think After Reading This Page?", ph: "e.g., trustworthy, innovative, approachable" },
+                      { k: "aboutBusiness" as const, label: "Describe your business — how it started, what you do, and who you serve.", ph: "Your story and mission" },
+                      { k: "aboutUnique" as const, label: "What sets you apart from competitors? What's your unique story?", ph: "Your differentiators" },
+                      { k: "aboutFeel" as const, label: "What do you want visitors to feel or think after reading this page?", ph: "e.g., trustworthy, innovative, approachable" },
                       { k: "aboutDetails" as const, label: "Additional Details", ph: "Awards, milestones, team info, etc.", optional: true },
                     ]},
                     { title: "Services / Products", fields: [
-                      { k: "servicesInfo" as const, label: "List A General Overview Of Your Services Or Products — Names, Descriptions, And Pricing If Applicable.", ph: "Include all offerings" },
-                      { k: "servicesBenefits" as const, label: "What Are The Main Benefits Of Each Service/Product For Your Customers?", ph: "Focus on customer outcomes" },
-                      { k: "servicesOffers" as const, label: "Any Special Offers, Packages, Or Promotions You Want Highlighted?", ph: "Discounts, bundles, limited-time deals" },
+                      { k: "servicesInfo" as const, label: "List a general overview of your services or products — names, descriptions, and pricing if applicable.", ph: "Include all offerings" },
+                      { k: "servicesBenefits" as const, label: "What are the main benefits of each service/product for your customers?", ph: "Focus on customer outcomes" },
+                      { k: "servicesOffers" as const, label: "Any special offers, packages, or promotions you want highlighted?", ph: "Discounts, bundles, limited-time deals" },
                       { k: "servicesDetails" as const, label: "Additional Details", ph: "Certifications, process steps, guarantees, etc.", optional: true },
                     ]},
                     { title: "Contact", fields: [
-                      { k: "contactMethods" as const, label: "What Contact Methods Do You Want Available?", ph: "e.g., phone, email, contact form, live chat" },
-                      { k: "contactHours" as const, label: "What Are Your Business Hours And Preferred Response Time?", ph: "e.g., Mon–Fri 9AM–5PM EST, reply within 24hrs" },
-                      { k: "contactCTA" as const, label: "What's The Main Reason You Want Visitors To Contact You?", ph: "Your call-to-action for this page" },
+                      { k: "contactMethods" as const, label: "What contact methods do you want available?", ph: "e.g., phone, email, contact form, live chat" },
+                      { k: "contactHours" as const, label: "What are your business hours and preferred response time?", ph: "e.g., Mon–Fri 9AM–5PM EST, reply within 24hrs" },
+                      { k: "contactCTA" as const, label: "What's the main reason you want visitors to contact you?", ph: "Your call-to-action for this page" },
                       { k: "contactDetails" as const, label: "Additional Details", ph: "Locations, social links, map embed, etc.", optional: true },
                     ]},
                   ] as Array<{ title: string; fields: Array<{ k: keyof typeof step2Data; label: string; ph: string; optional?: boolean }> }>).map(({ title, fields }) => (
@@ -2289,18 +2288,21 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     <p className="text-xs text-muted-foreground mb-4">Select any additional pages you&apos;d like included on your website.</p>
                     <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                       {[
-                        "Blog","FAQ","Testimonials / Reviews","Portfolio / Gallery",
-                        "Team / Staff","Careers / Jobs","Press / Media Kit","Events",
-                        "Newsletter / Email Signup","Online Store / Shop","Product Catalog",
-                        "Booking / Appointments","Login / Member Portal","Dashboard / Client Portal",
-                        "Terms of Service","Privacy Policy","Cookie Policy","Sitemap",
-                        "404 / Error Page","Coming Soon / Under Construction","Thank You Page",
-                        "Confirmation Page","Affiliates / Partners","Case Studies",
-                        "Resources / Downloads","Video Gallery","Photo Gallery","Virtual Tour",
-                        "Podcast / Audio","Locations / Branches","Delivery / Shipping Info",
-                        "Return Policy","Warranty Info","Support / Help Center","Live Chat",
-                        "Community / Forum","Investor Relations","Franchise Info",
-                        "Wholesale Inquiry","Donation / Fundraising",
+                        "Testimonials / Reviews","Portfolio","FAQ","Pricing",
+                        "Appointments / Consultations / Reservations","Meet the Team",
+                        "Blog / News","Newsletter / Email Signup","Resources / Downloads",
+                        "Announcements / Updates","Press / Media Kit","Photo / Video Gallery",
+                        "Case Studies","Tour","Merchandise","Music","Events",
+                        "Affiliates / Partners / Relations","Privacy Policy","Terms of Service",
+                        "Cookie Policy","Return Policy","Refund Policy","404 / Error Page",
+                        "Thank You / Confirmation Page","Contact Form",
+                        "Coming Soon / Under Maintenance","Shop / Online Store / Product Catalog",
+                        "Delivery / Shipping / Warranty","Shopping Cart","Checkout Page",
+                        "Dashboard","Account / Login / Member Portal","Help Center / Support",
+                        "Community / Forum / Docs","Locations / Branches / Service Areas",
+                        "Sitemap","Podcast / Audio","Menu","Live Chat","Order Online",
+                        "Hours of Operation","Listings","Virtual Tour","Careers / Jobs",
+                        "Donation / Volunteer / Fundraising","Programs","Wholesale / Franchise",
                       ].map((page) => (
                         <label key={page} className="flex items-center gap-2 text-sm cursor-pointer select-none">
                           <input
@@ -2321,7 +2323,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       ))}
                     </div>
                     <div className="mt-4">
-                      <label className="block text-sm font-medium mb-1.5">Additional details for these pages</label>
+                      <label className="block text-sm font-medium mb-1.5">Additional Details</label>
                       <Textarea
                         className="bg-background min-h-[80px]"
                         placeholder="Describe what you need on any of the pages selected above, or specify any pages not listed."
