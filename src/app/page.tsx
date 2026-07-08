@@ -410,8 +410,8 @@ function HeroSection() {
 
           <h1 className="tracking-tight leading-[1.05] mb-8 animate-slideIn opacity-0 stagger-2 transition-none" style={{ fontFamily: "'Inter', sans-serif", fontWeight: 550, fontSize: "80px" }}>
             <span className="block">We Build</span>
-            <span className="block gradient-text whitespace-nowrap" style={{ minHeight: "1.1em", overflow: "hidden" }}>
-              {displayed}<span className="hero-cursor">|</span>
+            <span className="block" style={{ minHeight: "1.1em", overflow: "hidden", whiteSpace: "nowrap" }}>
+              <span className="gradient-text">{displayed}</span><span className="hero-cursor">|</span>
             </span>
             <span className="block">That Convert</span>
           </h1>
@@ -1210,6 +1210,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     additionalPagesDetails: "",
   });
   const [showAdditionalPagesHelp, setShowAdditionalPagesHelp] = useState(false);
+  const [showAttachmentsHelp, setShowAttachmentsHelp] = useState(false);
   const attachmentsRef = useRef<FileList | null>(null);
   const [showWhyPopup, setShowWhyPopup] = useState<"company" | "social" | "phone" | "plan" | "domain" | "google" | "ownsDomain" | null>(null);
   const [showPlanDropdown, setShowPlanDropdown] = useState(false);
@@ -2204,9 +2205,16 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 {/* File Upload */}
                 <div>
                   <label className="block text-sm font-medium mb-1.5">
-                    Attachments <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full ml-1">Recommended</span>
+                    <span className="flex items-center gap-1.5">
+                      Attachments
+                      <span className="text-xs font-medium text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">Recommended</span>
+                      <button
+                        type="button"
+                        className="w-4 h-4 rounded-full bg-muted text-muted-foreground text-xs flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-colors flex-shrink-0"
+                        onClick={() => setShowAttachmentsHelp(true)}
+                      >?</button>
+                    </span>
                   </label>
-                  <p className="text-xs text-muted-foreground mb-2">Upload your logo, gallery photos, fonts, brand colors, videos, animations/GIFs, or anything else that will help us create your website.</p>
                   <input
                     type="file"
                     multiple
@@ -2402,6 +2410,26 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
               onClick={() => setShowAdditionalPagesHelp(false)}
               className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
+              Got It
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showAttachmentsHelp && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={() => setShowAttachmentsHelp(false)}>
+          <div className="bg-card border border-border rounded-2xl p-6 max-w-sm w-full shadow-xl animate-slideIn"
+            onClick={e => e.stopPropagation()}>
+            <div className="flex items-start justify-between mb-3">
+              <h3 className="text-lg font-bold pr-2">Why?</h3>
+              <button type="button" onClick={() => setShowAttachmentsHelp(false)} className="text-muted-foreground hover:text-foreground transition-colors flex-shrink-0 mt-0.5"><X className="w-4 h-4" /></button>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Uploading your logo, gallery photos / videos, fonts, brand colors, animations/GIFs, etc. will help our team design the best website possible for your brand.
+            </p>
+            <button type="button" onClick={() => setShowAttachmentsHelp(false)}
+              className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
               Got It
             </button>
           </div>
