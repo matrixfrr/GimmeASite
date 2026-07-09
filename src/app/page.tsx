@@ -2323,7 +2323,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     ref={fileInputRef}
                     type="file"
                     multiple
-                    accept=".png,.jpg,.jpeg,.gif,.mp4,.svg,.zip,.otf"
+                    accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.svg,.zip,.otf"
                     className="hidden"
                     onChange={e => {
                       const newFiles = Array.from(e.target.files || []);
@@ -2346,7 +2346,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   {fileErrors.map((err, i) => (
                     <p key={i} className="text-red-500 text-xs mt-1">{err}</p>
                   ))}
-                  <p className="text-xs text-muted-foreground mt-1.5">PNG, JPG, GIF, MP4, SVG, OTF, or ZIP files accepted. Max 10 files, 25 MB each.</p>
+                  <p className="text-xs text-muted-foreground mt-1.5">PNG, JPG, WEBP, GIF, MP4, SVG, OTF, or ZIP files accepted. Max 10 files, 25 MB each.</p>
                 </div>
 
                 {/* Security Disclaimer */}
