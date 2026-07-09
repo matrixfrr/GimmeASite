@@ -289,12 +289,16 @@ export default function AdminPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, adminPassword }),
       });
-      const data = await res.json();
-      if (data.error) { setError(data.error); return; }
+      let data: Record<string, unknown> = {};
+      try { data = await res.json(); } catch { /* non-JSON response */ }
+      if (!res.ok || data.error) {
+        setError(String(data.error || `HTTP ${res.status}: ${res.statusText}`));
+        return;
+      }
       setTickets(prev => prev.filter(t => t.id !== id));
       setSuccess("Ticket deleted.");
-    } catch {
-      setError("Failed to delete ticket");
+    } catch (err) {
+      setError(`Failed to delete ticket: ${err instanceof Error ? err.message : String(err)}`);
     }
   };
 
