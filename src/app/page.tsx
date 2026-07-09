@@ -1514,10 +1514,10 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
 
   const validateStep2 = () => {
     const required = [
-      "homePurpose","homeValueProp","homeAction","homeDetails",
-      "aboutBusiness","aboutUnique","aboutFeel","aboutDetails",
-      "servicesInfo","servicesBenefits","servicesOffers","servicesDetails",
-      "contactMethods","contactHours","contactCTA","contactDetails",
+      "homeValueProp", "homeAction",
+      "aboutBusiness", "aboutUnique",
+      "servicesInfo", "servicesOffers",
+      "contactMethods", "contactHours",
     ] as const;
     return required.every(k => step2Data[k].trim());
   };
@@ -1537,7 +1537,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     }
 
     if (isMultiStepPlan && !validateStep2()) {
-      setErrors(prev => ({ ...prev, submit: "Please fill out all required fields in Step 2." }));
+      setErrors(prev => ({ ...prev, submit: "Please fill out all required fields." }));
       return;
     }
 
