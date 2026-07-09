@@ -243,6 +243,35 @@ export async function POST(request: Request) {
   }
 }
 
+export async function DELETE(request: Request) {
+  try {
+    const { id, adminPassword } = await request.json();
+
+    if (adminPassword !== process.env.ADMIN_PASSWORD) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
+
+    const supabaseAdmin = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { error } = await supabaseAdmin.from("tickets").delete().eq("id", id);
+
+    if (error) {
+      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: "Failed to delete ticket" }, { status: 500 });
+  }
+}
+
 export async function PATCH(request: Request) {
   try {
     const { id, status, adminPassword } = await request.json();
@@ -271,4 +300,5 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: "Failed to update ticket" }, { status: 500 });
   }
 }
+
 
