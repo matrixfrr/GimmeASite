@@ -1343,10 +1343,9 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       linkedin: `https://linkedin.com/company/${username}`,
     };
 
-    // For Google Business, accept any URL-like input (the full URL is now entered directly)
+    // For Google Business, only accept https://share.google/ links
     if (platform === 'googleBusiness') {
-      const isUrl = /^https?:\/\//i.test(username) || username.includes('share.google') || username.includes('maps.app.goo.gl') || username.includes('g.page') || username.includes('business.google') || username.includes('google.com');
-      return isUrl;
+      return /^https:\/\/share\.google\//i.test(username.trim());
     }
 
     // Basic username format validation
@@ -1383,7 +1382,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
 
     if (!isValid) {
       if (platform === 'googleBusiness') {
-        setErrors(prev => ({ ...prev, [platform]: "Please enter a valid Google Business URL (e.g., https://share.google/...)" }));
+        setErrors(prev => ({ ...prev, [platform]: "Please enter a valid Google Business share link starting with https://share.google/" }));
       } else {
         setErrors(prev => ({ ...prev, [platform]: "This username format appears to be invalid" }));
       }
@@ -1529,6 +1528,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     if (isMultiStepPlan && formStep === 1) {
       if (!validateForm()) return;
       setFormStep(2);
+      setTimeout(() => scrollToSection("contact"), 50);
       return;
     }
 
@@ -1639,9 +1639,19 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id } = e.target;
     let value = e.target.value;
-    // Strip full URL if user pastes facebook.com/... into the username-only field
+    // Strip pasted domain prefixes for all social media username fields
     if (id === "facebook") {
       value = value.replace(/^https?:\/\/(www\.)?facebook\.com\//i, "");
+    } else if (id === "instagram") {
+      value = value.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "");
+    } else if (id === "twitter") {
+      value = value.replace(/^https?:\/\/(www\.)?(?:twitter|x)\.com\//i, "");
+    } else if (id === "youtube") {
+      value = value.replace(/^https?:\/\/(www\.)?youtube\.com\/(?:@|c\/|user\/|channel\/)?/i, "");
+    } else if (id === "tiktok") {
+      value = value.replace(/^https?:\/\/(www\.)?tiktok\.com\/@?/i, "");
+    } else if (id === "linkedin") {
+      value = value.replace(/^https?:\/\/(www\.)?linkedin\.com\/(?:company|in)\//i, "");
     }
     setFormData(prev => ({ ...prev, [id]: value }));
     if (errors[id]) {
@@ -2472,7 +2482,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     type="button"
                     variant="outline"
                     className="w-full py-6 text-base"
-                    onClick={() => setFormStep(1)}
+                    onClick={() => { setFormStep(1); setTimeout(() => scrollToSection("contact"), 50); }}
                   >
                     Back
                   </Button>
