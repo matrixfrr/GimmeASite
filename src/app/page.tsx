@@ -1191,6 +1191,13 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
   );
 }
 
+function ErrorWithEmail({ msg }: { msg: string }) {
+  const email = "hello@gimmeasite.com";
+  const parts = msg.split(email);
+  if (parts.length === 1) return <>{msg}</>;
+  return <>{parts[0]}<a href={`mailto:${email}`} className="font-bold underline underline-offset-2">{email}</a>{parts[1]}</>;
+}
+
 // Contact Section
 function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
   const [formData, setFormData] = useState({
@@ -1469,7 +1476,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       const submittedDomains: string[] = JSON.parse(localStorage.getItem('gs_submitted_domains') || '[]');
       const domainKey = formData.domain.toLowerCase().trim().replace(/^www\./, '');
       if (domainKey && submittedDomains.includes(domainKey)) {
-        newErrors.domain = "A request for this domain has already been submitted. Please contact us at hello@gimmeasite.com if you have questions.";
+        newErrors.domain = "A request for this domain has already been submitted. Please contact us at hello@gimmeasite.com if you have any questions.";
       }
     }
     if (ownsDomain && !existingDomain.trim()) {
@@ -1551,7 +1558,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       fd.append("company", formData.company);
       fd.append("domain", ownsDomain ? "" : formData.domain);
       fd.append("paymentPlan", formData.paymentPlan);
-      fd.append("message", formData.message);
+      fd.append("message", formData.message || "See additional project details in the fields below.");
       fd.append("instagram", formData.instagram);
       fd.append("facebook", formData.facebook);
       fd.append("twitter", formData.twitter);
@@ -2339,7 +2346,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                 </div>
 
                 {errors.submit && (
-                  <p className="text-sm text-red-500 text-center -mt-2">{errors.submit}</p>
+                  <p className="text-sm text-red-500 text-center -mt-2"><ErrorWithEmail msg={errors.submit} /></p>
                 )}
                 <Button
                   type="submit"
@@ -2466,7 +2473,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   </div>
 
                   {errors.submit && (
-                    <p className="text-sm text-red-500 text-center mb-4">{errors.submit}</p>
+                    <p className="text-sm text-red-500 text-center mb-4"><ErrorWithEmail msg={errors.submit} /></p>
                   )}
 
                   <Button
