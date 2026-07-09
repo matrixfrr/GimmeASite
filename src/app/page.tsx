@@ -1549,42 +1549,60 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     setIsSubmitting(true);
 
     try {
-      const fd = new FormData();
-      fd.append("name", formData.name);
-      fd.append("email", formData.email);
-      fd.append("phone", formData.phone);
-      fd.append("company", formData.company);
-      fd.append("domain", ownsDomain ? "" : formData.domain);
-      fd.append("paymentPlan", formData.paymentPlan);
-      fd.append("message", formData.message || "See additional project details in the fields below.");
-      fd.append("instagram", formData.instagram);
-      fd.append("facebook", formData.facebook);
-      fd.append("twitter", formData.twitter);
-      fd.append("youtube", formData.youtube);
-      fd.append("tiktok", formData.tiktok);
-      fd.append("linkedin", formData.linkedin);
-      fd.append("googleBusiness", formData.googleBusiness);
-      fd.append("ownsDomain", ownsDomain ? "yes" : "no");
-      fd.append("existingDomain", ownsDomain ? existingDomain : "");
-      if (isMultiStepPlan) {
-        fd.append("homeKeyMessage", step2Data.homeValueProp);
-        fd.append("homeAction", step2Data.homeAction);
-        fd.append("aboutStory", step2Data.aboutBusiness);
-        fd.append("aboutUnique", step2Data.aboutUnique);
-        fd.append("servicesProducts", step2Data.servicesInfo);
-        fd.append("specialOffers", step2Data.servicesOffers);
-        fd.append("contactMethods", step2Data.contactMethods);
-        fd.append("businessHours", step2Data.contactHours);
-        fd.append("additionalPages", step2Data.additionalPages.join(", ") || "None");
-        fd.append("additionalDetails", step2Data.additionalPagesDetails);
+      // Upload any attachments to Supabase storage first, collect public URLs
+      let attachmentUrls: string[] = [];
+      if (attachedFiles.length > 0) {
+        const uploadFd = new FormData();
+        attachedFiles.forEach(file => uploadFd.append("file", file));
+        try {
+          const uploadRes = await fetch("/api/contact-attachments", { method: "POST", body: uploadFd });
+          if (uploadRes.ok) {
+            const uploadJson = await uploadRes.json();
+            attachmentUrls = uploadJson.urls ?? [];
+          }
+        } catch { /* attachments optional – proceed without */ }
       }
-      attachedFiles.forEach(file => fd.append("attachment", file));
-      fd.append("_replyto", formData.email);
-      fd.append("_subject", `New GimmeASite Inquiry from ${formData.name}`);
+
+      const payload: Record<string, string> = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        company: formData.company,
+        domain: ownsDomain ? "" : formData.domain,
+        paymentPlan: formData.paymentPlan,
+        message: formData.message || "See additional project details in the fields below.",
+        instagram: formData.instagram,
+        facebook: formData.facebook,
+        twitter: formData.twitter,
+        youtube: formData.youtube,
+        tiktok: formData.tiktok,
+        linkedin: formData.linkedin,
+        googleBusiness: formData.googleBusiness,
+        ownsDomain: ownsDomain ? "yes" : "no",
+        existingDomain: ownsDomain ? existingDomain : "",
+        _replyto: formData.email,
+        _subject: `New GimmeASite Inquiry from ${formData.name}`,
+      };
+      if (isMultiStepPlan) {
+        payload.homeKeyMessage = step2Data.homeValueProp;
+        payload.homeAction = step2Data.homeAction;
+        payload.aboutStory = step2Data.aboutBusiness;
+        payload.aboutUnique = step2Data.aboutUnique;
+        payload.servicesProducts = step2Data.servicesInfo;
+        payload.specialOffers = step2Data.servicesOffers;
+        payload.contactMethods = step2Data.contactMethods;
+        payload.businessHours = step2Data.contactHours;
+        payload.additionalPages = step2Data.additionalPages.join(", ") || "None";
+        payload.additionalDetails = step2Data.additionalPagesDetails;
+      }
+      if (attachmentUrls.length > 0) {
+        payload.attachments = attachmentUrls.join("\n");
+      }
+
       const response = await fetch("https://formspree.io/f/xnjobyzd", {
         method: "POST",
-        headers: { "Accept": "application/json" },
-        body: fd,
+        headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
