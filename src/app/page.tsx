@@ -1580,8 +1580,6 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         googleBusiness: formData.googleBusiness,
         ownsDomain: ownsDomain ? "yes" : "no",
         existingDomain: ownsDomain ? existingDomain : "",
-        _replyto: formData.email,
-        _subject: `New GimmeASite Inquiry from ${formData.name}`,
       };
       if (isMultiStepPlan) {
         payload.homeKeyMessage = step2Data.homeValueProp;
@@ -1595,14 +1593,10 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         payload.additionalPages = step2Data.additionalPages.join(", ") || "None";
         payload.additionalDetails = step2Data.additionalPagesDetails;
       }
-      if (attachmentUrls.length > 0) {
-        payload.attachments = attachmentUrls.join("\n");
-      }
-
-      const response = await fetch("https://formspree.io/f/xnjobyzd", {
+      const response = await fetch("/api/contact", {
         method: "POST",
-        headers: { "Accept": "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...payload, attachmentUrls }),
       });
 
       if (response.ok) {
