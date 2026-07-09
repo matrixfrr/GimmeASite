@@ -744,7 +744,7 @@ export default function AdminPage() {
               {(["all", "transfer_ownership", "domain_change"] as const).map(s => (
                 <button key={s} type="button" onClick={() => setTicketTypeFilter(s)}
                   className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${ticketTypeFilter === s ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground hover:border-primary/50"}`}>
-                  {s === "all" ? "All Types" : s === "transfer_ownership" ? "Transfer" : "Domain Change"}
+                  {s === "all" ? "All Types" : s === "transfer_ownership" ? "Transfer of Ownership" : "Domain Change"}
                 </button>
               ))}
             </div>
