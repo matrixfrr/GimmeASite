@@ -36,7 +36,8 @@ const scrollToSection = (sectionId: string) => {
   const element = document.getElementById(sectionId);
   if (element) {
     const navHeight = 72;
-    const top = element.getBoundingClientRect().top + window.scrollY - navHeight;
+    const paddingTop = parseInt(getComputedStyle(element).paddingTop || "0", 10);
+    const top = element.getBoundingClientRect().top + window.scrollY + paddingTop - navHeight - 16;
     window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
   }
 };
@@ -411,7 +412,7 @@ function HeroSection() {
 
       <div className="max-w-7xl mx-auto px-6 py-4 md:py-12 relative z-10">
         <div className="text-center max-w-6xl mx-auto">
-          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-8 mb-4 md:mb-8 text-sm text-muted-foreground animate-slideIn opacity-0 stagger-1">
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-8 mb-4 md:mb-8 text-xs md:text-sm text-muted-foreground animate-slideIn opacity-0 stagger-1">
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Proven Results</span></div>
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Expedited Delivery</span></div>
             <div className="flex items-center gap-2"><Check className="w-5 h-5 text-primary" /><span>Quality Guaranteed</span></div>
@@ -425,7 +426,7 @@ function HeroSection() {
             <span className="block">That Convert</span>
           </h1>
 
-          <p className="text-lg md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-5 md:mb-10 leading-relaxed animate-slideIn opacity-0 stagger-3">
+          <p className="text-sm md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-5 md:mb-10 leading-relaxed animate-slideIn opacity-0 stagger-3">
             Transform your business with a professional website that captures attention and drives results. Fast, affordable, and designed to grow with you.
           </p>
 
