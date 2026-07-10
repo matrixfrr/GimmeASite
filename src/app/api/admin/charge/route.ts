@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+import { getEnv } from "@/lib/cfenv";
 
 const TICKET_TYPE_LABELS: Record<string, string> = {
   transfer_ownership: "Transfer of Ownership",
@@ -17,17 +16,25 @@ export async function POST(request: Request) {
       newMonthlyCents, newYearlyCents,
     } = await request.json();
 
-    if (adminPassword !== process.env.ADMIN_PASSWORD) {
+    const [envAdminPassword, stripeKey, supabaseUrl, supabaseServiceKey, cfAccountId, cfKvNsId, cfApiToken] = await Promise.all([
+      getEnv("ADMIN_PASSWORD"),
+      getEnv("STRIPE_SECRET_KEY"),
+      getEnv("NEXT_PUBLIC_SUPABASE_URL"),
+      getEnv("SUPABASE_SERVICE_ROLE_KEY"),
+      getEnv("CF_ACCOUNT_ID"),
+      getEnv("CF_KV_NAMESPACE_ID"),
+      getEnv("CF_API_TOKEN"),
+    ]);
+
+    if (adminPassword !== envAdminPassword) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     if (!email || !ticketId) {
       return NextResponse.json({ error: "email and ticketId are required" }, { status: 400 });
     }
 
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const stripe = new Stripe(stripeKey!);
+    const supabaseAdmin = createClient(supabaseUrl!, supabaseServiceKey!);
 
     // ── Find or create Stripe customer ────────────────────────────────────────
     const customers = await stripe.customers.list({ email: email.toLowerCase(), limit: 1 });
@@ -128,10 +135,10 @@ export async function POST(request: Request) {
       const newAmountDollars = (targetAmount / 100).toFixed(2);
 
       await fetch(
-        `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ACCOUNT_ID}/storage/kv/namespaces/${process.env.CF_KV_NAMESPACE_ID}/values/${encodeURIComponent(`pending_domain_change_sub_email:${email}`)}`,
+        `https://api.cloudflare.com/client/v4/accounts/${cfAccountId}/storage/kv/namespaces/${cfKvNsId}/values/${encodeURIComponent(`pending_domain_change_sub_email:${email}`)}`,
         {
           method: "PUT",
-          headers: { Authorization: `Bearer ${process.env.CF_API_TOKEN}` },
+          headers: { Authorization: `Bearer ${cfApiToken}` },
           body: JSON.stringify({ email, first_name: firstName, new_amount: newAmountDollars, interval }),
         }
       );

@@ -1,16 +1,18 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { getEnv } from "@/lib/cfenv";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    if (body.adminPassword !== process.env.ADMIN_PASSWORD) {
+    const adminPassword = await getEnv("ADMIN_PASSWORD");
+    if (body.adminPassword !== adminPassword) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      (await getEnv("NEXT_PUBLIC_SUPABASE_URL"))!,
+      (await getEnv("SUPABASE_SERVICE_ROLE_KEY"))!
     );
 
     let totalUpdated = 0;

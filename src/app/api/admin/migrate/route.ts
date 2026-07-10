@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { getEnv } from "@/lib/cfenv";
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  if (searchParams.get("key") !== process.env.ADMIN_PASSWORD) {
+  const adminPassword = await getEnv("ADMIN_PASSWORD");
+  if (searchParams.get("key") !== adminPassword) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

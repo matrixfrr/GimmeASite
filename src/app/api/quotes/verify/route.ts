@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
+import { getEnv } from "@/lib/cfenv";
 
 // POST - Verify quote by email or verify admin password
 export async function POST(request: Request) {
@@ -8,7 +9,8 @@ export async function POST(request: Request) {
 
     // Check if this is an admin password verification
     if (body.adminPassword !== undefined) {
-      if (body.adminPassword !== process.env.ADMIN_PASSWORD) {
+      const adminPassword = await getEnv("ADMIN_PASSWORD");
+      if (body.adminPassword !== adminPassword) {
         return NextResponse.json({ error: "Unauthorized", success: false }, { status: 401 });
       }
       return NextResponse.json({ success: true });
