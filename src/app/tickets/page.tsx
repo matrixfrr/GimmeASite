@@ -678,7 +678,7 @@ export default function TicketsPage() {
                           // @ts-expect-error webkitdirectory is non-standard but widely supported
                           webkitdirectory=""
                           className="hidden"
-                          accept=".png,.jpg,.jpeg,.webp,.heic,.svg,.gif,.pdf,.docx,.mov,.mp4,.otf,.ttf,.mp3,.wav,.zip,.html,.js,.css,.xlsx,.csv,.txt"
+                          accept=".png,.jpg,.jpeg,.webp,.heic,.svg,.gif,.pdf,.docx,.mov,.mp4,.otf,.ttf,.mp3,.wav,.zip,.html,.js,.css,.xlsx,.csv,.txt,.json"
                           onChange={(e) => {
                             const newFiles = Array.from(e.target.files || []);
                             const combined = [...attachments, ...newFiles];
