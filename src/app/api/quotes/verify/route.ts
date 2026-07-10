@@ -10,7 +10,6 @@ export async function POST(request: Request) {
     // Check if this is an admin password verification
     if (body.adminPassword !== undefined) {
       const adminPassword = await getEnv("ADMIN_PASSWORD");
-      console.log("ADMIN_PASSWORD resolved:", adminPassword ? `[set, length=${adminPassword.length}]` : "[undefined]");
       if (body.adminPassword !== adminPassword) {
         return NextResponse.json({ error: "Unauthorized", success: false }, { status: 401 });
       }
