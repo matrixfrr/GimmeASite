@@ -1,14 +1,20 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
-// The Stripe payment link ID for Revision Refills
-// Derived from: https://account.gimmeasite.com/b/9B68wR9mG4602VQ0tB0co0g
-const REVISION_REFILL_PAYMENT_LINK = process.env.REVISION_REFILL_PAYMENT_LINK_ID!;
+import { getEnv } from "@/lib/cfenv";
 
 export async function POST(request: Request) {
+  const [stripeKey, refillWebhookSecret, revisionRefillPaymentLink, supabaseUrl, supabaseServiceKey] = await Promise.all([
+    getEnv("STRIPE_SECRET_KEY"),
+    getEnv("STRIPE_REFILL_WEBHOOK_SECRET"),
+    getEnv("REVISION_REFILL_PAYMENT_LINK_ID"),
+    getEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    getEnv("SUPABASE_SERVICE_ROLE_KEY"),
+  ]);
+
+  const stripe = new Stripe(stripeKey!);
+  const REVISION_REFILL_PAYMENT_LINK = revisionRefillPaymentLink!;
+
   const body = await request.text();
   const sig = request.headers.get("stripe-signature");
 
@@ -18,7 +24,7 @@ export async function POST(request: Request) {
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_REFILL_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(body, sig, refillWebhookSecret!);
   } catch (err) {
     console.error("Webhook signature verification failed:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
@@ -47,10 +53,7 @@ export async function POST(request: Request) {
     const quantity = lineItems.data[0]?.quantity ?? 1;
 
     // Increment revision_credits on the most recent paid quote for this email
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabaseAdmin = createClient(supabaseUrl!, supabaseServiceKey!);
 
     const { data: quote, error: fetchErr } = await supabaseAdmin
       .from("client_quotes")
