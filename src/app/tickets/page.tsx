@@ -675,18 +675,15 @@ export default function TicketsPage() {
                           ref={fileRef}
                           type="file"
                           multiple
+                          // @ts-expect-error webkitdirectory is non-standard but widely supported
+                          webkitdirectory=""
                           className="hidden"
                           accept=".png,.jpg,.jpeg,.webp,.heic,.svg,.gif,.pdf,.docx,.mov,.mp4,.otf,.ttf,.mp3,.wav,.zip,.html,.js,.css,.xlsx,.csv,.txt"
                           onChange={(e) => {
                             const newFiles = Array.from(e.target.files || []);
                             const combined = [...attachments, ...newFiles];
                             const errs: string[] = [];
-                            if (combined.length > 10) {
-                              errs.push(`You can only attach up to 10 files. Please remove ${combined.length - 10} file(s).`);
-                              setAttachments(combined.slice(0, 10));
-                            } else {
-                              setAttachments(combined);
-                            }
+                            setAttachments(combined);
                             const oversized = combined.filter(f => f.size > 50 * 1024 * 1024);
                             if (oversized.length > 0) {
                               errs.push(`The following file(s) exceed 50 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
