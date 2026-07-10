@@ -46,11 +46,23 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
     answer: "We value expedited services at GimmeASite. All sites are completed in up to five business days depending on complexity. However, some sites can even be delivered the next day!",
   },  {
     question: 'How does "temporary support" work?',
-    answer: <>In the Upfront Plan, there is a temporary support period included that lasts 6 months beginning from the billing date. Within that timeframe, you have access to accelerated response time for support questions, 3 revision credits, reports from regular security scans and performance monitoring, and more. Following the conclusion of this period, your site will remain online, but we will no longer maintain its full-stack unless you renew your support period at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. However, you can still reach out to us via email with questions or concerns, as we are always available.</>,
+    answer: <>Included in our Upfront Plan is a temporary support period that lasts 6 months beginning from the billing date. Within that timeframe, you have access to accelerated response time for support questions, 3 revision credits, regular troubleshooting, and more. Following the conclusion of this period, your site will remain online, but we will no longer maintain its full-stack, unless you renew your support period at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. However, you can still reach out to us via email with questions or concerns, as we are always available.</>,
   },
   {
-    question: "What are revisions?",
-    answer: (<><span>Revisions are updates and edits to your site that you can request. A different allowance of revisions are included in each Plan. You can request revisions at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. Opening a &ldquo;Revision Request&rdquo; ticket counts towards one (1) revision, in which you can request multiple reasonable edits in the ticket. Requesting extra revisions (&ldquo;Revision Refill&rdquo;) beyond what your Plan includes, or redesigns (total makeovers of your site) may incur additional fees. If we incorrectly revise your site following a request, let support know and we may waive a revision at our discretion.</span><span className="block mt-3 pt-3 border-t border-border/40"><span className="block font-semibold text-foreground mb-1">Aren't revisions just a form of support (which is already included)?</span><span className="text-sm">Support is an umbrella term for many different aspects of website maintenance; however, &ldquo;revisions&rdquo; are quantifiable, so we separate them as an independent amenity to avoid confusion.</span></span></>),
+    question: "What counts as a revision?",
+    answer: (
+      <div className="space-y-3">
+        <p>When requesting a revision, you can ask for many reasonable edits to your site in one ticket submission. A different allowance of revisions are included in each Plan, and they must be made at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>. Requesting extra revisions (&ldquo;Revision Refill&rdquo;) beyond what your Plan includes, or redesigns (total makeovers of your site) may incur additional fees. If we incorrectly revise your site following a request, open another ticket under &ldquo;General Inquiry&rdquo;, and we may waive a revision of yours at our discretion.</p>
+        <div className="pl-4 border-l-2 border-border/50">
+          <p className="font-semibold text-foreground mb-1">Aren&rsquo;t revisions just a form of support (which is already included)?</p>
+          <p>Support is an umbrella term for many different aspects of website maintenance; however, &ldquo;revisions&rdquo; are quantifiable, so we separate them as an independent amenity to avoid confusion.</p>
+        </div>
+      </div>
+    ),
+  },
+  {
+    question: "Do I need to pay separately for hosting?",
+    answer: <>Nope! We handle domain registration entirely for you, as hosting comes included in all Plans offered by GimmeASite.</>,
   },
   {
     question: "Where do I manage my subscription?",
@@ -66,7 +78,15 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
   {
     question: "Where do I open a ticket?",
-    answer: <>You can open a ticket at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>.</>,
+    answer: (
+      <div className="space-y-3">
+        <p>You can open a ticket at <a href="https://gimmeasite.com/tickets" className="text-primary hover:underline font-medium">https://gimmeasite.com/tickets</a>.</p>
+        <div className="pl-4 border-l-2 border-border/50">
+          <p className="font-semibold text-foreground mb-1">Is there a limit to how many tickets I can open?</p>
+          <p>Nope! We are here to answer any questions or concerns you may have, no matter the frequency.</p>
+        </div>
+      </div>
+    ),
   },
   {
     question: "How do I access my account?",
@@ -83,11 +103,16 @@ function FaqSection() {
   };
 
   return (
-    <section id="faq" className="py-20 relative noise-bg" style={{ scrollMarginTop: "88px" }}>
+    <section id="faq" className="py-20 relative" style={{ scrollMarginTop: "88px" }}>
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">FAQ</Badge>
-          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">In Case You Were Confused</h2>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+            In Case
+            <br />
+            <span className="gradient-text">You Were Confused</span>
+          </h2>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">Find answers to your common questions below.</p>
         </div>
         <div className="space-y-3">
           {faqItems.map((item, index) => {
@@ -149,44 +174,16 @@ function Navigation() {
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-6">
             <Link href="/" className="flex items-center gap-2">
               <img src="/favicon.svg" alt="GimmeASite" className="w-10 h-10" />
               <span className="text-xl font-bold tracking-tight">GimmeASite</span>
             </Link>
 
-            <div className="hidden md:flex items-center gap-8">
-              <div className="relative" onMouseEnter={() => openDrop("services")} onMouseLeave={closeDrop}>
-                <button type="button" onClick={() => handleNavClick("services")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
-                  Services <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "services" ? "rotate-180" : ""}`} />
-                </button>
-                {openDropdown === "services" && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden" onMouseEnter={() => openDrop("services")} onMouseLeave={closeDrop}>
-                    {(["Website Design", "Hosting", "Maintenance"] as const).map(item => (
-                      <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                        onClick={() => { handleNavClick("services"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightService", { detail: item })), 600); }}
-                      >{item}</button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="relative" onMouseEnter={() => openDrop("process")} onMouseLeave={closeDrop}>
-                <button type="button" onClick={() => handleNavClick("process")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
-                  Process <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "process" ? "rotate-180" : ""}`} />
-                </button>
-                {openDropdown === "process" && (
-                  <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden" onMouseEnter={() => openDrop("process")} onMouseLeave={closeDrop}>
-                    {(["Discovery", "Design", "Development", "Deployment"] as const).map(item => (
-                      <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                        onClick={() => { handleNavClick("process"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightProcess", { detail: item })), 600); }}
-                      >{item}</button>
-                    ))}
-                  </div>
-                )}
-              </div>
+            <div className="hidden md:flex items-center gap-6">
               <div className="relative" onMouseEnter={() => openDrop("pricing")} onMouseLeave={closeDrop}>
                 <button type="button" onClick={() => handleNavClick("pricing")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
-                  Pricing <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "pricing" ? "rotate-180" : ""}`} />
+                  Plans <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "pricing" ? "rotate-180" : ""}`} />
                 </button>
                 {openDropdown === "pricing" && (
                   <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden" onMouseEnter={() => openDrop("pricing")} onMouseLeave={closeDrop}>
@@ -202,7 +199,7 @@ function Navigation() {
               <button type="button" onClick={() => handleNavClick("contact")} className="text-muted-foreground hover:text-foreground transition-colors">Contact</button>
             </div>
 
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-3 ml-auto">
               <Button
                 size="sm"
                 variant="ghost"
@@ -213,14 +210,14 @@ function Navigation() {
                 <UserCircle className="w-5 h-5" />
               </Button>
               <Button size="sm" className="bg-primary hover:bg-primary/90" onClick={() => handleNavClick("contact")}>
-                Get Started
+                Get Your Free Draft
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
 
             <button
               type="button"
-              className="md:hidden p-2"
+              className="md:hidden p-2 ml-auto"
               onClick={() => setIsOpen(!isOpen)}
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -229,9 +226,7 @@ function Navigation() {
 
           {isOpen && (
             <div className="md:hidden pt-4 pb-2 space-y-4">
-              <button type="button" onClick={() => handleNavClick("services")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Services</button>
-              <button type="button" onClick={() => handleNavClick("process")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Process</button>
-              <button type="button" onClick={() => handleNavClick("pricing")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Pricing</button>
+              <button type="button" onClick={() => handleNavClick("pricing")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Plans</button>
               <button type="button" onClick={() => handleNavClick("faq")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">FAQ</button>
               <button type="button" onClick={() => handleNavClick("contact")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Contact</button>
               <div className="flex gap-2 mt-4">
@@ -239,7 +234,7 @@ function Navigation() {
                   <UserCircle className="w-4 h-4 mr-1" />
                   Account
                 </Button>
-                <Button className="flex-1 bg-primary hover:bg-primary/90" onClick={() => handleNavClick("contact")}>Get Started</Button>
+                <Button className="flex-1 bg-primary hover:bg-primary/90" onClick={() => handleNavClick("contact")}>Get Your Free Draft</Button>
               </div>
             </div>
           )}
@@ -660,7 +655,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       priceLabel: "for more information",
       description: "Everything in Hybrid, including:",
       features: [
-        "Subdomain Configuration",
         "Redesigns",
         "Unlimited Revisions",
         "VIP, Priority Support",
@@ -685,7 +679,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       <style>{`@keyframes planPop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.05);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.98);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.02);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .plan-pop{animation:planPop 15s ease-out forwards}`}</style>
       <div id="pricing" className="max-w-[1600px] mx-auto px-4" style={{ scrollMarginTop: "88px" }}>
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <Badge variant="secondary" className="mb-4">Pricing</Badge>
+          <Badge variant="secondary" className="mb-4">Plans</Badge>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
             The Plan That's
             <br />
@@ -703,7 +697,9 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               className={`p-6 relative group h-full flex flex-col ${planAnimKeys[plan.name] ? "plan-pop" : ""} ${
                 plan.popular
                   ? "bg-primary/5 border-primary/30 animate-attention-bounce"
-                  : (plan.name === "Hybrid" || plan.name === "Annual")
+                  : plan.name === "Annual"
+                  ? "bg-green-500/10 border-green-500/40 animate-attention-bounce"
+                  : plan.name === "Hybrid"
                   ? "bg-green-500/5 border-green-500/20 animate-attention-bounce"
                   : "bg-card/50 border-border/50"
               } ${(plan.name === "Hybrid" || plan.name === "Annual") ? "hover-lift-green" : "hover-lift"}`}
@@ -719,8 +715,8 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 </Badge>
               )}
               {plan.name === "Annual" && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 hover:bg-green-600 text-white border-0 transition-all duration-300" style={{boxShadow: "0 2px 12px rgba(34, 197, 94, 0.5)"}}>
-                  Save 15%
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 hover:bg-green-600 text-white border-0 transition-all duration-300 px-3" style={{boxShadow: "0 2px 20px rgba(34, 197, 94, 0.75)"}}>
+                  Best Value — Save 15%
                 </Badge>
               )}
               <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -964,7 +960,6 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   { perk: "Content Strategy", up: false, mo: true, hy: true, an: true },
                   { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "15%" },
                   { perk: "Redesigns", up: false, mo: false, hy: false, an: true },
-                  { perk: "Subdomains", up: false, mo: false, hy: false, an: true },
                 ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
                   const cell = (v: boolean | string) => typeof v === "string"
                     ? <span className={`text-xs font-semibold ${typeof v === "string" && v.endsWith("%") ? "text-green-500" : "text-foreground"}`}>{v}</span>
@@ -2649,7 +2644,7 @@ function Footer({ onOpenPrivacyPolicy }: { onOpenPrivacyPolicy: () => void }) {
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-3 text-muted-foreground">
-                <li><button type="button" onClick={() => scrollToSection("pricing")} className="hover:text-foreground transition-colors">Pricing</button></li>
+                <li><button type="button" onClick={() => scrollToSection("pricing")} className="hover:text-foreground transition-colors">Plans</button></li>
                 <li><button type="button" onClick={() => scrollToSection("faq")} className="hover:text-foreground transition-colors">FAQ</button></li>
                 <li><button type="button" onClick={() => scrollToSection("contact")} className="hover:text-foreground transition-colors">Contact</button></li>
               </ul>
