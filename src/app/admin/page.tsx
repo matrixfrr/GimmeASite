@@ -425,8 +425,8 @@ export default function AdminPage() {
   };
 
   const isFiltered = statusFilter !== null || planFilter !== null;
-  const filteredTitle = statusFilter === "all" ? "Total" : statusFilter === "pending" ? "Pending Payment" : statusFilter === "paid" ? "Paid" : planFilter === "upfront" ? "Upfront" : planFilter === "monthly" ? "Monthly" : planFilter === "hybrid" ? "Hybrid" : planFilter === "annual" ? "Annual" : "";
-  const filteredQuotes = statusFilter === "all" ? quotes : statusFilter === "pending" ? allUnpaid : statusFilter === "paid" ? allPaid : planFilter ? allUnpaid.filter(q => getPlanKey(q) === planFilter) : [];
+  const filteredTitle = statusFilter === "all" ? "Total" : statusFilter === "pending" ? "Pending Payment" : statusFilter === "paid" ? (planFilter ? `Paid — ${planFilter === "upfront" ? "Upfront" : planFilter === "monthly" ? "Monthly" : planFilter === "hybrid" ? "Hybrid" : "Annual"}` : "Paid") : planFilter === "upfront" ? "Upfront" : planFilter === "monthly" ? "Monthly" : planFilter === "hybrid" ? "Hybrid" : planFilter === "annual" ? "Annual" : "";
+  const filteredQuotes = statusFilter === "all" ? quotes : statusFilter === "pending" ? allUnpaid : statusFilter === "paid" ? (planFilter ? allPaid.filter(q => getPlanKey(q) === planFilter) : allPaid) : planFilter ? allUnpaid.filter(q => getPlanKey(q) === planFilter) : [];
   const unpaidQuotes = allUnpaid;
   const paidQuotes = allPaid;
 
@@ -580,8 +580,8 @@ export default function AdminPage() {
 
             <div className="flex flex-wrap gap-2 mb-8">
               {([["upfront","Upfront","bg-red-400/10 text-red-400 border-red-400/30 hover:border-red-400","border-red-400"],["monthly","Monthly","bg-violet-500/10 text-violet-400 border-violet-400/30 hover:border-violet-400","border-violet-400"],["hybrid","Hybrid","bg-pink-400/10 text-pink-400 border-pink-400/30 hover:border-pink-400","border-pink-400"],["annual","Annual","bg-cyan-500/10 text-cyan-400 border-cyan-500/30 hover:border-cyan-500","border-cyan-500"]] as const).map(([key, label, baseClass, activeClass]) => (
-                <button key={key} type="button" disabled={statusFilter === "paid"} onClick={() => { setPlanFilter(f => f === key ? null : key); setStatusFilter(null); }}
-                  className={`px-4 py-1.5 rounded-full border text-sm font-medium transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${baseClass} ${planFilter === key ? activeClass : ""}`}>
+                <button key={key} type="button" onClick={() => { setPlanFilter(f => f === key ? null : key); if (statusFilter !== "paid") setStatusFilter(null); }}
+                  className={`px-4 py-1.5 rounded-full border text-sm font-medium transition-colors ${baseClass} ${planFilter === key ? activeClass : ""}`}>
                   {label}
                 </button>
               ))}
