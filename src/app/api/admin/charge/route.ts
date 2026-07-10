@@ -118,6 +118,24 @@ export async function POST(request: Request) {
         .update({ custom_price: targetAmount })
         .eq("id", ticketId);
 
+      // Queue confirmation email via watcher KV
+      const { data: ticketRow } = await supabaseAdmin
+        .from("tickets")
+        .select("name")
+        .eq("id", ticketId)
+        .single();
+      const firstName = (ticketRow?.name as string | null)?.split(" ")[0] || "there";
+      const newAmountDollars = (targetAmount / 100).toFixed(2);
+
+      await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${process.env.CF_ACCOUNT_ID}/storage/kv/namespaces/${process.env.CF_KV_NAMESPACE_ID}/values/${encodeURIComponent(`pending_domain_change_sub_email:${email}`)}`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${process.env.CF_API_TOKEN}` },
+          body: JSON.stringify({ email, first_name: firstName, new_amount: newAmountDollars, interval }),
+        }
+      );
+
       results.subscriptionId = sub.id;
       results.newPriceId = newPrice.id;
       results.newAmount = targetAmount;

@@ -30,6 +30,7 @@ import {
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { PaymentModal } from "@/components/PaymentModal";
+import { getSupabase } from "@/lib/supabase";
 
 // Smooth scroll utility function - scrolls without changing URL
 const scrollToSection = (sectionId: string) => {
@@ -1563,43 +1564,47 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
         } catch { /* attachments optional – proceed without */ }
       }
 
-      const payload: Record<string, string> = {
+      const payload: Record<string, unknown> = {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        company: formData.company,
-        domain: ownsDomain ? "" : formData.domain,
-        paymentPlan: formData.paymentPlan,
-        message: formData.message || "See additional project details in the fields below.",
-        instagram: formData.instagram,
-        facebook: formData.facebook,
-        twitter: formData.twitter,
-        youtube: formData.youtube,
-        tiktok: formData.tiktok,
-        linkedin: formData.linkedin,
-        googleBusiness: formData.googleBusiness,
-        ownsDomain: ownsDomain ? "yes" : "no",
-        existingDomain: ownsDomain ? existingDomain : "",
+        company: formData.company || null,
+        payment_plan: formData.paymentPlan,
+        owns_domain: ownsDomain,
+        desired_domain: ownsDomain ? null : (formData.domain || null),
+        existing_domain: ownsDomain ? (existingDomain || null) : null,
+        message: isMultiStepPlan ? null : (formData.message || null),
+        instagram: formData.instagram || null,
+        facebook: formData.facebook || null,
+        twitter: formData.twitter || null,
+        youtube: formData.youtube || null,
+        tiktok: formData.tiktok || null,
+        linkedin: formData.linkedin || null,
+        google_business: formData.googleBusiness || null,
+        attachments: attachmentUrls.length > 0
+          ? attachmentUrls.map(url => ({ url }))
+          : null,
       };
       if (isMultiStepPlan) {
-        payload.homeKeyMessage = step2Data.homeValueProp;
-        payload.homeAction = step2Data.homeAction;
-        payload.aboutStory = step2Data.aboutBusiness;
-        payload.aboutUnique = step2Data.aboutUnique;
-        payload.servicesProducts = step2Data.servicesInfo;
-        payload.specialOffers = step2Data.servicesOffers;
-        payload.contactMethods = step2Data.contactMethods;
-        payload.businessHours = step2Data.contactHours;
-        payload.additionalPages = step2Data.additionalPages.join(", ") || "None";
-        payload.additionalDetails = step2Data.additionalPagesDetails;
+        payload.home_value_prop = step2Data.homeValueProp || null;
+        payload.home_action = step2Data.homeAction || null;
+        payload.about_story = step2Data.aboutBusiness || null;
+        payload.about_differentiator = step2Data.aboutUnique || null;
+        payload.services_products = step2Data.servicesInfo || null;
+        payload.special_offers = step2Data.servicesOffers || null;
+        payload.contact_methods = step2Data.contactMethods || null;
+        payload.business_hours = step2Data.contactHours || null;
+        payload.additional_pages = step2Data.additionalPages.length > 0
+          ? step2Data.additionalPages
+          : null;
+        payload.additional_details = step2Data.additionalPagesDetails || null;
       }
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, attachmentUrls }),
-      });
 
-      if (response.ok) {
+      const { error: insertError } = await getSupabase()
+        .from("contact_submissions")
+        .insert(payload);
+
+      if (!insertError) {
         setSubmitSuccess(true);
         setShowSubmitToast(true);
         onSuccess?.();
@@ -1643,6 +1648,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
           additionalPages: [], additionalPagesDetails: "",
         });
       } else {
+        console.error("Supabase insert error:", insertError);
         setErrors(prev => ({ ...prev, submit: "Something went wrong. Please try again or email us at hello@gimmeasite.com." }));
       }
     } catch (error) {
@@ -2317,18 +2323,21 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     ref={fileInputRef}
                     type="file"
                     multiple
-                    // @ts-expect-error webkitdirectory is non-standard but widely supported
-                    webkitdirectory=""
-                    accept=".png,.jpg,.jpeg,.webp,.heic,.svg,.gif,.pdf,.docx,.mov,.mp4,.otf,.ttf,.mp3,.wav,.zip,.html,.js,.css,.xlsx,.csv,.txt,.json"
+                    accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.svg,.zip,.otf"
                     className="hidden"
                     onChange={e => {
                       const newFiles = Array.from(e.target.files || []);
                       const combined = [...attachedFiles, ...newFiles];
                       const errs: string[] = [];
-                      setAttachedFiles(combined);
-                      const oversized = combined.filter(f => f.size > 50 * 1024 * 1024);
+                      if (combined.length > 10) {
+                        errs.push(`You can only attach up to 10 files. Please remove ${combined.length - 10} file(s).`);
+                        setAttachedFiles(combined.slice(0, 10));
+                      } else {
+                        setAttachedFiles(combined);
+                      }
+                      const oversized = combined.filter(f => f.size > 25 * 1024 * 1024);
                       if (oversized.length > 0) {
-                        errs.push(`The following file(s) exceed 50 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
+                        errs.push(`The following file(s) exceed 25 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
                       }
                       setFileErrors(errs);
                       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -2337,7 +2346,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   {fileErrors.map((err, i) => (
                     <p key={i} className="text-red-500 text-xs mt-1">{err}</p>
                   ))}
-                  <p className="text-xs text-muted-foreground mt-1.5">Max. 50 MB per file.</p>
+                  <p className="text-xs text-muted-foreground mt-1.5">PNG, JPG, WEBP, GIF, MP4, SVG, OTF, or ZIP files accepted. Max 10 files, 25 MB each.</p>
                 </div>
 
                 {/* Security Disclaimer */}
