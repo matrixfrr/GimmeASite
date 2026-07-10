@@ -19,8 +19,6 @@ jobs:
           GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
           GITHUB_TOKEN_SECRET: ${{ secrets.GIST_TOKEN }}
           INBOX_GIST_ID: ${{ secrets.INBOX_GIST_ID }}
-          GODADDY_KEY: ${{ secrets.GODADDY_KEY }}
-          GODADDY_SECRET: ${{ secrets.GODADDY_SECRET }}
           CF_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python3 .github/workflows/watcher.py

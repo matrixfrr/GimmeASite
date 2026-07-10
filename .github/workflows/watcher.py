@@ -31,8 +31,6 @@ PENDING_APPROVALS    = "/Users/admin/.gimmeasite/pending_approvals.json"
 REVISION_EMAILS_FILE = "/Users/admin/.gimmeasite/processed_revision_emails.json"
 PENDING_REVISIONS    = "/Users/admin/.gimmeasite/pending_revisions.json"
 BOOKING_LINK   = "https://calendar.app.google/wQdwGP7Trr5ThAKn6"
-GODADDY_KEY    = os.environ["GODADDY_KEY"]
-GODADDY_SECRET = os.environ["GODADDY_SECRET"]
 EST            = timezone(timedelta(hours=-4))  # EDT (UTC-4); change to -5 in Nov when clocks fall back
 CALENDAR_ID    = "hello@gimmeasite.com"
 CF_ACCOUNT_ID  = os.environ.get("CF_ACCOUNT_ID", "848d99ff350de8b5b16548fa02e03a48")
