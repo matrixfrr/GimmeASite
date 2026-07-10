@@ -177,7 +177,7 @@ export function PaymentModal({ isOpen, onClose, planType, billingCycle = "monthl
                   >
                     {plan.label}
                     {plan.key === "hybrid" && <span className="text-green-500 font-normal" style={{fontSize:"0.6rem"}}>Save 10%</span>}
-                    {plan.key === "annual" && <span className="text-green-500 font-normal" style={{fontSize:"0.6rem"}}>Save 15%</span>}
+                    {plan.key === "annual" && <span className="text-green-500 font-normal" style={{fontSize:"0.6rem"}}>Save 20%</span>}
 
                   </button>
                 ))}

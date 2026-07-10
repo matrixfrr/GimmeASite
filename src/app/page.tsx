@@ -336,7 +336,7 @@ function HeroSection() {
   }, [displayed, isDeleting, phraseIndex]);
 
   return (
-    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-24 md:pt-32 overflow-hidden noise-bg">
+    <section id="hero" className="relative min-h-screen flex items-center justify-center pt-24 md:pt-32 overflow-hidden">
 
       <div className="max-w-7xl mx-auto px-6 py-4 md:py-12 relative z-10">
         <div className="text-center max-w-6xl mx-auto">
@@ -424,7 +424,7 @@ function ServicesSection() {
   return (
     <>
       <style>{`@keyframes servicePop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.1);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.96);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.06);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .service-pop{animation:servicePop 15s ease-out forwards}`}</style>
-      <section className="py-20 relative noise-bg">
+      <section className="py-20 relative">
       <div id="services" className="max-w-[96rem] mx-auto px-6" style={{ scrollMarginTop: "88px" }}>
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">Services</Badge>
@@ -502,7 +502,7 @@ function ProcessSection() {
   ];
 
   return (
-    <section className="py-32 relative noise-bg">
+    <section className="py-32 relative">
       <style>{`@keyframes stepPop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.06);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.97);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.03);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .step-pop{border-radius:0.75rem;animation:stepPop 15s ease-out forwards}`}</style>
       <div id="process" className="max-w-7xl mx-auto px-6" style={{ scrollMarginTop: "88px" }}>
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -537,7 +537,7 @@ function ProcessSection() {
 // About Us Section
 function AboutUsSection() {
   return (
-    <section className="py-20 relative noise-bg">
+    <section className="py-20 relative">
       <div id="about" className="max-w-7xl mx-auto px-6" style={{ scrollMarginTop: "88px" }}>
         <div className="text-center max-w-3xl mx-auto mb-16">
           <Badge variant="secondary" className="mb-4">About</Badge>
@@ -675,7 +675,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <section className="pt-32 pb-32 relative overflow-x-hidden noise-bg">
+      <section className="pt-32 pb-32 relative overflow-x-hidden">
       <style>{`@keyframes planPop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.05);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.98);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.02);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .plan-pop{animation:planPop 15s ease-out forwards}`}</style>
       <div id="pricing" className="max-w-[1600px] mx-auto px-4" style={{ scrollMarginTop: "88px" }}>
         <div className="text-center max-w-3xl mx-auto mb-16">
