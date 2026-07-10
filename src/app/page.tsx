@@ -2335,7 +2335,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     ref={fileInputRef}
                     type="file"
                     multiple
-                    accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.svg,.zip,.otf"
+                    accept=".png,.jpg,.jpeg,.webp,.heic,.svg,.gif,.pdf,.docx,.mov,.mp4,.otf,.ttf,.mp3,.wav,.zip,.html,.js,.css,.xlsx,.csv,.txt,.json"
                     className="hidden"
                     onChange={e => {
                       const newFiles = Array.from(e.target.files || []);
