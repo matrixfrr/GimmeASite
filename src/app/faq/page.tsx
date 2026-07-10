@@ -7,8 +7,7 @@ export default function FaqPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Redirect to main page with FAQ trigger
-    router.replace("/?modal=faq");
+    router.replace("/#faq");
   }, [router]);
 
   return (

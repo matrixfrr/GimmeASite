@@ -15,7 +15,6 @@ import {
   Mail,
   Menu,
   X,
-  HelpCircle,
   Shield,
   Loader2,
   Search,
@@ -75,50 +74,22 @@ const faqItems: { question: string; answer: React.ReactNode }[] = [
   },
 ];
 
-// FAQ Popup Component
-function FaqPopup({ isOpen, onClose, openToIndex }: { isOpen: boolean; onClose: () => void; openToIndex?: number }) {
+// FAQ Section Component
+function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  // Reset or pre-open when popup opens/closes
-  useEffect(() => {
-    if (!isOpen) {
-      setOpenIndex(null);
-    } else if (openToIndex !== undefined) {
-      setOpenIndex(openToIndex);
-    }
-  }, [isOpen, openToIndex]);
-
-  if (!isOpen) return null;
 
   const toggleItem = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
   };
 
   return (
-    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4">
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div className="relative bg-card border border-border rounded-2xl p-8 max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl animate-slideIn">
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <HelpCircle className="w-8 h-8 text-primary" />
-          </div>
-          <h3 className="text-2xl font-bold mb-2">Frequently Asked Questions</h3>
-          <p className="text-muted-foreground">
-            Find answers to your common questions below.
-          </p>
+    <section id="faq" className="py-20 relative noise-bg" style={{ scrollMarginTop: "88px" }}>
+      <div className="max-w-3xl mx-auto px-6">
+        <div className="text-center mb-12">
+          <Badge variant="secondary" className="mb-4">FAQ</Badge>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight">In Case You Were Confused</h2>
         </div>
-
-        <div className="space-y-3 mb-8">
+        <div className="space-y-3">
           {faqItems.map((item, index) => {
             const isItemOpen = openIndex === index;
             return (
@@ -154,37 +125,13 @@ function FaqPopup({ isOpen, onClose, openToIndex }: { isOpen: boolean; onClose: 
             );
           })}
         </div>
-
-        <Separator className="mb-6" />
-
-        <div className="text-center">
-          <p className="text-muted-foreground mb-3">
-            Still have questions? We're here to help!
-          </p>
-          <a
-            href="mailto:hello@gimmeasite.com"
-            className="inline-flex items-center gap-2 text-primary font-semibold hover:underline"
-          >
-            <Mail className="w-4 h-4" />
-            hello@gimmeasite.com
-          </a>
-        </div>
-
-        <div className="mt-6 text-center">
-          <Button
-            onClick={onClose}
-            className="bg-primary hover:bg-primary/90"
-          >
-            Got It
-          </Button>
-        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
 // Navigation Component
-function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
+function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [showAccountPopup, setShowAccountPopup] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
@@ -237,7 +184,6 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
                   </div>
                 )}
               </div>
-              <button type="button" onClick={() => handleNavClick("about")} className="text-muted-foreground hover:text-foreground transition-colors">About</button>
               <div className="relative" onMouseEnter={() => openDrop("pricing")} onMouseLeave={closeDrop}>
                 <button type="button" onClick={() => handleNavClick("pricing")} className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors">
                   Pricing <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openDropdown === "pricing" ? "rotate-180" : ""}`} />
@@ -252,18 +198,11 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
                   </div>
                 )}
               </div>
+              <button type="button" onClick={() => handleNavClick("faq")} className="text-muted-foreground hover:text-foreground transition-colors">FAQ</button>
               <button type="button" onClick={() => handleNavClick("contact")} className="text-muted-foreground hover:text-foreground transition-colors">Contact</button>
             </div>
 
             <div className="hidden md:flex items-center gap-3">
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-muted-foreground hover:text-foreground"
-                onClick={onOpenFaq}
-              >
-                <HelpCircle className="w-5 h-5" />
-              </Button>
               <Button
                 size="sm"
                 variant="ghost"
@@ -292,14 +231,10 @@ function Navigation({ onOpenFaq }: { onOpenFaq: () => void }) {
             <div className="md:hidden pt-4 pb-2 space-y-4">
               <button type="button" onClick={() => handleNavClick("services")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Services</button>
               <button type="button" onClick={() => handleNavClick("process")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Process</button>
-              <button type="button" onClick={() => handleNavClick("about")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">About</button>
               <button type="button" onClick={() => handleNavClick("pricing")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Pricing</button>
+              <button type="button" onClick={() => handleNavClick("faq")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">FAQ</button>
               <button type="button" onClick={() => handleNavClick("contact")} className="block py-2 text-muted-foreground hover:text-foreground w-full text-left">Contact</button>
               <div className="flex gap-2 mt-4">
-                <Button variant="outline" size="sm" onClick={onOpenFaq}>
-                  <HelpCircle className="w-4 h-4 mr-1" />
-                  Help
-                </Button>
                 <Button variant="outline" size="sm" onClick={() => { setIsOpen(false); setShowAccountPopup(true); }}>
                   <UserCircle className="w-4 h-4 mr-1" />
                   Account
@@ -1676,7 +1611,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     let value = e.target.value;
     // Strip pasted domain prefixes for all social media username fields
     if (id === "facebook") {
-      value = value.replace(/^https?:\/\/(www\.)?facebook\.com\//i, "");
+      value = value.replace(/^(?:https?:\/\/)?(?:www\.)?facebook\.com\//i, "");
     } else if (id === "instagram") {
       value = value.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "");
     } else if (id === "twitter") {
@@ -2667,7 +2602,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
 }
 
 // Footer
-function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onOpenPrivacyPolicy: () => void }) {
+function Footer({ onOpenPrivacyPolicy }: { onOpenPrivacyPolicy: () => void }) {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfService, setShowTermsOfService] = useState(false);
   const [showCookiePolicy, setShowCookiePolicy] = useState(false);
@@ -2714,9 +2649,9 @@ function Footer({ onOpenFaq, onOpenPrivacyPolicy }: { onOpenFaq: () => void; onO
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <ul className="space-y-3 text-muted-foreground">
-                <li><button type="button" onClick={() => scrollToSection("about")} className="hover:text-foreground transition-colors">About</button></li>
+                <li><button type="button" onClick={() => scrollToSection("pricing")} className="hover:text-foreground transition-colors">Pricing</button></li>
+                <li><button type="button" onClick={() => scrollToSection("faq")} className="hover:text-foreground transition-colors">FAQ</button></li>
                 <li><button type="button" onClick={() => scrollToSection("contact")} className="hover:text-foreground transition-colors">Contact</button></li>
-                <li><Link href="/faq" onClick={(e) => { e.preventDefault(); onOpenFaq(); }} className="hover:text-foreground transition-colors">FAQ</Link></li>
               </ul>
             </div>
 
@@ -3137,8 +3072,6 @@ function ThanksPopup({ isOpen, onClose, onBookCall }: { isOpen: boolean; onClose
 }
 
 export default function Home() {
-  const [showFaqPopup, setShowFaqPopup] = useState(false);
-  const [faqTargetIndex, setFaqTargetIndex] = useState<number | undefined>(undefined);
   const [showThanksPopup, setShowThanksPopup] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [paymentPlanType, setPaymentPlanType] = useState<"one-time" | "monthly" | "hybrid">("one-time");
@@ -3179,9 +3112,8 @@ export default function Home() {
       window.dispatchEvent(new Event("openTermsOfService"));
       window.history.replaceState({}, document.title, window.location.pathname);
     } else if (modal === "faq") {
-      setFaqTargetIndex(undefined);
-      setShowFaqPopup(true);
       window.history.replaceState({}, document.title, window.location.pathname);
+      setTimeout(() => scrollToSection("faq"), 100);
     } else if (modal === "payment-upfront" || modal === "payment-one-time") {
       // Scroll to pricing section first, then open modal
       setTimeout(() => {
@@ -3236,15 +3168,6 @@ export default function Home() {
       }, 100);
     }
 
-    // Listen for openFaqAt events (from dropdowns with ? buttons)
-    const handleOpenFaqAt = (e: Event) => {
-      const idx = (e as CustomEvent).detail;
-      setFaqTargetIndex(idx);
-      setShowFaqPopup(true);
-    };
-    window.addEventListener('faqNavigate', (ev: Event) => { const e = ev as CustomEvent; if (e.detail === 'pricing') { handleCloseFaq(); setTimeout(() => scrollToSection('pricing'), 100); } });
-      window.addEventListener('openFaqAt', handleOpenFaqAt);
-
     // Handle ?thanks=1 (from /thank-you route) and legacy #thanks hash
     if (urlParams.get("thanks") === "1" || window.location.hash === "#thanks") {
       setShowThanksPopup(true);
@@ -3259,8 +3182,6 @@ export default function Home() {
     }
   }, []);
 
-  const handleOpenFaq = () => { setFaqTargetIndex(undefined); setShowFaqPopup(true); };
-  const handleCloseFaq = () => { setShowFaqPopup(false); setFaqTargetIndex(undefined); };
   const handleOpenPrivacyPolicy = () => {
     window.dispatchEvent(new Event('openPrivacyPolicy'));
   };
@@ -3277,15 +3198,14 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
-      <Navigation onOpenFaq={handleOpenFaq} />
+      <Navigation />
       <HeroSection />
       <ServicesSection />
       <ProcessSection />
-      <AboutUsSection />
       <PricingSection onOpenPayment={handleOpenPayment} />
+      <FaqSection />
       <ContactSection onSuccess={() => setShowThanksPopup(true)} />
-      <Footer onOpenFaq={handleOpenFaq} onOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
-      <FaqPopup isOpen={showFaqPopup} onClose={handleCloseFaq} openToIndex={faqTargetIndex} />
+      <Footer onOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
       <ThanksPopup isOpen={showThanksPopup} onClose={() => setShowThanksPopup(false)} onBookCall={() => setBookCallClicked(true)} />
       <PromoPopup />
       <PaymentModal
