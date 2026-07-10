@@ -2347,9 +2347,9 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                       } else {
                         setAttachedFiles(combined);
                       }
-                      const oversized = combined.filter(f => f.size > 25 * 1024 * 1024);
+                      const oversized = combined.filter(f => f.size > 50 * 1024 * 1024);
                       if (oversized.length > 0) {
-                        errs.push(`The following file(s) exceed 25 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
+                        errs.push(`The following file(s) exceed 50 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
                       }
                       setFileErrors(errs);
                       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -2358,7 +2358,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   {fileErrors.map((err, i) => (
                     <p key={i} className="text-red-500 text-xs mt-1">{err}</p>
                   ))}
-                  <p className="text-xs text-muted-foreground mt-1.5">PNG, JPG, WEBP, GIF, MP4, SVG, OTF, or ZIP files accepted. Max 10 files, 25 MB each.</p>
+                  <p className="text-xs text-muted-foreground mt-1.5">Max. 50 MB per file.</p>
                 </div>
 
                 {/* Security Disclaimer */}
