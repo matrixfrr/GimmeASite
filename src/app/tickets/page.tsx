@@ -676,7 +676,7 @@ export default function TicketsPage() {
                           type="file"
                           multiple
                           className="hidden"
-                          accept=".png,.jpg,.jpeg,.webp,.gif,.mp4,.pdf,.docx,.svg,.zip,.otf"
+                          accept=".png,.jpg,.jpeg,.webp,.heic,.svg,.gif,.pdf,.docx,.mov,.mp4,.otf,.ttf,.mp3,.wav,.zip,.html,.js,.css,.xlsx,.csv,.txt"
                           onChange={(e) => {
                             const newFiles = Array.from(e.target.files || []);
                             const combined = [...attachments, ...newFiles];
@@ -699,7 +699,7 @@ export default function TicketsPage() {
                           <p key={i} className="text-red-500 text-xs mt-1">{err}</p>
                         ))}
                         <p className="text-xs text-muted-foreground mt-1.5">
-                          PNG, JPG, WEBP, GIF, MP4, PDF, DOCX, SVG, OTF, or ZIP files accepted. Max file size 50 MB each.
+                          Max. 50 MB per file.
                         </p>
                       </div>
                     </>
