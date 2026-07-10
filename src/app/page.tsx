@@ -1160,14 +1160,26 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    onClick={() => setEquityVote(v => v === 'up' ? null : 'up')}
+                    onClick={async () => {
+                      const next = equityVote === 'up' ? null : 'up';
+                      setEquityVote(next);
+                      if (next) {
+                        try { await getSupabase().from("equity_votes").insert({ vote: next }); } catch { /* non-critical */ }
+                      }
+                    }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${equityVote === 'up' ? 'bg-green-500/20 border-green-500 text-green-500' : 'border-border/50 text-muted-foreground hover:border-green-500/50 hover:text-green-500'}`}
                   >
                     <ThumbsUp className="w-3.5 h-3.5" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => setEquityVote(v => v === 'down' ? null : 'down')}
+                    onClick={async () => {
+                      const next = equityVote === 'down' ? null : 'down';
+                      setEquityVote(next);
+                      if (next) {
+                        try { await getSupabase().from("equity_votes").insert({ vote: next }); } catch { /* non-critical */ }
+                      }
+                    }}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${equityVote === 'down' ? 'bg-red-500/20 border-red-500 text-red-500' : 'border-border/50 text-muted-foreground hover:border-red-500/50 hover:text-red-500'}`}
                   >
                     <ThumbsDown className="w-3.5 h-3.5" />
@@ -1177,14 +1189,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             </div>
             <button
               type="button"
-              onClick={async () => {
-                if (equityVote) {
-                  try {
-                    await getSupabase().from("equity_votes").insert({ vote: equityVote });
-                  } catch { /* non-critical */ }
-                }
-                setShowEquityCmsPopup(false);
-              }}
+              onClick={() => setShowEquityCmsPopup(false)}
               className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               Got It
