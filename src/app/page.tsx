@@ -2317,21 +2317,18 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                     ref={fileInputRef}
                     type="file"
                     multiple
+                    // @ts-expect-error webkitdirectory is non-standard but widely supported
+                    webkitdirectory=""
                     accept=".png,.jpg,.jpeg,.webp,.heic,.svg,.gif,.pdf,.docx,.mov,.mp4,.otf,.ttf,.mp3,.wav,.zip,.html,.js,.css,.xlsx,.csv,.txt"
                     className="hidden"
                     onChange={e => {
                       const newFiles = Array.from(e.target.files || []);
                       const combined = [...attachedFiles, ...newFiles];
                       const errs: string[] = [];
-                      if (combined.length > 10) {
-                        errs.push(`You can only attach up to 10 files. Please remove ${combined.length - 10} file(s).`);
-                        setAttachedFiles(combined.slice(0, 10));
-                      } else {
-                        setAttachedFiles(combined);
-                      }
-                      const oversized = combined.filter(f => f.size > 25 * 1024 * 1024);
+                      setAttachedFiles(combined);
+                      const oversized = combined.filter(f => f.size > 50 * 1024 * 1024);
                       if (oversized.length > 0) {
-                        errs.push(`The following file(s) exceed 25 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
+                        errs.push(`The following file(s) exceed 50 MB and must be removed: ${oversized.map(f => f.name).join(", ")}.`);
                       }
                       setFileErrors(errs);
                       if (fileInputRef.current) fileInputRef.current.value = "";
