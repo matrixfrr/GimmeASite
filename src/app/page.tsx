@@ -658,7 +658,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
         "Redesigns",
         "Unlimited Revisions",
         "VIP, Priority Support",
-        "__green__15% Off / Year",
+        "__green__20% Off / Year",
       ],
       popular: false,
     },
@@ -675,7 +675,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
 
   return (
     <>
-      <section className="pt-32 pb-32 relative overflow-x-hidden">
+      <section className="pt-32 pb-32 relative overflow-x-hidden noise-bg">
       <style>{`@keyframes planPop{0%{transform:scale(1);box-shadow:none}5%{transform:scale(1.05);box-shadow:0 0 0 4px rgba(249,115,22,0.75),0 24px 64px rgba(249,115,22,0.2)}13%{transform:scale(0.98);box-shadow:0 0 0 2px rgba(249,115,22,0.45)}22%{transform:scale(1.02);box-shadow:0 0 0 2px rgba(249,115,22,0.25)}31%{transform:scale(1);box-shadow:none}100%{transform:scale(1)}} .plan-pop{animation:planPop 15s ease-out forwards}`}</style>
       <div id="pricing" className="max-w-[1600px] mx-auto px-4" style={{ scrollMarginTop: "88px" }}>
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -698,7 +698,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                 plan.popular
                   ? "bg-primary/5 border-primary/30 animate-attention-bounce"
                   : plan.name === "Annual"
-                  ? "bg-green-500/10 border-green-500/40 animate-attention-bounce"
+                  ? "bg-green-500/15 border-green-500/50 animate-attention-bounce"
                   : plan.name === "Hybrid"
                   ? "bg-green-500/5 border-green-500/20 animate-attention-bounce"
                   : "bg-card/50 border-border/50"
@@ -716,7 +716,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               )}
               {plan.name === "Annual" && (
                 <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 hover:bg-green-600 text-white border-0 transition-all duration-300 px-3" style={{boxShadow: "0 2px 20px rgba(34, 197, 94, 0.75)"}}>
-                  Best Value — Save 15%
+                  Save 20%
                 </Badge>
               )}
               <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -958,7 +958,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
                   { perk: "Analytics", up: false, mo: true, hy: true, an: true },
                   { perk: "Copywriting", up: false, mo: true, hy: true, an: true },
                   { perk: "Content Strategy", up: false, mo: true, hy: true, an: true },
-                  { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "15%" },
+                  { perk: "Monthly Discount", up: false, mo: false, hy: "10%", an: "20%" },
                   { perk: "Redesigns", up: false, mo: false, hy: false, an: true },
                 ] as { perk: string; up: boolean | string; mo: boolean | string; hy: boolean | string; an: boolean | string }[]).map(({ perk, up, mo, hy, an }) => {
                   const cell = (v: boolean | string) => typeof v === "string"
@@ -1057,7 +1057,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               <ul className="space-y-1.5 list-none">
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Established businesses looking to <strong className="text-foreground">commit</strong> for the year</span></li>
                 <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span><strong className="text-foreground">Complex</strong> sites with <strong className="text-foreground">premium</strong> amenities, including unlimited revisions and priority support</span></li>
-                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">15% off</span> (approx. 2 months free)</span></li>
+                <li className="flex items-start gap-2"><span className="text-primary font-bold mt-0.5">·</span><span>Business owners interested in <strong className="text-foreground">long-term</strong> growth and <span className="text-green-500 font-semibold">20% off</span> (approx. 2.4 months free)</span></li>
               </ul>
             </div>
             <button type="button" onClick={() => setShowAnnualPopup(false)} className="mt-5 w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">Got It</button>
@@ -1999,7 +1999,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                           }`}
                           onClick={() => handlePlanSelect("Annual")}
                         >
-                          Annual <span className="text-green-500" style={{fontSize:"0.6rem"}}>Save 15%</span>
+                          Annual <span className="text-green-500" style={{fontSize:"0.6rem"}}>Save 20%</span>
                         </button>
 
                       </div>
