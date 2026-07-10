@@ -1177,7 +1177,14 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
             </div>
             <button
               type="button"
-              onClick={() => setShowEquityCmsPopup(false)}
+              onClick={async () => {
+                if (equityVote) {
+                  try {
+                    await getSupabase().from("equity_votes").insert({ vote: equityVote });
+                  } catch { /* non-critical */ }
+                }
+                setShowEquityCmsPopup(false);
+              }}
               className="w-full py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               Got It
