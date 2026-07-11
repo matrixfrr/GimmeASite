@@ -1697,13 +1697,13 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
                   <div className="text-sm text-muted-foreground mb-1">Hours (EST)</div>
                   <div className="space-y-0.5 text-sm">
                     {[
-                      { day: "Sun", hours: "Closed" },
+                      { day: "Sun", hours: "9AM-5PM" },
                       { day: "Mon", hours: "9AM-5PM" },
                       { day: "Tue", hours: "9AM-5PM" },
                       { day: "Wed", hours: "9AM-5PM" },
                       { day: "Thu", hours: "9AM-5PM" },
                       { day: "Fri", hours: "9AM-5PM" },
-                      { day: "Sat", hours: "Closed" },
+                      { day: "Sat", hours: "9AM-5PM" },
                     ].map(({ day, hours }) => (
                       <div key={day} className="flex gap-3">
                         <span className="font-bold text-white w-8">{day}</span>
