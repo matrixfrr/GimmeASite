@@ -17,7 +17,7 @@ function getStripe(): Stripe {
   if (secretKey.includes("YOUR_SECRET_KEY_HERE") || secretKey === "sk_live_" || secretKey === "sk_test_") {
     throw new Error("STRIPE_SECRET_KEY is set to a placeholder value. Please configure your actual Stripe secret key.");
   }
-  return new Stripe(secretKey);
+  return new Stripe(secretKey, { httpClient: Stripe.createFetchHttpClient() });
 }
 
 // Validate that the URL is a valid Stripe Checkout URL
