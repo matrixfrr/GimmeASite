@@ -102,6 +102,13 @@
   animation: float 6s ease-in-out infinite;
 }
 
+.pricing-card {
+  transition: transform 0.3s ease;
+}
+.pricing-card:hover {
+  animation: float 2s ease-in-out infinite;
+}
+
 .animate-glow {
   animation: glow 3s ease-in-out infinite;
 }

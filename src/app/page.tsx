@@ -696,12 +696,12 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
               key={plan.name}
               className={`p-6 relative group h-full flex flex-col ${planAnimKeys[plan.name] ? "plan-pop" : ""} ${
                 plan.popular
-                  ? "bg-primary/5 border-primary/30 animate-attention-bounce"
+                  ? "bg-primary/5 border-primary/30 pricing-card"
                   : plan.name === "Annual"
-                  ? "bg-green-500/15 border-green-500/50 animate-attention-bounce"
+                  ? "bg-green-500/15 border-green-500/50 pricing-card"
                   : plan.name === "Hybrid"
-                  ? "bg-green-500/5 border-green-500/20 animate-attention-bounce"
-                  : "bg-card/50 border-border/50"
+                  ? "bg-green-500/5 border-green-500/20 pricing-card"
+                  : "bg-card/50 border-border/50 pricing-card"
               } ${(plan.name === "Hybrid" || plan.name === "Annual") ? "hover-lift-green" : "hover-lift"}`}
             >
               {plan.popular && (
