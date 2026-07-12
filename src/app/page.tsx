@@ -191,9 +191,11 @@ function Navigation() {
                       <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors flex items-center justify-between"
                         onClick={() => { handleNavClick("pricing"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightPlan", { detail: item })), 600); }}
                       >
-                        <span>{item}</span>
-                        {item === "Hybrid" && <span className="text-xs text-green-500 font-medium">Save 10%</span>}
-                        {item === "Annual" && <span className="text-xs text-green-500 font-medium">Save 20%</span>}
+                        <span className="flex items-center gap-1.5">
+                          {item}
+                          {item === "Hybrid" && <span className="text-xs text-green-500 font-medium">Save 10%</span>}
+                          {item === "Annual" && <span className="text-xs text-green-500 font-medium">Save 20%</span>}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -661,7 +663,7 @@ function PricingSection({ onOpenPayment }: { onOpenPayment: (plan: "one-time" | 
       features: [
         "Redesigns",
         "Unlimited Revisions",
-        "VIP, Priority Support",
+        "Priority Support",
         "__green__20% Off / Year",
       ],
       popular: false,
