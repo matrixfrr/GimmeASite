@@ -237,32 +237,55 @@ def build_html(sub):
 
 Override the style only if it is clearly inappropriate for the client's industry — use the next most fitting style instead.
 
+A local UI reference library is available at /Users/admin/.gimmeasite/ui-reference/. Read from it when building — it contains source code, CSS patterns, design tokens, and component implementations across every library below. Use it to pull real implementations directly rather than writing from scratch.
+
 For additional design inspiration, draw from the following sources for palette choices, spacing rhythms, component aesthetics, and interaction patterns that feel production-quality rather than AI-generated:
 
-- https://styles.refero.design/ -- 2,000+ real-world design systems with color palettes, typography specs, and atmospheric descriptions
-- https://ui.shadcn.com/create?preset=b27GcrRo -- polished component patterns and interaction design
-- https://tailwindcss.com/plus -- utility-first layout and spacing patterns
-- https://www.untitledui.com/ -- Figma, React, and icon design systems
-- https://heroui.com/ -- accessible, modern component library
-- https://magicui.design/ -- animated, high-impact UI components
-- https://react-aria.adobe.com/ -- Adobe's accessible interaction primitives
-- https://www.kibo-ui.com/ -- refined, minimal UI components
-- https://ui.aceternity.com/ -- bold, cinematic UI effects
-- https://ui.mantine.dev/ -- full-featured component library with strong defaults
-- https://ant.design/ -- enterprise-grade design language and components
-- https://www.alignui.com/ -- clean, modern design system
-- https://www.originui-ng.com/ -- open-source UI components
-- https://www.radix-ui.com/ -- unstyled, accessible component primitives
-- https://21st.dev/ -- curated, high-quality UI components
-- https://www.tremor.so/ -- dashboard and data UI components
-- https://preline.co/ -- Tailwind UI component library
-- https://flowbite.com/ -- open-source Tailwind component library
+- https://styles.refero.design/ — 2,000+ real-world design systems with color palettes, typography specs, and atmospheric descriptions
+- https://ui.shadcn.com/ — clean, accessible components (local: ui-reference/shadcn/)
+- https://tailwindcss.com/plus — utility-first layout and spacing patterns
+- https://www.untitledui.com/ — Figma, React, and icon design systems
+- https://heroui.com/ — accessible, modern component library (local: ui-reference/heroui/)
+- https://magicui.design/ — animated, high-impact UI components (local: ui-reference/magicui/)
+- https://react-aria.adobe.com/ — Adobe's accessible interaction primitives (local: ui-reference/react-spectrum/)
+- https://www.kibo-ui.com/ — refined, minimal UI components (local: ui-reference/kibo/)
+- https://ui.aceternity.com/ — bold, cinematic UI effects
+- https://ui.mantine.dev/ — full-featured component library (local: ui-reference/mantine/)
+- https://ant.design/ — enterprise-grade design language (local: ui-reference/ant-design/)
+- https://www.alignui.com/ — clean, modern design system
+- https://www.originui-ng.com/ — open-source UI components
+- https://www.radix-ui.com/ — unstyled, accessible component primitives (local: ui-reference/radix/)
+- https://21st.dev/ — curated, high-quality UI components
+- https://www.tremor.so/ — dashboard and data UI components (local: ui-reference/tremor/)
+- https://preline.co/ — Tailwind UI component library (local: ui-reference/preline/)
+- https://flowbite.com/ — open-source Tailwind component library (local: ui-reference/flowbite.min.css, flowbite.min.js)
+- https://daisyui.com/ — Tailwind-based semantic component library (local: ui-reference/daisyui.css)
+- https://open-props.style/ — CSS custom properties design tokens (local: ui-reference/open-props.min.css)
+- https://www.pollen.style/ — CSS variables design system (local: ui-reference/pollen.css)
+- https://uiverse.io/ — community-made HTML/CSS components (local: ui-reference/uiverse/)
+
+For icons, draw from:
+- Lucide (local: ui-reference/lucide/)
+- Phosphor Icons (local: ui-reference/phosphor/)
+- Tabler Icons (local: ui-reference/tabler-icons/)
+
+For animation, draw from:
+- anime.js (local: ui-reference/anime/)
+- Motion One (local: ui-reference/motion/)
+- Lenis smooth scroll (local: ui-reference/lenis/)
+- Splitting.js for text reveals (local: ui-reference/splitting/)
+- GSAP free tier (local: ui-reference/gsap/)
+
+For CSS backgrounds and textures:
+- Hero Patterns (local: ui-reference/heropatterns/)
+- pattern.css (local: ui-reference/pattern-css/)
+- Radix Colors (local: ui-reference/radix-colors/)
 
 Once the style is chosen, derive ALL of the following from it so every element feels intentional and cohesive:
 
-FONT PAIRING — choose a Google Fonts pairing that authentically fits the style. Never use: Inter, Roboto, Open Sans, Lato, Montserrat, Poppins, Raleway, Arial, or any default system font. Use weight extremes (100/200 vs 800/900) and size jumps of 3x+. Avoid overused AI choices like Space Grotesk.
+FONT PAIRING — choose a Google Fonts or Fontshare pairing that authentically fits the style. Never use: Inter, Roboto, Open Sans, Lato, Montserrat, Poppins, Raleway, Arial, or any default system font. Use weight extremes (100/200 vs 800/900) and size jumps of 3x+. Avoid overused AI choices like Space Grotesk. Fontshare CDN: https://api.fontshare.com/v2/css?f[]=FONTNAME@400,700&display=swap
 
-COLOR PALETTE — choose a dominant color, sharp accent, and background tone that serve the style. Options: light (cream/off-white), dark (near-black/deep navy/charcoal), or tinted (saturated mid-tone — forest, rust, indigo, etc.). Never default to plain white. Define all tokens as CSS variables.
+COLOR PALETTE — choose a dominant color, sharp accent, and background tone that serve the style. Options: light (cream/off-white), dark (near-black/deep navy/charcoal), or tinted (saturated mid-tone — forest, rust, indigo, etc.). Never default to plain white. Define all tokens as CSS variables. Reference ui-reference/radix-colors/ and ui-reference/open-props.min.css for battle-tested color scales.
 
 HERO LAYOUT — choose whichever of left-aligned, center-aligned, right-aligned, or full-bleed best fits the style.
 
@@ -270,33 +293,45 @@ NAV STYLE — choose whichever of sticky top bar, minimal floating pill, left si
 
 SECTION ORDER — arrange sections (hero, about, services, testimonials, contact, etc.) in the sequence that best serves the style and the client's industry.
 
-BACKGROUND TREATMENT — choose whichever of layered CSS gradient, geometric pattern, grain/noise texture, generative art, or split-color panels best fits the style. Never use a plain solid color background.
+BACKGROUND TREATMENT — choose whichever of layered CSS gradient, geometric pattern (reference ui-reference/heropatterns/ or ui-reference/pattern-css/), grain/noise texture, generative art, or split-color panels best fits the style. Never use a plain solid color background.
 
-ANIMATION STYLE — choose whichever of staggered fade-in on load, slide-up reveals on scroll, typewriter headline, parallax layers, or subtle pulse/glow on CTAs best fits the style. CSS-only — no external JS animation libraries.
+ANIMATION STYLE — choose whichever of staggered fade-in on load, slide-up reveals on scroll, typewriter headline, parallax layers, or subtle pulse/glow on CTAs best fits the style. Reference ui-reference/anime/, ui-reference/gsap/, or ui-reference/motion/ for implementation patterns.
 
 State the chosen style and all derived decisions in an HTML comment at the top of the file.
 
 ---
 
-You are an expert frontend engineer. Build a complete, self-contained HTML file using vanilla HTML, CSS, and JavaScript — all inline. Use Tailwind CSS for utility classes where helpful, but define all design tokens as CSS variables. No external dependencies beyond Google Fonts and Tailwind CDN.
+You are an expert frontend engineer. Build a complete, self-contained HTML file using vanilla HTML, CSS, and JavaScript — all inline. Use Tailwind CSS for utility classes where helpful, but define all design tokens as CSS variables. No external dependencies beyond Google Fonts, Fontshare, and Tailwind CDN.
 
 THIS IS A SINGLE-PAGE DRAFT. The entire site must be one HTML file, one page, no routing, no multi-page navigation. All sections scroll vertically on the same page. Nav links must anchor-scroll to sections on the same page — they must NOT link to separate pages or external URLs. There are no other HTML files. Enforce this absolutely.
 
-Avoid the "AI slop" aesthetic at all costs:
+Do NOT produce anything that looks generic, templated, or AI-generated. No Claude Aesthetic. Avoid AI slop at all costs:
 - No purple gradients on white backgrounds
 - No predictable card-grid layouts
 - No clichéd hero + feature section + CTA patterns unless genuinely appropriate
-- No generic, context-free design — every choice should feel tailored to this specific client
+- No uniform typography — every section must have deliberate size/weight contrast
+- No emoji used as decorative elements or next to contact info/social links
+- No blindly placing uploaded files into sections where they don't contextually belong
 
 Build a sexy, professional, modern, high-converting, easily-navigated, desktop/tablet/mobile-friendly one-page draft. Structure the navigation to include Home, About or Why Us?, Contact, and — if applicable — Our Services or Book Appointment (with pricing). Adapt to the client's type: a music artist does not want an "Our Services" section; a law firm does not want a booking widget. Be circumstantially intelligent.
+
+Each page must be fully mobile responsive (375px, 768px, 1280px) and load fast — embedded CSS only, no external frameworks beyond Google Fonts, Fontshare, and Tailwind CDN.
 
 Use the client info below to shape layout, structure, and UX. Pull their branding, colors, logo, photos, and social media presence from their public profiles and Google. Display their logo in the header. Include galleries, banners, or backgrounds pulled from or inspired by their real media. If media is unavailable, compensate with original generative designs — never use placeholders.
 
 Pull real reviews from Yelp, Google, or relevant platforms for testimonials where credibility matters. Pull accurate business details (address, hours, phone, email) from public sources. Do not invent or generalize information that belongs to other businesses.
 
-Include a footer with social media links, and Privacy Policy, Terms of Service, and Cookie Policy pages linked (not built). Ensure strong CTAs and lead capture forms where appropriate. Make adjustments to avoid plagiarism and AI speculation.
+Contact forms must be wired to the GimmeASite forms Worker: https://gimmeasite-forms.mattrixfr.workers.dev/submit. Submit via JS fetch with Content-Type: application/json. Include a hidden client_id field set to the client's slug (e.g. "barkbusters-buxmont") and a hidden form_type field (e.g. "contact", "booking"). Every other field is up to you. Do NOT use Formspree.
+
+Include a footer with social media links, and Privacy Policy, Terms of Service, and Cookie Policy pages linked (not built). Ensure strong CTAs and lead capture forms where appropriate.
+
+Contact sections and social media links must be clean and professional. No emoji next to social media profile links or contact details. Social links should display as the platform name or handle only.
 
 If "Owns existing domain" is yes, use the existing domain throughout the site — footer, contact info, header. Otherwise use the desired domain field.
+
+If attached files include a logo, display it in the header. If they include photos, use them selectively where contextually appropriate — not blindly in every section. Always research the client's social media and online presence to fill gaps and elevate the design.
+
+If revision notes are provided, apply every single one precisely.
 
 CLIENT INFO:
 - Business name: {fields['company']}
@@ -315,7 +350,7 @@ CLIENT INFO:
 - Payment plan interest: {fields['paymentPlan']}
 - Their message: {fields['message']}
 
-COPY PROVIDED BY CLIENT (use this exact content for the sections below — do not invent or replace):
+COPY PROVIDED BY CLIENT (use this exact content — do not invent or replace):
 - Home page key message / tagline: {fields['homeKeyMessage']}
 - Home page primary call-to-action: {fields['homeAction']}
 - About page — their story: {fields['aboutStory']}
@@ -329,7 +364,7 @@ COPY PROVIDED BY CLIENT (use this exact content for the sections below — do no
 
 If any copy field above is blank, fall back to researching the client's public presence (social media, Google, Yelp). Never leave a section empty or use obvious placeholder text.
 
-If brand files were uploaded (logo, photos, fonts, brand colors), they are attached as images. Use them directly — display the logo in the header, incorporate brand colors and imagery throughout.
+Do NOT include a "Designed by GimmeASite" footer credit — this is a draft, not the finished site.
 
 Return ONLY the raw HTML — no markdown, no explanation, no code fences."""
     image_attachments = [a for a in sub.get("attachments", []) if a["content_type"].startswith("image/")]

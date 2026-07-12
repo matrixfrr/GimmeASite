@@ -203,6 +203,28 @@ export default function AdminPage() {
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "paid" | null>(null);
   const [planFilter, setPlanFilter] = useState<"upfront" | "monthly" | "hybrid" | "annual" | null>(null);
   const [statusLoading, setStatusLoading] = useState<string | null>(null);
+  const [editingQuote, setEditingQuote] = useState<string | null>(null);
+  const [editFields, setEditFields] = useState<{ name: string; email: string }>({ name: "", email: "" });
+
+  const handleEditQuote = async (id: string) => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/quotes", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, updates: { name: editFields.name, email: editFields.email.toLowerCase() }, adminPassword }),
+      });
+      const data = await res.json();
+      if (data.error) { setError(data.error); return; }
+      setSuccess("Quote updated!");
+      setEditingQuote(null);
+      fetchData(adminPassword);
+    } catch {
+      setError("Failed to update quote");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!success) return;
@@ -480,11 +502,26 @@ export default function AdminPage() {
                 {!dimmed && (isAnnual ? <p className="text-xs text-muted-foreground">/year</p> : quote.plan_type === "monthly" ? <p className="text-xs text-muted-foreground">/month</p> : null)}
               </div>
             )}
-            <Button variant="ghost" size="sm" className="mt-2 text-red-500 hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDeleteQuote(quote.id)}>
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            <div className="flex gap-1 mt-2">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-muted/50" onClick={() => { setEditingQuote(quote.id); setEditFields({ name: quote.name, email: quote.email }); }}>
+                <MessageSquare className="w-4 h-4" />
+              </Button>
+              <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-400 hover:bg-red-500/10" onClick={() => handleDeleteQuote(quote.id)}>
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
+        {editingQuote === quote.id && (
+          <div className="mt-3 pt-3 border-t border-border space-y-2">
+            <Input value={editFields.name} onChange={e => setEditFields({ ...editFields, name: e.target.value })} placeholder="Full name" className="bg-background h-8 text-sm" />
+            <Input type="email" value={editFields.email} onChange={e => setEditFields({ ...editFields, email: e.target.value })} placeholder="Email address" className="bg-background h-8 text-sm" />
+            <div className="flex gap-2">
+              <Button size="sm" className="h-7 text-xs" onClick={() => handleEditQuote(quote.id)} disabled={loading}>Save</Button>
+              <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => setEditingQuote(null)}>Cancel</Button>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
