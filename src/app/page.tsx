@@ -188,9 +188,13 @@ function Navigation() {
                 {openDropdown === "pricing" && (
                   <div className="absolute top-full left-0 mt-2 w-48 bg-background/95 backdrop-blur-xl border border-border/50 rounded-xl shadow-2xl z-50 py-1 overflow-hidden" onMouseEnter={() => openDrop("pricing")} onMouseLeave={closeDrop}>
                     {(["Upfront", "Monthly", "Hybrid", "Annual"] as const).map(item => (
-                      <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                      <button key={item} type="button" className="w-full text-left px-4 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors flex items-center justify-between"
                         onClick={() => { handleNavClick("pricing"); setTimeout(() => window.dispatchEvent(new CustomEvent("highlightPlan", { detail: item })), 600); }}
-                      >{item}</button>
+                      >
+                        <span>{item}</span>
+                        {item === "Hybrid" && <span className="text-xs text-green-500 font-medium">Save 10%</span>}
+                        {item === "Annual" && <span className="text-xs text-green-500 font-medium">Save 20%</span>}
+                      </button>
                     ))}
                   </div>
                 )}
