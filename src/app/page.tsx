@@ -3055,7 +3055,7 @@ function ThanksPopup({ isOpen, onClose, onBookCall }: { isOpen: boolean; onClose
             className="bg-primary hover:bg-primary/90 w-full px-8"
           >
             <a
-              href="https://calendar.app.google/wQdwGP7Trr5ThAKn6"
+              href="https://cal.com/gimmeasite"
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => { onBookCall(); onClose(); }}
