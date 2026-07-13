@@ -3035,38 +3035,31 @@ function PaymentStatusToast({ status, onClose }: { status: "success" | "cancelle
 
 // Main Page Component
 // Thanks Popup Component
-function ThanksPopup({ isOpen, onClose, onBookCall }: { isOpen: boolean; onClose: () => void; onBookCall: () => void }) {
+function ThanksPopup({ isOpen, onBookCall }: { isOpen: boolean; onBookCall: () => void }) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-card border border-border rounded-2xl p-6 max-w-2xl w-full shadow-2xl animate-slideIn flex flex-col max-h-[90vh]">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors z-10"
-          aria-label="Close"
-        >
-          <X className="w-5 h-5" />
-        </button>
-        <div className="text-center mb-4">
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-            <Check className="w-6 h-6 text-primary" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="relative bg-card border border-border rounded-2xl p-5 max-w-2xl w-full shadow-2xl animate-slideIn">
+        <div className="text-center mb-3">
+          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
+            <Check className="w-5 h-5 text-primary" />
           </div>
-          <h2 className="text-xl font-bold">Thank You!</h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h2 className="text-lg font-bold">Thank You!</h2>
+          <p className="text-xs text-muted-foreground mt-1">
             We've received your message. Book a quick call and we'll walk you through your draft together.
           </p>
         </div>
-        <div className="flex-1 min-h-0 rounded-xl overflow-hidden border border-border">
+        <div className="rounded-xl overflow-hidden border border-border">
           <iframe
             src="https://cal.com/gimmeasite?embed=true&embedType=inline&layout=month_view"
-            className="w-full h-full"
-            style={{ minHeight: '500px', border: 'none' }}
+            className="w-full"
+            style={{ height: '380px', border: 'none' }}
             onLoad={() => onBookCall()}
           />
         </div>
-        <p className="text-xs text-muted-foreground/60 text-center mt-3 leading-snug">
+        <p className="text-xs text-muted-foreground/60 text-center mt-2 leading-snug">
           Drafts are completed within one business day — your site will be ready before the call.
         </p>
       </div>
@@ -3082,14 +3075,14 @@ export default function Home() {
   const [paymentStatus, setPaymentStatus] = useState<"success" | "cancelled" | null>(null);
   const [bookCallClicked, setBookCallClicked] = useState(false);
 
-  // Warn before tab close if ThanksPopup open but Book Call not clicked
+  // Warn before tab close while ThanksPopup is open
   useEffect(() => {
-    if (showThanksPopup && !bookCallClicked) {
+    if (showThanksPopup) {
       const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
       window.addEventListener('beforeunload', handler);
       return () => window.removeEventListener('beforeunload', handler);
     }
-  }, [showThanksPopup, bookCallClicked]);
+  }, [showThanksPopup]);
 
   // Handle URL parameters for payment status and modals
   useEffect(() => {
@@ -3209,7 +3202,7 @@ export default function Home() {
       <FaqSection />
       <ContactSection onSuccess={() => setShowThanksPopup(true)} />
       <Footer onOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
-      <ThanksPopup isOpen={showThanksPopup} onClose={() => setShowThanksPopup(false)} onBookCall={() => setBookCallClicked(true)} />
+      <ThanksPopup isOpen={showThanksPopup} onBookCall={() => setBookCallClicked(true)} />
       <PromoPopup />
       <PaymentModal
         isOpen={paymentModalOpen}
