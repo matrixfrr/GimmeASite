@@ -3036,13 +3036,34 @@ function PaymentStatusToast({ status, onClose }: { status: "success" | "cancelle
 // Main Page Component
 // Thanks Popup Component
 function ThanksPopup({ isOpen, onBookCall }: { isOpen: boolean; onBookCall: () => void }) {
+  const [selected, setSelected] = useState<'15min' | '30min' | null>(null);
+
+  useEffect(() => { if (!isOpen) setSelected(null); }, [isOpen]);
+
   if (!isOpen) return null;
+
+  const eventTypes = [
+    {
+      id: '15min' as const,
+      label: '15 Min Discovery Call',
+      desc: 'Quick walkthrough of your draft — answer questions, confirm direction.',
+      duration: '15m',
+    },
+    {
+      id: '30min' as const,
+      label: '30 Min Discovery Call',
+      desc: 'More time to go deep on revisions, pricing, and next steps.',
+      duration: '30m',
+    },
+  ];
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
       <div className="relative bg-card border border-border rounded-2xl p-5 max-w-2xl w-full shadow-2xl animate-slideIn">
-        <div className="text-center mb-3">
+
+        {/* Header */}
+        <div className="text-center mb-4">
           <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-2">
             <Check className="w-5 h-5 text-primary" />
           </div>
@@ -3051,15 +3072,51 @@ function ThanksPopup({ isOpen, onBookCall }: { isOpen: boolean; onBookCall: () =
             We've received your message. Book a quick call and we'll walk you through your draft together.
           </p>
         </div>
-        <div className="rounded-xl overflow-hidden border border-border">
-          <iframe
-            src="https://cal.com/gimmeasite?embed=true&embedType=inline&layout=month_view"
-            className="w-full"
-            style={{ height: '380px', border: 'none' }}
-            onLoad={() => onBookCall()}
-          />
-        </div>
-        <p className="text-xs text-muted-foreground/60 text-center mt-2 leading-snug">
+
+        {selected ? (
+          <>
+            {/* Back button */}
+            <button
+              onClick={() => setSelected(null)}
+              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-3"
+            >
+              <ArrowRight className="w-3 h-3 rotate-180" />
+              Choose a different call type
+            </button>
+
+            {/* Calendar iframe for selected event */}
+            <div className="rounded-xl overflow-hidden border border-border">
+              <iframe
+                key={selected}
+                src={`https://cal.com/gimmeasite/${selected}?embed=true&embedType=inline&layout=month_view`}
+                className="w-full"
+                style={{ height: 'calc(100vh - 340px)', minHeight: '460px', maxHeight: '580px', border: 'none' }}
+                onLoad={() => onBookCall()}
+              />
+            </div>
+          </>
+        ) : (
+          /* Event type selection */
+          <div className="space-y-2">
+            {eventTypes.map((et) => (
+              <button
+                key={et.id}
+                onClick={() => setSelected(et.id)}
+                className="w-full text-left border border-border rounded-xl p-4 hover:border-primary/50 hover:bg-muted/40 transition-all group"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">{et.label}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{et.desc}</div>
+                  </div>
+                  <span className="shrink-0 text-xs text-muted-foreground border border-border rounded-full px-2 py-0.5 mt-0.5">{et.duration}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        <p className="text-xs text-muted-foreground/60 text-center mt-3 leading-snug">
           Drafts are completed within one business day — your site will be ready before the call.
         </p>
       </div>
