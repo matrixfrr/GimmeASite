@@ -3035,10 +3035,37 @@ function PaymentStatusToast({ status, onClose }: { status: "success" | "cancelle
 
 // Main Page Component
 // Thanks Popup Component
-function ThanksPopup({ isOpen, onBookCall }: { isOpen: boolean; onBookCall: () => void }) {
+function ThanksPopup({ isOpen, onClose, onBookCall }: { isOpen: boolean; onClose: () => void; onBookCall: () => void }) {
   const [selected, setSelected] = useState<'15min' | '30min' | null>(null);
+  const [bookingComplete, setBookingComplete] = useState(false);
 
-  useEffect(() => { if (!isOpen) setSelected(null); }, [isOpen]);
+  // Reset state when popup closes/reopens
+  useEffect(() => {
+    if (!isOpen) { setSelected(null); setBookingComplete(false); }
+  }, [isOpen]);
+
+  // Block tab close/refresh until booking is confirmed
+  useEffect(() => {
+    if (!isOpen || bookingComplete) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isOpen, bookingComplete]);
+
+  // Detect Cal.com booking confirmation via postMessage
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: MessageEvent) => {
+      if (!e.origin.includes('cal.com')) return;
+      const type = typeof e.data === 'object' ? e.data?.type : '';
+      if (type === 'cal:bookingSuccessful' || type === 'bookingSuccessful') {
+        setBookingComplete(true);
+        onBookCall();
+      }
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, [isOpen, onBookCall]);
 
   if (!isOpen) return null;
 
@@ -3059,8 +3086,22 @@ function ThanksPopup({ isOpen, onBookCall }: { isOpen: boolean; onBookCall: () =
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={bookingComplete ? onClose : undefined}
+      />
       <div className="relative bg-card border border-border rounded-2xl p-5 max-w-2xl w-full shadow-2xl animate-slideIn">
+
+        {/* Close button — only after booking confirmed */}
+        {bookingComplete && (
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors z-10"
+            aria-label="Close"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
 
         {/* Header */}
         <div className="text-center mb-4">
@@ -3075,14 +3116,16 @@ function ThanksPopup({ isOpen, onBookCall }: { isOpen: boolean; onBookCall: () =
 
         {selected ? (
           <>
-            {/* Back button */}
-            <button
-              onClick={() => setSelected(null)}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-3"
-            >
-              <ArrowRight className="w-3 h-3 rotate-180" />
-              Choose a different call type
-            </button>
+            {/* Back button — hidden once booking is confirmed */}
+            {!bookingComplete && (
+              <button
+                onClick={() => setSelected(null)}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-3"
+              >
+                <ArrowRight className="w-3 h-3 rotate-180" />
+                Choose a different call type
+              </button>
+            )}
 
             {/* Calendar iframe for selected event */}
             <div className="rounded-xl overflow-hidden border border-border">
@@ -3091,7 +3134,6 @@ function ThanksPopup({ isOpen, onBookCall }: { isOpen: boolean; onBookCall: () =
                 src={`https://cal.com/gimmeasite/${selected}?embed=true&embedType=inline&layout=month_view`}
                 className="w-full"
                 style={{ height: 'calc(100vh - 340px)', minHeight: '460px', maxHeight: '580px', border: 'none' }}
-                onLoad={() => onBookCall()}
               />
             </div>
           </>
@@ -3124,6 +3166,7 @@ function ThanksPopup({ isOpen, onBookCall }: { isOpen: boolean; onBookCall: () =
   );
 }
 
+
 export default function Home() {
   const [showThanksPopup, setShowThanksPopup] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -3132,14 +3175,6 @@ export default function Home() {
   const [paymentStatus, setPaymentStatus] = useState<"success" | "cancelled" | null>(null);
   const [bookCallClicked, setBookCallClicked] = useState(false);
 
-  // Warn before tab close while ThanksPopup is open
-  useEffect(() => {
-    if (showThanksPopup) {
-      const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
-      window.addEventListener('beforeunload', handler);
-      return () => window.removeEventListener('beforeunload', handler);
-    }
-  }, [showThanksPopup]);
 
   // Handle URL parameters for payment status and modals
   useEffect(() => {
@@ -3259,7 +3294,7 @@ export default function Home() {
       <FaqSection />
       <ContactSection onSuccess={() => setShowThanksPopup(true)} />
       <Footer onOpenPrivacyPolicy={handleOpenPrivacyPolicy} />
-      <ThanksPopup isOpen={showThanksPopup} onBookCall={() => setBookCallClicked(true)} />
+      <ThanksPopup isOpen={showThanksPopup} onClose={() => setShowThanksPopup(false)} onBookCall={() => setBookCallClicked(true)} />
       <PromoPopup />
       <PaymentModal
         isOpen={paymentModalOpen}
