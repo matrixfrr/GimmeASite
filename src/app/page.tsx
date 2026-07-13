@@ -3040,33 +3040,35 @@ function ThanksPopup({ isOpen, onClose, onBookCall }: { isOpen: boolean; onClose
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-      <div className="relative bg-card border border-border rounded-2xl p-8 max-w-md w-full shadow-2xl animate-slideIn">
-        <div className="text-center">
-          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Check className="w-10 h-10 text-primary" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-card border border-border rounded-2xl p-6 max-w-2xl w-full shadow-2xl animate-slideIn flex flex-col max-h-[90vh]">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors z-10"
+          aria-label="Close"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        <div className="text-center mb-4">
+          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
+            <Check className="w-6 h-6 text-primary" />
           </div>
-          <h2 className="text-2xl font-bold mb-4">Thank You!</h2>
-          <p className="text-muted-foreground mb-6">
-            We've received your message and will get back to you within 24 business hours. We're excited to help bring your vision to life!
-          </p>
-          <Button
-            asChild
-            className="bg-primary hover:bg-primary/90 w-full px-8"
-          >
-            <a
-              href="https://cal.com/gimmeasite"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => { onBookCall(); onClose(); }}
-            >
-              Book a Call to Review Your Draft
-            </a>
-          </Button>
-          <p className="text-xs text-muted-foreground/70 text-center mt-2 leading-snug">
-            Drafts are completed within one business day, and you cannot book us within 24 hours of your meeting — Your draft will be ready.
+          <h2 className="text-xl font-bold">Thank You!</h2>
+          <p className="text-sm text-muted-foreground mt-1">
+            We've received your message. Book a quick call and we'll walk you through your draft together.
           </p>
         </div>
+        <div className="flex-1 min-h-0 rounded-xl overflow-hidden border border-border">
+          <iframe
+            src="https://cal.com/gimmeasite?embed=true&embedType=inline&layout=month_view"
+            className="w-full h-full"
+            style={{ minHeight: '500px', border: 'none' }}
+            onLoad={() => onBookCall()}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground/60 text-center mt-3 leading-snug">
+          Drafts are completed within one business day — your site will be ready before the call.
+        </p>
       </div>
     </div>
   );
