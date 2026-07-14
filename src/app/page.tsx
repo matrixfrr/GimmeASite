@@ -1285,67 +1285,86 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
   };
 
   // Social media URL validation
-  const validateSocialMediaUrl = async (platform: string, username: string): Promise<boolean> => {
-    if (!username.trim()) return true; // Empty is valid (optional field)
+  // Returns an error string, or "" if valid
+  const validateSocialHandle = (platform: string, value: string): string => {
+    const v = value.trim();
+    if (!v) return "";
 
-    const urls: Record<string, string> = {
-      instagram: `https://instagram.com/${username}`,
-      facebook: `https://facebook.com/${username}`,
-      twitter: `https://x.com/${username}`,
-      youtube: `https://youtube.com/${username}`,
-      tiktok: `https://tiktok.com/@${username}`,
-      linkedin: `https://linkedin.com/company/${username}`,
-    };
+    if (v.endsWith("/") || v.endsWith("\\"))
+      return "Please remove the trailing slash at the end.";
 
-    // For Google Business, only accept https://share.google/ links
-    if (platform === 'googleBusiness') {
-      return /^https:\/\/share\.google\//i.test(username.trim());
-    }
+    const atPlatforms = ["instagram", "twitter", "tiktok", "linkedin", "facebook"];
+    if (atPlatforms.includes(platform) && v.startsWith("@"))
+      return "Please remove the @ symbol — just enter your username.";
 
-    // Basic username format validation
-    if (platform === 'instagram' || platform === 'twitter' || platform === 'tiktok') {
-      // Instagram, Twitter, TikTok usernames: alphanumeric, underscores, periods (no special chars at start/end)
-      const usernamePattern = /^[a-zA-Z0-9][\w.]*[a-zA-Z0-9]$|^[a-zA-Z0-9]$/;
-      if (!usernamePattern.test(username) && username.length > 1) {
-        return false;
+    switch (platform) {
+      case "tiktok": {
+        if (v.length < 2 || v.length > 24)
+          return "TikTok usernames must be 2–24 characters long.";
+        if (!/^[a-zA-Z0-9_.]+$/.test(v))
+          return "TikTok usernames can only contain letters, numbers, underscores, and periods.";
+        if (v.endsWith("."))
+          return "TikTok usernames cannot end with a period.";
+        return "";
       }
+      case "instagram": {
+        if (v.length > 30)
+          return "Instagram usernames cannot exceed 30 characters.";
+        if (!/^[a-zA-Z0-9._]+$/.test(v))
+          return "Instagram usernames can only contain letters, numbers, periods, and underscores.";
+        return "";
+      }
+      case "twitter": {
+        if (v.length < 4 || v.length > 15)
+          return "X (Twitter) usernames must be 4–15 characters long.";
+        if (!/^[a-zA-Z0-9_]+$/.test(v))
+          return "X (Twitter) usernames can only contain letters, numbers, and underscores.";
+        if (/admin|twitter/i.test(v))
+          return "Usernames cannot contain \"admin\" or \"twitter\".";
+        return "";
+      }
+      case "youtube": {
+        if (v.length < 3 || v.length > 30)
+          return "YouTube handles must be 3–30 characters long.";
+        if (!/^[a-zA-Z0-9][a-zA-Z0-9_.\-·]*[a-zA-Z0-9]$|^[a-zA-Z0-9]$/.test(v))
+          return "YouTube handles can only contain letters, numbers, underscores, hyphens, and periods, and cannot start or end with punctuation.";
+        return "";
+      }
+      case "facebook": {
+        if (v.length < 5)
+          return "Facebook usernames must be at least 5 characters long.";
+        if (!/^[a-zA-Z0-9.]+$/.test(v))
+          return "Facebook usernames can only contain letters, numbers, and periods.";
+        return "";
+      }
+      case "linkedin": {
+        if (v.length > 100)
+          return "LinkedIn company names cannot exceed 100 characters.";
+        if (!/^[a-z0-9-]+$/.test(v))
+          return "LinkedIn names can only contain lowercase letters, numbers, and hyphens.";
+        return "";
+      }
+      case "googleBusiness": {
+        if (!/^https:\/\/share\.google\//i.test(v))
+          return "Please enter a valid Google Business share link starting with https://share.google/";
+        return "";
+      }
+      default:
+        return "";
     }
-
-    return true;
   };
 
-  const handleSocialBlur = async (platform: string, value: string) => {
+  const handleSocialBlur = (platform: string, value: string) => {
     if (!value.trim()) {
       setErrors(prev => ({ ...prev, [platform]: "" }));
       setSocialValidated(prev => ({ ...prev, [platform]: false }));
       return;
     }
 
-    if (value.endsWith("/") || value.endsWith("\\")) {
-      setErrors(prev => ({ ...prev, [platform]: "Please remove the trailing slash at the end." }));
-      setSocialValidated(prev => ({ ...prev, [platform]: false }));
-      return;
-    }
+    const error = validateSocialHandle(platform, value);
 
-    const atPlatforms = ["instagram", "twitter", "tiktok", "linkedin", "facebook"];
-    if (atPlatforms.includes(platform) && value.startsWith("@")) {
-      setErrors(prev => ({ ...prev, [platform]: "Please remove the @ symbol — just enter your username." }));
-      setSocialValidated(prev => ({ ...prev, [platform]: false }));
-      return;
-    }
-
-    setValidatingSocial(prev => ({ ...prev, [platform]: true }));
-
-    const isValid = await validateSocialMediaUrl(platform, value);
-
-    setValidatingSocial(prev => ({ ...prev, [platform]: false }));
-
-    if (!isValid) {
-      if (platform === 'googleBusiness') {
-        setErrors(prev => ({ ...prev, [platform]: "Please enter a valid Google Business share link starting with https://share.google/" }));
-      } else {
-        setErrors(prev => ({ ...prev, [platform]: "This username format appears to be invalid" }));
-      }
+    if (error) {
+      setErrors(prev => ({ ...prev, [platform]: error }));
       setSocialValidated(prev => ({ ...prev, [platform]: false }));
     } else {
       setErrors(prev => ({ ...prev, [platform]: "" }));
@@ -1629,6 +1648,8 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       value = value.replace(/^https?:\/\/(www\.)?tiktok\.com\/@?/i, "");
     } else if (id === "linkedin") {
       value = value.replace(/^https?:\/\/(www\.)?linkedin\.com\/(?:company|in)\//i, "");
+      // Auto-convert invalid chars to hyphens, lowercase
+      value = value.toLowerCase().replace(/[^a-z0-9-]/g, "-");
     }
     setFormData(prev => ({ ...prev, [id]: value }));
     if (errors[id]) {
