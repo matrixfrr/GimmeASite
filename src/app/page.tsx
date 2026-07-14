@@ -1321,6 +1321,12 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
       return;
     }
 
+    if (value.endsWith("/") || value.endsWith("\\")) {
+      setErrors(prev => ({ ...prev, [platform]: "Please remove the trailing slash at the end." }));
+      setSocialValidated(prev => ({ ...prev, [platform]: false }));
+      return;
+    }
+
     const atPlatforms = ["instagram", "twitter", "tiktok", "linkedin", "facebook"];
     if (atPlatforms.includes(platform) && value.startsWith("@")) {
       setErrors(prev => ({ ...prev, [platform]: "Please remove the @ symbol — just enter your username." }));
@@ -1650,7 +1656,7 @@ function ContactSection({ onSuccess }: { onSuccess?: () => void }) {
     <section className="py-32 relative">
       {/* Toast Notification */}
       {showSubmitToast && (
-        <div className="fixed top-24 right-4 z-50 animate-slideIn">
+        <div className="fixed top-24 right-4 z-[110] animate-slideIn">
           <div className="bg-green-500/90 backdrop-blur-sm text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <Check className="w-5 h-5" />
@@ -2995,7 +3001,7 @@ function PaymentStatusToast({ status, onClose }: { status: "success" | "cancelle
   if (!status) return null;
 
   return (
-    <div className="fixed top-24 right-4 z-50 animate-slideIn">
+    <div className="fixed top-24 right-4 z-[110] animate-slideIn">
       <div className={`${
         status === "success"
           ? "bg-green-500/90"
